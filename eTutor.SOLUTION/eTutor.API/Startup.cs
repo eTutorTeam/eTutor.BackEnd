@@ -30,6 +30,7 @@ namespace eTutor.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ETutorContext>(opts => opts.UseMySql(Configuration.GetConnectionString("MainConnection")));
+            
             services.AddControllers();
             
             services.AddSwaggerGen(config =>
