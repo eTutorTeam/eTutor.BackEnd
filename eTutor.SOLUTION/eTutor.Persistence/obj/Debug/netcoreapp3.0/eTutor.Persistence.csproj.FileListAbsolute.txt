@@ -1,7 +1,0 @@
-/Users/juanozuna/Documents/INTEC/Proyecto Final/eTutor.BackEnd/eTutor.SOLUTION/eTutor.Persistence/bin/Debug/netcoreapp3.0/eTutor.Persistence.deps.json
-/Users/juanozuna/Documents/INTEC/Proyecto Final/eTutor.BackEnd/eTutor.SOLUTION/eTutor.Persistence/bin/Debug/netcoreapp3.0/eTutor.Persistence.dll
-/Users/juanozuna/Documents/INTEC/Proyecto Final/eTutor.BackEnd/eTutor.SOLUTION/eTutor.Persistence/bin/Debug/netcoreapp3.0/eTutor.Persistence.pdb
-/Users/juanozuna/Documents/INTEC/Proyecto Final/eTutor.BackEnd/eTutor.SOLUTION/eTutor.Persistence/obj/Debug/netcoreapp3.0/eTutor.Persistence.AssemblyInfoInputs.cache
-/Users/juanozuna/Documents/INTEC/Proyecto Final/eTutor.BackEnd/eTutor.SOLUTION/eTutor.Persistence/obj/Debug/netcoreapp3.0/eTutor.Persistence.AssemblyInfo.cs
-/Users/juanozuna/Documents/INTEC/Proyecto Final/eTutor.BackEnd/eTutor.SOLUTION/eTutor.Persistence/obj/Debug/netcoreapp3.0/eTutor.Persistence.dll
-/Users/juanozuna/Documents/INTEC/Proyecto Final/eTutor.BackEnd/eTutor.SOLUTION/eTutor.Persistence/obj/Debug/netcoreapp3.0/eTutor.Persistence.pdb

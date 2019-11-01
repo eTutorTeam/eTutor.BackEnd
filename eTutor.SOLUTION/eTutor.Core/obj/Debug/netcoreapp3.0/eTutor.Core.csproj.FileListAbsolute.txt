@@ -1,8 +1,0 @@
-/Users/juanozuna/Documents/INTEC/Proyecto Final/eTutor.BackEnd/eTutor.SOLUTION/eTutor.Core/bin/Debug/netcoreapp3.0/eTutor.Core.deps.json
-/Users/juanozuna/Documents/INTEC/Proyecto Final/eTutor.BackEnd/eTutor.SOLUTION/eTutor.Core/bin/Debug/netcoreapp3.0/eTutor.Core.dll
-/Users/juanozuna/Documents/INTEC/Proyecto Final/eTutor.BackEnd/eTutor.SOLUTION/eTutor.Core/bin/Debug/netcoreapp3.0/eTutor.Core.pdb
-/Users/juanozuna/Documents/INTEC/Proyecto Final/eTutor.BackEnd/eTutor.SOLUTION/eTutor.Core/obj/Debug/netcoreapp3.0/eTutor.Core.csprojAssemblyReference.cache
-/Users/juanozuna/Documents/INTEC/Proyecto Final/eTutor.BackEnd/eTutor.SOLUTION/eTutor.Core/obj/Debug/netcoreapp3.0/eTutor.Core.AssemblyInfoInputs.cache
-/Users/juanozuna/Documents/INTEC/Proyecto Final/eTutor.BackEnd/eTutor.SOLUTION/eTutor.Core/obj/Debug/netcoreapp3.0/eTutor.Core.AssemblyInfo.cs
-/Users/juanozuna/Documents/INTEC/Proyecto Final/eTutor.BackEnd/eTutor.SOLUTION/eTutor.Core/obj/Debug/netcoreapp3.0/eTutor.Core.dll
-/Users/juanozuna/Documents/INTEC/Proyecto Final/eTutor.BackEnd/eTutor.SOLUTION/eTutor.Core/obj/Debug/netcoreapp3.0/eTutor.Core.pdb
