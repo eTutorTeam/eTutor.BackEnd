@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using eTutor.ServerApi.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 
 namespace eTutor.ServerApi
 {
@@ -26,8 +28,24 @@ namespace eTutor.ServerApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
+            
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials()
+                        .Build());
+            });
+            
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddJsonOptions(opts =>
+                    {
+                        opts.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                        opts.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                    });
 
             services.AddSwaggerGen(config =>
             {
@@ -35,6 +53,17 @@ namespace eTutor.ServerApi
                 {
                     Title = "eTutor Web Api",
                     Description = "Our web API"
+                });
+                config.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please enter JWT with Bearer into field", 
+                    Name = "Authorization", 
+                    Type = SecuritySchemeType.ApiKey
+                });
+                config.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    Keys = { }
                 });
             });
         }
@@ -48,7 +77,6 @@ namespace eTutor.ServerApi
             }
             else
             {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
@@ -60,6 +88,11 @@ namespace eTutor.ServerApi
             });
 
             app.UseHttpsRedirection();
+
+            app.UseMiddleware<HttpExceptionHandler>();
+            
+            app.UseCors("CorsPolicy");
+
             app.UseMvc();
         }
     }
