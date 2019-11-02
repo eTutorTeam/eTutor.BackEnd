@@ -1,11 +1,12 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eTutor.API", "eTutor.API\eTutor.API.csproj", "{32FB2F79-9197-4ECF-8EFF-E359A85179B3}"
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29424.173
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eTutor.Core", "eTutor.Core\eTutor.Core.csproj", "{84CA66D6-13FD-44BC-B962-F8739DF5E6E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eTutor.Core", "eTutor.Core\eTutor.Core.csproj", "{84CA66D6-13FD-44BC-B962-F8739DF5E6E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eTutor.Persistence", "eTutor.Persistence\eTutor.Persistence.csproj", "{8B55E12B-949C-46DA-9006-229C06A827B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eTutor.Persistence", "eTutor.Persistence\eTutor.Persistence.csproj", "{8B55E12B-949C-46DA-9006-229C06A827B3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eTutor.ServerApi", "eTutor.ServerApi\eTutor.ServerApi.csproj", "{A55D1C24-B637-4A3B-9C8A-5D8587AEE5E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,10 +14,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{32FB2F79-9197-4ECF-8EFF-E359A85179B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{32FB2F79-9197-4ECF-8EFF-E359A85179B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{32FB2F79-9197-4ECF-8EFF-E359A85179B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{32FB2F79-9197-4ECF-8EFF-E359A85179B3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{84CA66D6-13FD-44BC-B962-F8739DF5E6E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{84CA66D6-13FD-44BC-B962-F8739DF5E6E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84CA66D6-13FD-44BC-B962-F8739DF5E6E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -25,5 +22,15 @@ Global
 		{8B55E12B-949C-46DA-9006-229C06A827B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B55E12B-949C-46DA-9006-229C06A827B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B55E12B-949C-46DA-9006-229C06A827B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A55D1C24-B637-4A3B-9C8A-5D8587AEE5E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A55D1C24-B637-4A3B-9C8A-5D8587AEE5E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A55D1C24-B637-4A3B-9C8A-5D8587AEE5E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A55D1C24-B637-4A3B-9C8A-5D8587AEE5E5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {885A30BC-E17B-49C4-9C8A-E3D6046C962D}
 	EndGlobalSection
 EndGlobal
