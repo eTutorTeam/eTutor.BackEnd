@@ -53,5 +53,11 @@ namespace eTutor.Core.Models
         /// Represente the users roles
         /// </summary>
         public ISet<UserRole> UserRoles { get; set; }
+        
+        public Student Student { get; set; }
+        
+        public Parent Parent { get; set; }
+        
+        public Tutor Tutor { get; set; }
     }
 }

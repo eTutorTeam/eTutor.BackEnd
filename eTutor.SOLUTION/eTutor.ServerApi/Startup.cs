@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using eTutor.Persistence;
 using eTutor.ServerApi.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -28,6 +30,11 @@ namespace eTutor.ServerApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddDbContext<ETutorContext>(opts =>
+                {
+                    opts.UseMySql(Configuration.GetConnectionString("MainConnection"));
+                });
             
             services.AddCors(options =>
             {
@@ -65,6 +72,11 @@ namespace eTutor.ServerApi
                 {
                     Keys = { }
                 });
+            });
+
+            services.AddAuthentication(options =>
+            {
+                //options.DefaultAuthenticateScheme = 
             });
         }
 

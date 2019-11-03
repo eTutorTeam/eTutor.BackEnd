@@ -24,10 +24,10 @@ namespace eTutor.Core.Models
         public string Name { get; set; }
 
         ///<inheritdoc cref="IEntityBase.CreatedDate"/>
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime CreatedDate { get; set; } = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769);
 
         ///<inheritdoc cref="IEntityBase.UpdatedDate"/>
-        public DateTime UpdatedDate { get; set; } = DateTime.Now;
+        public DateTime UpdatedDate { get; set; } = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769);
 
         /// <summary>
         /// Represents the user roles
