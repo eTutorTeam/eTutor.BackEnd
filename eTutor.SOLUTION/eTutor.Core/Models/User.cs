@@ -35,11 +35,6 @@ namespace eTutor.Core.Models
         public bool IsTemporaryPassword { get; set; }
 
         /// <summary>
-        /// Represents the user's password
-        /// </summary>
-        public string Password { get; set; }
-
-        /// <summary>
         /// Represents the user's gender
         /// </summary>
         public Gender Gender { get; set; }

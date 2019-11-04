@@ -87,7 +87,14 @@ namespace eTutor.ServerApi
 
         private void AuthenticationServiceConfiguration(IServiceCollection services)
         {
-            services.AddIdentity<User, Role>()
+            services.AddIdentity<User, Role>(opts =>
+                {
+                    opts.Password.RequireDigit = false;
+                    opts.Password.RequiredLength = 4;
+                    opts.Password.RequireNonAlphanumeric = false;
+                    opts.Password.RequireUppercase = false;
+                    opts.Password.RequireLowercase = false;
+                })
                 .AddEntityFrameworkStores<ETutorContext>()
                 .AddDefaultTokenProviders();
 

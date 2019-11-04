@@ -9,7 +9,6 @@ namespace eTutor.Core.Validations
         {
             RuleFor(u => u.Email).NotEmpty();
             RuleFor(u => u.UserName).NotEmpty();
-            RuleFor(u => u.Password).NotEmpty();
         }
     }
 }

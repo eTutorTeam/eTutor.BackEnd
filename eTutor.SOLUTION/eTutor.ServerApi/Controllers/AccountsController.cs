@@ -50,7 +50,7 @@ namespace eTutor.ServerApi.Controllers
                     LastName = "Admin",
                     UserName = "admin@admin.com",
                 };
-
+                
                 IdentityResult res = await _userManager.CreateAsync(user, "123456");
 
                 return Ok(res);
