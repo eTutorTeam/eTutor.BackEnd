@@ -23,7 +23,8 @@ namespace eTutor.Core.Configurations
             var roles = enumValues.Select(r => new Role
             {
                 Id = (int) r,
-                Name = r.GetEnumValueDescription()
+                Name = r.GetEnumValueDescription(),
+                NormalizedName = r.GetEnumValueDescription()
             });
 
             builder.HasData(roles);

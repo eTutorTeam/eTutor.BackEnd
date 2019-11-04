@@ -14,11 +14,6 @@ namespace eTutor.Core.Models
     public sealed class User : IdentityUser<int>, IEntityBase
     {
 
-
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public override int Id { get; set; }
-        
         /// <summary>
         /// Represents the user name
         /// </summary>
@@ -40,11 +35,6 @@ namespace eTutor.Core.Models
         public bool IsTemporaryPassword { get; set; }
 
         /// <summary>
-        /// Represents the user's password
-        /// </summary>
-        public string Password { get; set; }
-
-        /// <summary>
         /// Represents the user's gender
         /// </summary>
         public Gender Gender { get; set; }
@@ -53,6 +43,12 @@ namespace eTutor.Core.Models
         /// Represente the users roles
         /// </summary>
         public ISet<UserRole> UserRoles { get; set; }
+        
+        public ISet<UserClaim> UserClaims { get; set; }
+        
+        public ISet<UserLogin> UserLogins { get; set; }
+        
+        public ISet<UserToken> UserTokens { get; set; }
         
         public Student Student { get; set; }
         

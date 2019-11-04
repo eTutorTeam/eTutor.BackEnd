@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using eTutor.Core.Enums;
 using eTutor.Core.Models;
@@ -34,20 +35,30 @@ namespace eTutor.ServerApi.Controllers
         }
 
 
-        public IActionResult CreateDemoAccounts()
+        [HttpGet("test")]
+        public async Task<IActionResult> CreateDemoAccounts()
         {
-            var User = new User
+            try
             {
-                Email = "admin@admin.com",
-                Gender = Gender.Male,
-                IsEmailValidated = true,
-                IsTemporaryPassword = false,
-                Name = "Admin",
-                LastName = "Admin",
-                Username = "admin@admin.com"
-            };
+                var user = new User
+                {
+                    Email = "admin@admin.com",
+                    Gender = Gender.Male,
+                    IsEmailValidated = true,
+                    IsTemporaryPassword = false,
+                    Name = "Admin",
+                    LastName = "Admin",
+                    UserName = "admin@admin.com",
+                };
+                
+                IdentityResult res = await _userManager.CreateAsync(user, "123456");
 
-            return Ok();
+                return Ok(res);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
         }
     }
 }

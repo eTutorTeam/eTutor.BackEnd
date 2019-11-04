@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -52,29 +53,8 @@ namespace eTutor.ServerApi
                         .Build());
             });
             
-            services.AddIdentity<User, Role>()
-                .AddDefaultTokenProviders();
             
-            JwtSecurityTokenHandler.DefaultInboundClaimFilter.Clear();
-            services
-                .AddAuthentication(opts =>
-                {
-                    opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    opts.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                    opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(cfg =>
-                {
-                    cfg.RequireHttpsMetadata = false;
-                    cfg.SaveToken = true;
-                    cfg.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidIssuer = Configuration.GetSection("JWT")["Issuer"],
-                        ValidAudience = Configuration.GetSection("JWT")["Issuer"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetSection("JWT")["Key"])),
-                        ClockSkew = TimeSpan.Zero
-                    };
-                });
+            AuthenticationServiceConfiguration(services);
             
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
@@ -103,6 +83,41 @@ namespace eTutor.ServerApi
                     Keys = { }
                 });
             });
+        }
+
+        private void AuthenticationServiceConfiguration(IServiceCollection services)
+        {
+            services.AddIdentity<User, Role>(opts =>
+                {
+                    opts.Password.RequireDigit = false;
+                    opts.Password.RequiredLength = 4;
+                    opts.Password.RequireNonAlphanumeric = false;
+                    opts.Password.RequireUppercase = false;
+                    opts.Password.RequireLowercase = false;
+                })
+                .AddEntityFrameworkStores<ETutorContext>()
+                .AddDefaultTokenProviders();
+
+            JwtSecurityTokenHandler.DefaultInboundClaimFilter.Clear();
+            services
+                .AddAuthentication(opts =>
+                {
+                    opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    opts.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(cfg =>
+                {
+                    cfg.RequireHttpsMetadata = false;
+                    cfg.SaveToken = true;
+                    cfg.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = Configuration.GetSection("JWT")["Issuer"],
+                        ValidAudience = Configuration.GetSection("JWT")["Issuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetSection("JWT")["Key"])),
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

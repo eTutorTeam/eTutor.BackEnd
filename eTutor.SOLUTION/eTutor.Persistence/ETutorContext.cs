@@ -2,16 +2,13 @@
 using eTutor.Core.Configurations;
 using eTutor.Core.Enums;
 using eTutor.Core.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace eTutor.Persistence
 {
-    public class ETutorContext : DbContext
+    public class ETutorContext : IdentityDbContext<User, Role, int, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>
     {
-
-        public DbSet<User> Users { get; set; }
-        public DbSet<UserRole> UserRoles { get; set; }
-        public DbSet<Role> Roles { get; set; }
         public DbSet<Parent> Parents { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<Tutor> Tutors { get; set; }
@@ -29,11 +26,19 @@ namespace eTutor.Persistence
         {
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(builder);
 
-            ApplyConfigurations(modelBuilder);
+            builder.Entity<User>().ToTable("Users");
+            builder.Entity<UserClaim>().ToTable("UserClaims");
+            builder.Entity<UserLogin>().ToTable("UserLogins");
+            builder.Entity<UserToken>().ToTable("UserTokens");
+            builder.Entity<UserRole>().ToTable("UserRoles");
+            builder.Entity<Role>().ToTable("Roles");
+            builder.Entity<RoleClaim>().ToTable("RoleClaims");
+            
+            ApplyConfigurations(builder);
         }
 
         private void ApplyConfigurations(ModelBuilder modelBuilder)

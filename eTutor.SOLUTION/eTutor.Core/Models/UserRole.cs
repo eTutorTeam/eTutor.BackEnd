@@ -1,19 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using eTutor.Core.Enums;
+using Microsoft.AspNetCore.Identity;
 
 namespace eTutor.Core.Models
 {
     /// <summary>
     /// Represents the relationship between user and roles
     /// </summary>
-    public sealed class UserRole : EntityBase, IEntityBase
+    public sealed class UserRole : IdentityUserRole<int>, IEntityBase
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        
         /// <summary>
         /// Represents the Id of the User
         /// </summary>
-        public int UserId { get; set; }
+        public override int UserId { get; set; }
 
         /// <summary>
         /// Represents the User Entity
@@ -23,11 +30,15 @@ namespace eTutor.Core.Models
         /// <summary>
         /// Represents the Role ID
         /// </summary>
-        public RoleTypes RoleId { get; set; }
+        public override int RoleId { get; set; }
 
         /// <summary>
         /// Represents the Role Entity
         /// </summary>
         public Role Role { get; set; }
+
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        
+        public DateTime UpdatedDate { get; set; } = DateTime.Now;
     }
 }
