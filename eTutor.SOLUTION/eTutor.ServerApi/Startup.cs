@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using eTutor.Core.Models;
 using eTutor.Persistence;
-using eTutor.Persistence.IdentityStores;
 using eTutor.ServerApi.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -89,10 +88,8 @@ namespace eTutor.ServerApi
         private void AuthenticationServiceConfiguration(IServiceCollection services)
         {
             services.AddIdentity<User, Role>()
+                .AddEntityFrameworkStores<ETutorContext>()
                 .AddDefaultTokenProviders();
-
-            services.AddTransient<IUserStore<User>, ETUserStore>();
-            services.AddTransient<IRoleStore<Role>, ETRoleStore>();
 
             JwtSecurityTokenHandler.DefaultInboundClaimFilter.Clear();
             services

@@ -14,11 +14,6 @@ namespace eTutor.Core.Models
     public sealed class User : IdentityUser<int>, IEntityBase
     {
 
-
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public override int Id { get; set; }
-        
         /// <summary>
         /// Represents the user name
         /// </summary>

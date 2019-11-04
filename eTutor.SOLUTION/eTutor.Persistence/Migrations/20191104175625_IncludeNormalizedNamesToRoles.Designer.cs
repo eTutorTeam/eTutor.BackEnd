@@ -9,8 +9,8 @@ using eTutor.Persistence;
 namespace eTutor.Persistence.Migrations
 {
     [DbContext(typeof(ETutorContext))]
-    [Migration("20191104141447_IncludePasswordFieldToUser")]
-    partial class IncludePasswordFieldToUser
+    [Migration("20191104175625_IncludeNormalizedNamesToRoles")]
+    partial class IncludeNormalizedNamesToRoles
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -212,9 +212,16 @@ namespace eTutor.Persistence.Migrations
                 {
                     b.Property<int>("Id");
 
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken();
+
                     b.Property<DateTime>("CreatedDate");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Name")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256);
 
                     b.Property<DateTime>("UpdatedDate");
 
@@ -223,37 +230,71 @@ namespace eTutor.Persistence.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasName("RoleNameIndex");
+
                     b.ToTable("Roles");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
+                            ConcurrencyStamp = "1123d79d-90f2-4987-ab72-fb55b95200e3",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "admin",
+                            NormalizedName = "admin",
                             UpdatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769)
                         },
                         new
                         {
                             Id = 2,
+                            ConcurrencyStamp = "cdd7f6b5-9f39-45ce-92a9-f4e70cdf3c56",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "tutor",
+                            NormalizedName = "tutor",
                             UpdatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769)
                         },
                         new
                         {
                             Id = 3,
+                            ConcurrencyStamp = "b42f8910-930c-4884-8f16-848d41b7a58d",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "student",
+                            NormalizedName = "student",
                             UpdatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769)
                         },
                         new
                         {
                             Id = 4,
+                            ConcurrencyStamp = "094faf1d-d1ac-4fab-b7a7-1025db3e18e3",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "parent",
+                            NormalizedName = "parent",
                             UpdatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769)
                         });
+                });
+
+            modelBuilder.Entity("eTutor.Core.Models.RoleClaim", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("ClaimType");
+
+                    b.Property<string>("ClaimValue");
+
+                    b.Property<int>("RoleId");
+
+                    b.Property<int?>("RoleId1");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("RoleId1");
+
+                    b.ToTable("RoleClaims");
                 });
 
             modelBuilder.Entity("eTutor.Core.Models.Student", b =>
@@ -381,10 +422,17 @@ namespace eTutor.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int>("AccessFailedCount");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken();
+
                     b.Property<DateTime>("CreatedDate");
 
                     b.Property<string>("Email")
-                        .IsRequired();
+                        .HasMaxLength(256);
+
+                    b.Property<bool>("EmailConfirmed");
 
                     b.Property<int>("Gender");
 
@@ -394,48 +442,162 @@ namespace eTutor.Persistence.Migrations
 
                     b.Property<string>("LastName");
 
+                    b.Property<bool>("LockoutEnabled");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd");
+
                     b.Property<string>("Name");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256);
 
                     b.Property<string>("Password");
 
+                    b.Property<string>("PasswordHash");
+
+                    b.Property<string>("PhoneNumber");
+
+                    b.Property<bool>("PhoneNumberConfirmed");
+
+                    b.Property<string>("SecurityStamp");
+
+                    b.Property<bool>("TwoFactorEnabled");
+
                     b.Property<DateTime>("UpdatedDate");
 
-                    b.Property<string>("Username")
-                        .IsRequired();
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256);
 
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.HasIndex("Username")
-                        .IsUnique();
+                    b.HasIndex("NormalizedEmail")
+                        .HasName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasName("UserNameIndex");
 
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("eTutor.Core.Models.UserRole", b =>
+            modelBuilder.Entity("eTutor.Core.Models.UserClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("ClaimType");
+
+                    b.Property<string>("ClaimValue");
+
                     b.Property<DateTime>("CreatedDate");
-
-                    b.Property<int>("RoleId");
-
-                    b.Property<int?>("RoleId1");
 
                     b.Property<DateTime>("UpdatedDate");
 
                     b.Property<int>("UserId");
 
-                    b.HasKey("Id");
+                    b.Property<int?>("UserId1");
 
-                    b.HasIndex("RoleId1");
+                    b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
+                    b.HasIndex("UserId1");
+
+                    b.ToTable("UserClaims");
+                });
+
+            modelBuilder.Entity("eTutor.Core.Models.UserLogin", b =>
+                {
+                    b.Property<string>("LoginProvider");
+
+                    b.Property<string>("ProviderKey");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("ProviderDisplayName");
+
+                    b.Property<DateTime>("UpdatedDate");
+
+                    b.Property<int>("UserId");
+
+                    b.Property<int?>("UserId1");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasAlternateKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("UserId1");
+
+                    b.ToTable("UserLogins");
+                });
+
+            modelBuilder.Entity("eTutor.Core.Models.UserRole", b =>
+                {
+                    b.Property<int>("UserId");
+
+                    b.Property<int>("RoleId");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int?>("RoleId1");
+
+                    b.Property<DateTime>("UpdatedDate");
+
+                    b.Property<int?>("UserId1");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasAlternateKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("RoleId1");
+
+                    b.HasIndex("UserId1");
+
                     b.ToTable("UserRoles");
+                });
+
+            modelBuilder.Entity("eTutor.Core.Models.UserToken", b =>
+                {
+                    b.Property<int>("UserId");
+
+                    b.Property<string>("LoginProvider");
+
+                    b.Property<string>("Name");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("UpdatedDate");
+
+                    b.Property<int?>("UserId1");
+
+                    b.Property<string>("Value");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.HasAlternateKey("Id");
+
+                    b.HasIndex("UserId1");
+
+                    b.ToTable("UserTokens");
                 });
 
             modelBuilder.Entity("eTutor.Core.Models.Invoice", b =>
@@ -531,6 +693,18 @@ namespace eTutor.Persistence.Migrations
                         .HasForeignKey("TutorId");
                 });
 
+            modelBuilder.Entity("eTutor.Core.Models.RoleClaim", b =>
+                {
+                    b.HasOne("eTutor.Core.Models.Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("eTutor.Core.Models.Role", "Role")
+                        .WithMany("RoleClaims")
+                        .HasForeignKey("RoleId1");
+                });
+
             modelBuilder.Entity("eTutor.Core.Models.Student", b =>
                 {
                     b.HasOne("eTutor.Core.Models.User", "User")
@@ -573,16 +747,61 @@ namespace eTutor.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("eTutor.Core.Models.UserClaim", b =>
+                {
+                    b.HasOne("eTutor.Core.Models.User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("eTutor.Core.Models.User", "User")
+                        .WithMany("UserClaims")
+                        .HasForeignKey("UserId1");
+                });
+
+            modelBuilder.Entity("eTutor.Core.Models.UserLogin", b =>
+                {
+                    b.HasOne("eTutor.Core.Models.User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("eTutor.Core.Models.User", "User")
+                        .WithMany("UserLogins")
+                        .HasForeignKey("UserId1");
+                });
+
             modelBuilder.Entity("eTutor.Core.Models.UserRole", b =>
                 {
+                    b.HasOne("eTutor.Core.Models.Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("eTutor.Core.Models.Role", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId1");
 
-                    b.HasOne("eTutor.Core.Models.User", "User")
-                        .WithMany("UserRoles")
+                    b.HasOne("eTutor.Core.Models.User")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("eTutor.Core.Models.User", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId1");
+                });
+
+            modelBuilder.Entity("eTutor.Core.Models.UserToken", b =>
+                {
+                    b.HasOne("eTutor.Core.Models.User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("eTutor.Core.Models.User", "User")
+                        .WithMany("UserTokens")
+                        .HasForeignKey("UserId1");
                 });
 #pragma warning restore 612, 618
         }

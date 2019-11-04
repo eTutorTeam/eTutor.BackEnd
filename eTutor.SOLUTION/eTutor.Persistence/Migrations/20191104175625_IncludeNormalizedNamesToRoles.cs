@@ -2,76 +2,68 @@
 
 namespace eTutor.Persistence.Migrations
 {
-    public partial class RemovedRedundantUsernameProperty : Migration
+    public partial class IncludeNormalizedNamesToRoles : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-
             migrationBuilder.UpdateData(
                 table: "Roles",
                 keyColumn: "Id",
                 keyValue: 1,
-                column: "ConcurrencyStamp",
-                value: "2ed231d9-f652-409d-ad77-834a82b4cb5e");
+                columns: new[] { "ConcurrencyStamp", "NormalizedName" },
+                values: new object[] { "1123d79d-90f2-4987-ab72-fb55b95200e3", "admin" });
 
             migrationBuilder.UpdateData(
                 table: "Roles",
                 keyColumn: "Id",
                 keyValue: 2,
-                column: "ConcurrencyStamp",
-                value: "54180e41-1346-4e8f-aa67-33a1f0021be1");
+                columns: new[] { "ConcurrencyStamp", "NormalizedName" },
+                values: new object[] { "cdd7f6b5-9f39-45ce-92a9-f4e70cdf3c56", "tutor" });
 
             migrationBuilder.UpdateData(
                 table: "Roles",
                 keyColumn: "Id",
                 keyValue: 3,
-                column: "ConcurrencyStamp",
-                value: "117c5ebc-8716-4cbb-b85e-9f70ab947edd");
+                columns: new[] { "ConcurrencyStamp", "NormalizedName" },
+                values: new object[] { "b42f8910-930c-4884-8f16-848d41b7a58d", "student" });
 
             migrationBuilder.UpdateData(
                 table: "Roles",
                 keyColumn: "Id",
                 keyValue: 4,
-                column: "ConcurrencyStamp",
-                value: "8985b6a9-f400-442f-ad5b-315090175527");
+                columns: new[] { "ConcurrencyStamp", "NormalizedName" },
+                values: new object[] { "094faf1d-d1ac-4fab-b7a7-1025db3e18e3", "parent" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
             migrationBuilder.UpdateData(
                 table: "Roles",
                 keyColumn: "Id",
                 keyValue: 1,
-                column: "ConcurrencyStamp",
-                value: "9ac69256-3e24-4944-91d8-dfabd887c5fb");
+                columns: new[] { "ConcurrencyStamp", "NormalizedName" },
+                values: new object[] { "999dfbc1-ea17-4729-8e7f-05b91f939807", null });
 
             migrationBuilder.UpdateData(
                 table: "Roles",
                 keyColumn: "Id",
                 keyValue: 2,
-                column: "ConcurrencyStamp",
-                value: "0acb6929-bb44-4365-ba93-a39fd6931157");
+                columns: new[] { "ConcurrencyStamp", "NormalizedName" },
+                values: new object[] { "850815df-d214-4cdb-8442-208245d661ba", null });
 
             migrationBuilder.UpdateData(
                 table: "Roles",
                 keyColumn: "Id",
                 keyValue: 3,
-                column: "ConcurrencyStamp",
-                value: "430f281c-280d-456c-8f61-3105f59e18cf");
+                columns: new[] { "ConcurrencyStamp", "NormalizedName" },
+                values: new object[] { "7859f029-6ec3-4441-af25-7b40cf0e93d9", null });
 
             migrationBuilder.UpdateData(
                 table: "Roles",
                 keyColumn: "Id",
                 keyValue: 4,
-                column: "ConcurrencyStamp",
-                value: "c7d22753-4307-4b5b-9947-e3de5f9e5224");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_Username",
-                table: "Users",
-                column: "Username",
-                unique: true);
+                columns: new[] { "ConcurrencyStamp", "NormalizedName" },
+                values: new object[] { "2d75174d-0ecb-4bd8-a168-ff5a36e5a83a", null });
         }
     }
 }
