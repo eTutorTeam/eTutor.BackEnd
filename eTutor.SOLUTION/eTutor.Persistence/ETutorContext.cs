@@ -2,6 +2,7 @@
 using eTutor.Core.Configurations;
 using eTutor.Core.Enums;
 using eTutor.Core.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace eTutor.Persistence
@@ -10,8 +11,12 @@ namespace eTutor.Persistence
     {
 
         public DbSet<User> Users { get; set; }
+        public DbSet<UserClaim> UserClaims { get; set; }
+        public DbSet<UserLogin> UserLogins { get; set; }
+        public DbSet<UserToken> UserTokens { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<RoleClaim> RoleClaims { get; set; }
         public DbSet<Parent> Parents { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<Tutor> Tutors { get; set; }

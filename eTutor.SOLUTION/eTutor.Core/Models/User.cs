@@ -54,6 +54,12 @@ namespace eTutor.Core.Models
         /// </summary>
         public ISet<UserRole> UserRoles { get; set; }
         
+        public ISet<UserClaim> UserClaims { get; set; }
+        
+        public ISet<UserLogin> UserLogins { get; set; }
+        
+        public ISet<UserToken> UserTokens { get; set; }
+        
         public Student Student { get; set; }
         
         public Parent Parent { get; set; }

@@ -34,5 +34,7 @@ namespace eTutor.Core.Models
         /// Represents the user roles
         /// </summary>
         public ISet<UserRole> UserRoles { get; set; }
+        
+        public ISet<RoleClaim> RoleClaims { get; set; }
     }
 }
