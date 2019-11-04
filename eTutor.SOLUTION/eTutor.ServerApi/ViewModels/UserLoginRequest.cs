@@ -1,4 +1,9 @@
-$HEADER$namespace $NAMESPACE$
+namespace eTutor.ServerApi.ViewModels
 {
-  public class $CLASS$ {$END$}
+    public sealed class UserLoginRequest
+    {
+        public string Email { get; set; }
+        
+        public string Password { get; set; }
+    }
 }

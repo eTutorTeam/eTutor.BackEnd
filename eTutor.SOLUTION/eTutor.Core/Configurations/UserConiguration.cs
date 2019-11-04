@@ -14,9 +14,6 @@ namespace eTutor.Core.Configurations
             // u => Represents a single user
             builder.HasIndex(u => u.Email)
                 .IsUnique();
-
-            builder.HasIndex(u => u.Username)
-                .IsUnique();
         }
     }
 }

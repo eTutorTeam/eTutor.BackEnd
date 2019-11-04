@@ -1,16 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using eTutor.Core.Enums;
+using Microsoft.AspNetCore.Identity;
 
 namespace eTutor.Core.Models
 {
     /// <summary>
     /// Represents an App User
     /// </summary>
-    public sealed class User : EntityBase, IEntityBase
+    public sealed class User : IdentityUser<int>, IEntityBase
     {
+
+
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public override int Id { get; set; }
+        
         /// <summary>
         /// Represents the user name
         /// </summary>
@@ -20,29 +28,21 @@ namespace eTutor.Core.Models
         /// Represents the LastName
         /// </summary>
         public string LastName { get; set; }
-
-        /// <summary>
-        /// Represents the user email
-        /// </summary>
-        [Required]
-        [DataType(DataType.EmailAddress)]
-        public string Email { get; set; }
-
+        
         /// <summary>
         /// Represents whether the email is validated
         /// </summary>
         public bool IsEmailValidated { get; set; }
 
         /// <summary>
-        /// Represents the user's username
-        /// </summary>
-        [Required]
-        public string Username { get; set; }
-
-        /// <summary>
         /// Represents whether the user is temporary password
         /// </summary>
         public bool IsTemporaryPassword { get; set; }
+
+        /// <summary>
+        /// Represents the user's password
+        /// </summary>
+        public string Password { get; set; }
 
         /// <summary>
         /// Represents the user's gender
@@ -59,5 +59,9 @@ namespace eTutor.Core.Models
         public Parent Parent { get; set; }
         
         public Tutor Tutor { get; set; }
+
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        
+        public DateTime UpdatedDate { get; set; } = DateTime.Now;
     }
 }

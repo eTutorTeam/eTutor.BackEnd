@@ -34,7 +34,6 @@ namespace eTutor.Persistence.Migrations
                     LastName = table.Column<string>(nullable: true),
                     Email = table.Column<string>(nullable: false),
                     IsEmailValidated = table.Column<bool>(nullable: false),
-                    Username = table.Column<string>(nullable: false),
                     IsTemporaryPassword = table.Column<bool>(nullable: false),
                     Gender = table.Column<int>(nullable: false)
                 },
@@ -103,12 +102,6 @@ namespace eTutor.Persistence.Migrations
                 name: "IX_Users_Email",
                 table: "Users",
                 column: "Email",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_Username",
-                table: "Users",
-                column: "Username",
                 unique: true);
         }
 
