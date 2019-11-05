@@ -9,8 +9,8 @@ using eTutor.Persistence;
 namespace eTutor.Persistence.Migrations
 {
     [DbContext(typeof(ETutorContext))]
-    [Migration("20191104175625_IncludeNormalizedNamesToRoles")]
-    partial class IncludeNormalizedNamesToRoles
+    [Migration("20191105020824_InitialDatabaseMigration")]
+    partial class InitialDatabaseMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -240,7 +240,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "1123d79d-90f2-4987-ab72-fb55b95200e3",
+                            ConcurrencyStamp = "ed10ef0d-186e-4035-bece-b9f80cbe4eda",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "admin",
                             NormalizedName = "admin",
@@ -249,7 +249,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "cdd7f6b5-9f39-45ce-92a9-f4e70cdf3c56",
+                            ConcurrencyStamp = "83ffd702-4950-4943-97de-b0a2d61a59f9",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "tutor",
                             NormalizedName = "tutor",
@@ -258,7 +258,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "b42f8910-930c-4884-8f16-848d41b7a58d",
+                            ConcurrencyStamp = "c44da043-e85e-47b0-bf2e-4263a8267a09",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "student",
                             NormalizedName = "student",
@@ -267,7 +267,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "094faf1d-d1ac-4fab-b7a7-1025db3e18e3",
+                            ConcurrencyStamp = "acab1a76-05c0-4a8a-986b-fbe3ab74152d",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "parent",
                             NormalizedName = "parent",
@@ -453,8 +453,6 @@ namespace eTutor.Persistence.Migrations
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256);
-
-                    b.Property<string>("Password");
 
                     b.Property<string>("PasswordHash");
 

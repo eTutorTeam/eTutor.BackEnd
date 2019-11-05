@@ -238,7 +238,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "eadff669-4561-4098-b83a-80ecce293759",
+                            ConcurrencyStamp = "ed10ef0d-186e-4035-bece-b9f80cbe4eda",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "admin",
                             NormalizedName = "admin",
@@ -247,7 +247,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "71f939a2-5475-4b7a-8da0-af5ba171392a",
+                            ConcurrencyStamp = "83ffd702-4950-4943-97de-b0a2d61a59f9",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "tutor",
                             NormalizedName = "tutor",
@@ -256,7 +256,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "48887df9-b307-4ba3-a98d-7a34ced9ae76",
+                            ConcurrencyStamp = "c44da043-e85e-47b0-bf2e-4263a8267a09",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "student",
                             NormalizedName = "student",
@@ -265,7 +265,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "83d04ea5-1e4f-4ac9-8737-37fd189c0680",
+                            ConcurrencyStamp = "acab1a76-05c0-4a8a-986b-fbe3ab74152d",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "parent",
                             NormalizedName = "parent",

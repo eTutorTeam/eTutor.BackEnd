@@ -11,8 +11,6 @@ namespace eTutor.Core.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public override int UserId { get; set; }
-
         public User User { get; set; }
 
         public DateTime CreatedDate { get; set; } = DateTime.Now;
