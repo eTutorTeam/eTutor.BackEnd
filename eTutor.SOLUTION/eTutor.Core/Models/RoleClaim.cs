@@ -4,6 +4,6 @@ namespace eTutor.Core.Models
 {
     public class RoleClaim : IdentityRoleClaim<int>
     {
-        public Role Role { get; set; }
+        
     }
 }

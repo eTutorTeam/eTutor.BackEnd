@@ -153,7 +153,8 @@ namespace eTutor.Persistence.Seeders
                         LastName = "eTutor",
                         Longitude = -16.343422f,
                         Latitude = 64.523433f,
-                        Address = "Street Name"
+                        Address = "Street Name",
+                        Gender = Gender.Male
                     }
                 };
 
@@ -165,27 +166,24 @@ namespace eTutor.Persistence.Seeders
                 context.SaveChanges();
             }
 
-            if (parent == null || student == null)
+            student = context.Users
+                .Include(s => s.Student)
+                .ThenInclude(s => s.Parents)
+                .FirstOrDefault(u => u.Email == studentEmail);
+            if (student != null && !student.Student.Parents.Any())
             {
                 parent = context.Users
                     .Include(u => u.Parent)
                     .FirstOrDefault(u => u.Email == "parent@etutor.com");
-
-                student = context.Users
-                    .Include(u => u.Parent)
-                    .FirstOrDefault(u => u.Email == "student@etutor.com");
-
-                if (!(parent.Parent.Students.Any() || student.Student.Parents.Any()))
+                
+                var relationship = new ParentStudent
                 {
-                    var relationship = new ParentStudent
-                    {
-                        ParentId = parent.Parent.Id,
-                        StudentId = student.Student.Id,
-                        Relationship = ParentRelationship.Father
-                    };
-                    context.Add(relationship);
-                    context.SaveChanges();
-                }
+                    ParentId = parent.Parent.Id,
+                    StudentId = student.Student.Id,
+                    Relationship = ParentRelationship.Father
+                };
+                context.Add(relationship);
+                context.SaveChanges();
             }
         }
     }

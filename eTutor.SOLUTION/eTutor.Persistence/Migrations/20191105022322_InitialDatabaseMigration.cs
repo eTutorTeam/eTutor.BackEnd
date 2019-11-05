@@ -190,9 +190,9 @@ namespace eTutor.Persistence.Migrations
                     UserId = table.Column<int>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true),
-                    UserId1 = table.Column<int>(nullable: true),
                     CreatedDate = table.Column<DateTime>(nullable: false),
-                    UpdatedDate = table.Column<DateTime>(nullable: false)
+                    UpdatedDate = table.Column<DateTime>(nullable: false),
+                    UserId1 = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -221,9 +221,9 @@ namespace eTutor.Persistence.Migrations
                     UserId = table.Column<int>(nullable: false),
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    UserId1 = table.Column<int>(nullable: true),
                     CreatedDate = table.Column<DateTime>(nullable: false),
-                    UpdatedDate = table.Column<DateTime>(nullable: false)
+                    UpdatedDate = table.Column<DateTime>(nullable: false),
+                    UserId1 = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -251,10 +251,10 @@ namespace eTutor.Persistence.Migrations
                     RoleId = table.Column<int>(nullable: false),
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    UserId1 = table.Column<int>(nullable: true),
-                    RoleId1 = table.Column<int>(nullable: true),
                     CreatedDate = table.Column<DateTime>(nullable: false),
-                    UpdatedDate = table.Column<DateTime>(nullable: false)
+                    UpdatedDate = table.Column<DateTime>(nullable: false),
+                    RoleId1 = table.Column<int>(nullable: true),
+                    UserId1 = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -290,15 +290,15 @@ namespace eTutor.Persistence.Migrations
                 name: "UserTokens",
                 columns: table => new
                 {
+                    UserId = table.Column<int>(nullable: false),
                     LoginProvider = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: false),
-                    UserId = table.Column<int>(nullable: false),
                     Value = table.Column<string>(nullable: true),
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    UserId1 = table.Column<int>(nullable: true),
                     CreatedDate = table.Column<DateTime>(nullable: false),
-                    UpdatedDate = table.Column<DateTime>(nullable: false)
+                    UpdatedDate = table.Column<DateTime>(nullable: false),
+                    UserId1 = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -569,10 +569,10 @@ namespace eTutor.Persistence.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "CreatedDate", "Name", "NormalizedName", "UpdatedDate" },
                 values: new object[,]
                 {
-                    { 1, "ed10ef0d-186e-4035-bece-b9f80cbe4eda", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769), "admin", "admin", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769) },
-                    { 2, "83ffd702-4950-4943-97de-b0a2d61a59f9", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769), "tutor", "tutor", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769) },
-                    { 3, "c44da043-e85e-47b0-bf2e-4263a8267a09", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769), "student", "student", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769) },
-                    { 4, "acab1a76-05c0-4a8a-986b-fbe3ab74152d", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769), "parent", "parent", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769) }
+                    { 1, "e0ed5da8-ee49-491a-81d8-c2de552ccad1", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769), "admin", "admin", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769) },
+                    { 2, "6c5e94c6-971d-4a0c-9141-34186c3721f5", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769), "tutor", "tutor", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769) },
+                    { 3, "c4cd3e57-dc95-4449-a111-58b0402063a7", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769), "student", "student", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769) },
+                    { 4, "5e052c0c-4de2-4275-a020-7216a098b29c", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769), "parent", "parent", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769) }
                 });
 
             migrationBuilder.CreateIndex(

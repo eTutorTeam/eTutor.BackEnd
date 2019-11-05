@@ -5,8 +5,6 @@ namespace eTutor.Core.Models
 {
     public sealed class UserClaim : IdentityUserClaim<int>, IEntityBase
     {
-        public User User { get; set; }
-        
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         
         public DateTime UpdatedDate { get; set; } = DateTime.Now;
