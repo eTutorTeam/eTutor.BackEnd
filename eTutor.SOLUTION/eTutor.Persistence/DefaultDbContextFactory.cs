@@ -41,5 +41,6 @@ namespace eTutor.Persistence
 
             return new ETutorContext(optionsBuilder.Options);
         }
+        
     }
 }

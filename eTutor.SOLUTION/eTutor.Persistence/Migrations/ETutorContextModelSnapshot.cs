@@ -238,7 +238,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "eadff669-4561-4098-b83a-80ecce293759",
+                            ConcurrencyStamp = "e0ed5da8-ee49-491a-81d8-c2de552ccad1",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "admin",
                             NormalizedName = "admin",
@@ -247,7 +247,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "71f939a2-5475-4b7a-8da0-af5ba171392a",
+                            ConcurrencyStamp = "6c5e94c6-971d-4a0c-9141-34186c3721f5",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "tutor",
                             NormalizedName = "tutor",
@@ -256,7 +256,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "48887df9-b307-4ba3-a98d-7a34ced9ae76",
+                            ConcurrencyStamp = "c4cd3e57-dc95-4449-a111-58b0402063a7",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "student",
                             NormalizedName = "student",
@@ -265,7 +265,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "83d04ea5-1e4f-4ac9-8737-37fd189c0680",
+                            ConcurrencyStamp = "5e052c0c-4de2-4275-a020-7216a098b29c",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "parent",
                             NormalizedName = "parent",
@@ -696,7 +696,7 @@ namespace eTutor.Persistence.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("eTutor.Core.Models.Role", "Role")
+                    b.HasOne("eTutor.Core.Models.Role")
                         .WithMany("RoleClaims")
                         .HasForeignKey("RoleId1");
                 });
@@ -750,7 +750,7 @@ namespace eTutor.Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("eTutor.Core.Models.User", "User")
+                    b.HasOne("eTutor.Core.Models.User")
                         .WithMany("UserClaims")
                         .HasForeignKey("UserId1");
                 });
@@ -762,7 +762,7 @@ namespace eTutor.Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("eTutor.Core.Models.User", "User")
+                    b.HasOne("eTutor.Core.Models.User")
                         .WithMany("UserLogins")
                         .HasForeignKey("UserId1");
                 });
@@ -774,7 +774,7 @@ namespace eTutor.Persistence.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("eTutor.Core.Models.Role", "Role")
+                    b.HasOne("eTutor.Core.Models.Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId1");
 
@@ -783,7 +783,7 @@ namespace eTutor.Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("eTutor.Core.Models.User", "User")
+                    b.HasOne("eTutor.Core.Models.User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId1");
                 });
@@ -795,7 +795,7 @@ namespace eTutor.Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("eTutor.Core.Models.User", "User")
+                    b.HasOne("eTutor.Core.Models.User")
                         .WithMany("UserTokens")
                         .HasForeignKey("UserId1");
                 });

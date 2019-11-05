@@ -17,26 +17,6 @@ namespace eTutor.Core.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         
-        /// <summary>
-        /// Represents the Id of the User
-        /// </summary>
-        public override int UserId { get; set; }
-
-        /// <summary>
-        /// Represents the User Entity
-        /// </summary>
-        public User User { get; set; }
-
-        /// <summary>
-        /// Represents the Role ID
-        /// </summary>
-        public override int RoleId { get; set; }
-
-        /// <summary>
-        /// Represents the Role Entity
-        /// </summary>
-        public Role Role { get; set; }
-
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         
         public DateTime UpdatedDate { get; set; } = DateTime.Now;

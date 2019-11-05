@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using eTutor.Core.Enums;
 using eTutor.Core.Models;
+using eTutor.Persistence.Seeders;
 using eTutor.ServerApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -27,11 +28,30 @@ namespace eTutor.ServerApi.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(UserLoginRequest request)
+        public async Task<IActionResult> Login([FromBody] UserLoginRequest request)
         {
-            var result = await _signInManager.PasswordSignInAsync(request.Email, request.Password, false, false);
+            try
+            {
+                var result = await _signInManager.PasswordSignInAsync(request.Email, request.Password, false, false);
 
-            return Ok();
+                if (!result.Succeeded)
+                {
+                    return BadRequest("User not found");
+                }
+
+                User user = await _userManager.FindByNameAsync(request.Email);
+                var roles = await _userManager.GetRolesAsync(user);
+
+                return Ok(new
+                {
+                    user = user,
+                    roles = roles
+                });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
         }
 
 
@@ -40,20 +60,7 @@ namespace eTutor.ServerApi.Controllers
         {
             try
             {
-                var user = new User
-                {
-                    Email = "admin@admin.com",
-                    Gender = Gender.Male,
-                    IsEmailValidated = true,
-                    IsTemporaryPassword = false,
-                    Name = "Admin",
-                    LastName = "Admin",
-                    UserName = "admin@admin.com",
-                };
-                
-                IdentityResult res = await _userManager.CreateAsync(user, "123456");
-
-                return Ok(res);
+                return Ok();
             }
             catch (Exception e)
             {
