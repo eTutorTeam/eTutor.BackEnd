@@ -5,7 +5,9 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using eTutor.Core.Contracts;
 using eTutor.Core.Enums;
+using eTutor.Core.Managers;
 using eTutor.Core.Models;
 using eTutor.Persistence;
 using eTutor.Persistence.Seeders;
@@ -15,6 +17,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace eTutor.ServerApi.Controllers
 {
@@ -23,18 +26,13 @@ namespace eTutor.ServerApi.Controllers
     [Produces("application/json")]
     public class AccountsController : ControllerBase
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
-        private readonly ETutorContext _context;
+        private readonly UsersManager _usersManager;
         private readonly IConfiguration _configuration;
 
-        public AccountsController(UserManager<User> userManager, SignInManager<User> signInManager,
-            IConfiguration configuration, ETutorContext context)
+        public AccountsController(UsersManager usersManager)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _configuration = configuration;
-            _context = context;
+          
+            _usersManager = usersManager;
         }
 
         [HttpPost]
@@ -42,14 +40,15 @@ namespace eTutor.ServerApi.Controllers
         [ProducesResponseType(typeof(UserTokenResponse), 200)]
         public async Task<IActionResult> Login([FromBody] UserLoginRequest request)
         {
-            var result = await _signInManager.PasswordSignInAsync(request.Email, request.Password, false, false);
+            IOperationResult<User> result = await _usersManager.AuthenticateUser(request.Email, request.Password);
 
-            if (!result.Succeeded)
+            if (!result.Success)
             {
-                return BadRequest("User not found");
+                return BadRequest(result.Message);
             }
 
-            User user = await _userManager.FindByNameAsync(request.Email);
+            User user = result.Entity;
+            
             var token = await GenerateJwtToken(user);
 
             return Ok(token);
@@ -64,7 +63,7 @@ namespace eTutor.ServerApi.Controllers
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
-            var roles = await _userManager.GetRolesAsync(user);
+            var roles = await _usersManager.GetRolesForUser(user.Id);
             claims.AddRange(roles.Select(role => new Claim(ClaimsIdentity.DefaultRoleClaimType, role)));
 
             var jwtConfigSection = _configuration.GetSection("JWT");
@@ -86,7 +85,7 @@ namespace eTutor.ServerApi.Controllers
                 UserName = user.UserName,
                 Email = user.Email,
                 Token = writtenToken,
-                Roles = _context.Roles.Where(r => roles.Contains(r.Name)).Select(r => r.Id).ToArray()
+                Roles = user.UserRoles.Select(r => r.RoleId).ToArray()
             };
         }
     }

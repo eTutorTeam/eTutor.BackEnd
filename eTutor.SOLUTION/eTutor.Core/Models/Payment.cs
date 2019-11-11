@@ -8,8 +8,8 @@ namespace eTutor.Core.Models
 
         public double PayedAmount { get; set; }
 
-        public int StudentId { get; set; }
+        public int UserId { get; set; }
 
-        public Student Student { get; set; }
+        public User User { get; set; }
     }
 }

@@ -8,13 +8,9 @@ namespace eTutor.Core.Models
 
         public Meeting Meeting { get; set; }
 
-        public int? StudentId { get; set; }
+        public int UserId { get; set; }
 
-        public Student Student { get; set; }
-
-        public int? TutorId { get; set; }
-
-        public Tutor Tutor { get; set; }
+        public User User { get; set; }
         
         [Range(0,10)]
         public int Calification { get; set; }

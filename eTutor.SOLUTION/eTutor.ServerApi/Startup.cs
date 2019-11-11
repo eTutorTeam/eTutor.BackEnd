@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using eTutor.Core.Managers;
 using eTutor.Core.Models;
 using eTutor.Persistence;
 using eTutor.Persistence.Seeders;
@@ -57,6 +58,10 @@ namespace eTutor.ServerApi
             
             AuthenticationServiceConfiguration(services);
             
+            ConfigureRepositories(services);
+            
+            ConfigureManagers(services);
+            
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(opts =>
@@ -84,6 +89,13 @@ namespace eTutor.ServerApi
                     Keys = { }
                 });
             });
+        }
+        
+        private void ConfigureRepositories(IServiceCollection services) {}
+
+        private void ConfigureManagers(IServiceCollection services)
+        {
+            services.AddScoped<UsersManager, UsersManager>();
         }
 
         private void AuthenticationServiceConfiguration(IServiceCollection services)

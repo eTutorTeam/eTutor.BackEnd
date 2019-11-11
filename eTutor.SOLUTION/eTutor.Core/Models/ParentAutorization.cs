@@ -7,7 +7,7 @@ namespace eTutor.Core.Models
     {
         public int ParentId { get; set; }
 
-        public Parent Parent { get; set; }
+        public User Parent { get; set; }
 
         public DateTime AuthorizationDate { get; set; }
         

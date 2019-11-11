@@ -4,7 +4,7 @@ namespace eTutor.Core.Models
     {
         public int TutorId { get; set; }
 
-        public Tutor Tutor { get; set; }
+        public User Tutor { get; set; }
 
         public int TopicId { get; set; }
 

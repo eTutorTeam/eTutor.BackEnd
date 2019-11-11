@@ -8,6 +8,6 @@ namespace eTutor.Core.Models
 
         public int StudentId { get; set; }
 
-        public Student Student { get; set; }
+        public User Student { get; set; }
     }
 }

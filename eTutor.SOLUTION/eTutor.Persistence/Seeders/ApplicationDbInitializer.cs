@@ -76,12 +76,6 @@ namespace eTutor.Persistence.Seeders
                     UpdatedDate = DateTime.Now,
                     AccessFailedCount = 0,
                     PasswordHash = hasher.HashPassword(new User(), "123456"),
-                    Tutor = new Tutor
-                    {
-                        Name = "Tutor",
-                        LastName = "eTutor",
-                        Address = "Moringa St."
-                    }
                 };
 
                 context.Add(user);
@@ -111,16 +105,6 @@ namespace eTutor.Persistence.Seeders
                     UpdatedDate = DateTime.Now,
                     AccessFailedCount = 0,
                     PasswordHash = hasher.HashPassword(new User(), "123456"),
-                    Student = new Student
-                    {
-                        Address = "Calle Prueba",
-                        Gender = Gender.Male,
-                        Longitude = -16.343422f,
-                        Latitude = 64.523433f,
-                        Name = "Student",
-                        LastName = "eTutor",
-                        BirthDate = new DateTime(2004, 4, 12)
-                    }
                 };
 
                 context.Add(user);
@@ -150,16 +134,6 @@ namespace eTutor.Persistence.Seeders
                     UpdatedDate = DateTime.Now,
                     AccessFailedCount = 0,
                     PasswordHash = hasher.HashPassword(new User(), "123456"),
-                    Parent = new Parent
-                    {
-                        BirthDate = new DateTime(1974, 12, 2),
-                        Name = "Parent",
-                        LastName = "eTutor",
-                        Longitude = -16.343422f,
-                        Latitude = 64.523433f,
-                        Address = "Street Name",
-                        Gender = Gender.Male
-                    }
                 };
 
                 context.Add(user);
@@ -171,19 +145,20 @@ namespace eTutor.Persistence.Seeders
             }
 
             student = context.Users
-                .Include(s => s.Student)
-                .ThenInclude(s => s.Parents)
+                .Include(s => s.UserRoles)
+                .Include(s => s.Parents)
                 .FirstOrDefault(u => u.Email == studentEmail);
-            if (student != null && !student.Student.Parents.Any())
+            if (student != null && !student.Parents.Any()) 
             {
                 parent = context.Users
-                    .Include(u => u.Parent)
-                    .FirstOrDefault(u => u.Email == "parent@etutor.com");
+                    .Include(u => u.UserRoles)
+                    .Include(u => u.Students)
+                    .FirstOrDefault(u => u.Email == parentEmail);
                 
                 var relationship = new ParentStudent
                 {
-                    ParentId = parent.Parent.Id,
-                    StudentId = student.Student.Id,
+                    ParentId = parent.Id,
+                    StudentId = student.Id,
                     Relationship = ParentRelationship.Father
                 };
                 context.Add(relationship);

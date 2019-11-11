@@ -6,11 +6,11 @@ namespace eTutor.Core.Models
     {
         public int StudentId { get; set; }
 
-        public Student Student { get; set; }
+        public User Student { get; set; }
 
         public int ParentId { get; set; }
 
-        public Parent Parent { get; set; }
+        public User Parent { get; set; }
         
         public ParentRelationship Relationship { get; set; }
     }

@@ -9,9 +9,6 @@ namespace eTutor.Persistence
 {
     public class ETutorContext : IdentityDbContext<User, Role, int, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>
     {
-        public DbSet<Parent> Parents { get; set; }
-        public DbSet<Student> Students { get; set; }
-        public DbSet<Tutor> Tutors { get; set; }
         public DbSet<ParentStudent> ParentStudents { get; set;}
         public DbSet<Topic> Topics { get; set; }
         public DbSet<TutorTopic> TutorTopics { get; set; }
@@ -43,10 +40,10 @@ namespace eTutor.Persistence
 
         private void ApplyConfigurations(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new ParentConfiguration());
+            modelBuilder.ApplyConfiguration(new MeetingConfiguration());
+            modelBuilder.ApplyConfiguration(new ParentAutorizationConfiguration());
+            modelBuilder.ApplyConfiguration(new ParentStudentConfiguration());
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
-            modelBuilder.ApplyConfiguration(new StudentConfiguration());
-            modelBuilder.ApplyConfiguration(new TutorConfiguration());
             modelBuilder.ApplyConfiguration(new UserConiguration());
         }
     }

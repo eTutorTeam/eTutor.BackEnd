@@ -40,6 +40,21 @@ namespace eTutor.Core.Models
         public Gender Gender { get; set; }
 
         /// <summary>
+        /// Represents the written address of the user
+        /// </summary>
+        public string Address { get; set; }
+
+        /// <summary>
+        /// Represents the user's home Longitude Coordinates
+        /// </summary>
+        public float? Longitude { get; set; }
+        
+        /// <summary>
+        /// Represents the user's home Latitude Coordinates
+        /// </summary>
+        public float? Latitude { get; set; }
+        
+        /// <summary>
         /// Represente the users roles
         /// </summary>
         public ISet<UserRole> UserRoles { get; set; }
@@ -49,15 +64,21 @@ namespace eTutor.Core.Models
         public ISet<UserLogin> UserLogins { get; set; }
         
         public ISet<UserToken> UserTokens { get; set; }
-        
-        public Student Student { get; set; }
-        
-        public Parent Parent { get; set; }
-        
-        public Tutor Tutor { get; set; }
 
+        public ISet<ParentStudent> Students { get; set; }
+        
+        public ISet<ParentStudent> Parents { get; set; }
+        
+        public ISet<TutorTopic> TutorTopics { get; set; }
+        
+        public ISet<ParentAutorization> Autorizations { get; set; }
+        
+        public ISet<Invoice> Invoices { get; set; }
+        
+        public ISet<Rating> Ratings { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         
         public DateTime UpdatedDate { get; set; } = DateTime.Now;
+        
     }
 }

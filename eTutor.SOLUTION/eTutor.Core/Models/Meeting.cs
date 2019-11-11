@@ -12,11 +12,11 @@ namespace eTutor.Core.Models
 
         public int StudentId { get; set; }
 
-        public Student Student { get; set; }
+        public User Student { get; set; }
 
         public int TutorId { get; set; }
 
-        public Tutor Tutor { get; set; }
+        public User Tutor { get; set; }
 
         public int? ParentAutorizationId { get; set; }
 
