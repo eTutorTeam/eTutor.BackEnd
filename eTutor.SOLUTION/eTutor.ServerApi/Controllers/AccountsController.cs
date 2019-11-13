@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using eTutor.Core.Contracts;
 using eTutor.Core.Enums;
 using eTutor.Core.Managers;
@@ -28,16 +29,19 @@ namespace eTutor.ServerApi.Controllers
     {
         private readonly UsersManager _usersManager;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
-        public AccountsController(UsersManager usersManager)
+        public AccountsController(UsersManager usersManager, IMapper mapper, IConfiguration configuration)
         {
-          
             _usersManager = usersManager;
+            _mapper = mapper;
+            _configuration = configuration;
         }
 
         [HttpPost]
         [AllowAnonymous]
         [ProducesResponseType(typeof(UserTokenResponse), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
         public async Task<IActionResult> Login([FromBody] UserLoginRequest request)
         {
             IOperationResult<User> result = await _usersManager.AuthenticateUser(request.Email, request.Password);
@@ -54,6 +58,28 @@ namespace eTutor.ServerApi.Controllers
             return Ok(token);
         }
 
+        [HttpPost("register")]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(UserTokenResponse), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        public async Task<IActionResult> RegisterUser([FromBody] UserRegistrationRequest request)
+        {
+            User newUser = _mapper.Map<User>(request);
+            string password = request.Password;
+            var roles = request.Roles;
+
+            IOperationResult<User> operationResult = await _usersManager.RegisterUser(newUser, password, roles);
+
+            if (!operationResult.Success)
+            {
+                return BadRequest(operationResult.Message);
+            }
+
+            var token = await GenerateJwtToken(operationResult.Entity);
+
+            return Ok(token);
+        }
+
         private async Task<UserTokenResponse> GenerateJwtToken(User user)
         {
             var claims = new List<Claim>
@@ -63,8 +89,8 @@ namespace eTutor.ServerApi.Controllers
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
-            var roles = await _usersManager.GetRolesForUser(user.Id);
-            claims.AddRange(roles.Select(role => new Claim(ClaimsIdentity.DefaultRoleClaimType, role)));
+            IEnumerable<Role> roles = await _usersManager.GetRolesForUser(user.Id);
+            claims.AddRange(roles.Select(role => new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Name)));
 
             var jwtConfigSection = _configuration.GetSection("JWT");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfigSection["Key"]));

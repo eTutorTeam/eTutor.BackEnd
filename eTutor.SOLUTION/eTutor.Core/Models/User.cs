@@ -25,6 +25,11 @@ namespace eTutor.Core.Models
         public string LastName { get; set; }
         
         /// <summary>
+        /// Represents the personal Id
+        /// </summary>
+        public string PersonalId { get; set; }
+        
+        /// <summary>
         /// Represents whether the email is validated
         /// </summary>
         public bool IsEmailValidated { get; set; }
