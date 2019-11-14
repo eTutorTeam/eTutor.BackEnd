@@ -26,6 +26,9 @@
   <ItemGroup>
     <ProjectReference Include="..\eTutor.Core\eTutor.Core.csproj" />
     <ProjectReference Include="..\eTutor.Persistence\eTutor.Persistence.csproj" />
+    <ProjectReference Include="..\eTutor.MailService\eTutor.SendGridMail.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
   </ItemGroup>
 
 </Project>

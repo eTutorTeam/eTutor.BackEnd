@@ -5,11 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using eTutor.Core.Contracts;
 using eTutor.Core.Managers;
 using eTutor.Core.Models;
 using eTutor.Core.Repositories;
 using eTutor.Persistence;
 using eTutor.Persistence.Repositories;
+using eTutor.SendGridMail;
 using eTutor.ServerApi.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -60,6 +62,8 @@ namespace eTutor.ServerApi
             
             ConfigureManagers(services);
 
+            ConfigureContractServices(services);
+
             services.AddAutoMapper();
             
             services.AddMvc()
@@ -89,6 +93,11 @@ namespace eTutor.ServerApi
                     Keys = { }
                 });
             });
+        }
+
+        private void ConfigureContractServices(IServiceCollection services)
+        {
+            services.AddScoped<IMailService, MailService>();
         }
 
         private void ConfigureRepositories(IServiceCollection services)

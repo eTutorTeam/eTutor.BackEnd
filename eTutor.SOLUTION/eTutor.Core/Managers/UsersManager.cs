@@ -17,15 +17,17 @@ namespace eTutor.Core.Managers
         private readonly IUserRepository _userRepository;
         private readonly IRoleRepository _roleRepository;
         private readonly IUserRoleRepository _userRoleRepository;
+        private readonly IMailService _mailService;
 
         public UsersManager(SignInManager<User> signInManager, UserManager<User> userManager, IUserRepository userRepository, 
-            IRoleRepository roleRepository, IUserRoleRepository userRoleRepository)
+            IRoleRepository roleRepository, IUserRoleRepository userRoleRepository, IMailService mailService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _userRepository = userRepository;
             _roleRepository = roleRepository;
             _userRoleRepository = userRoleRepository;
+            _mailService = mailService;
         }
 
 
@@ -88,7 +90,12 @@ namespace eTutor.Core.Managers
 
             return BasicOperationResult<User>.Ok(user);
             
-        } 
+        }
+
+        public async void SendTestEmail()
+        {
+            IOperationResult<int> res = await _mailService.SendEmailToRegisteredUser(2);
+        }
 
         public async Task<IEnumerable<Role>> GetRolesForUser(int userId) 
             => await _roleRepository.Set

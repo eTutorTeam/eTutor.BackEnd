@@ -80,6 +80,16 @@ namespace eTutor.ServerApi.Controllers
             return Ok(token);
         }
 
+        [HttpGet("test-mail")]
+        [AllowAnonymous]
+
+        public async Task<IActionResult> SendTestMail()
+        {
+             _usersManager.SendTestEmail();
+            return Ok();
+        }
+
+
         private async Task<UserTokenResponse> GenerateJwtToken(User user)
         {
             var claims = new List<Claim>

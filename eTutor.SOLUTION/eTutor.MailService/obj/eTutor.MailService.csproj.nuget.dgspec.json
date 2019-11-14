@@ -1,0 +1,64 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/juanozuna/Documents/INTEC/Proyecto Final/eTutor.BackEnd/eTutor.SOLUTION/eTutor.MailService/eTutor.MailService.csproj": {}
+  },
+  "projects": {
+    "/Users/juanozuna/Documents/INTEC/Proyecto Final/eTutor.BackEnd/eTutor.SOLUTION/eTutor.MailService/eTutor.MailService.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/juanozuna/Documents/INTEC/Proyecto Final/eTutor.BackEnd/eTutor.SOLUTION/eTutor.MailService/eTutor.MailService.csproj",
+        "projectName": "eTutor.MailService",
+        "projectPath": "/Users/juanozuna/Documents/INTEC/Proyecto Final/eTutor.BackEnd/eTutor.SOLUTION/eTutor.MailService/eTutor.MailService.csproj",
+        "packagesPath": "/Users/juanozuna/.nuget/packages/",
+        "outputPath": "/Users/juanozuna/Documents/INTEC/Proyecto Final/eTutor.BackEnd/eTutor.SOLUTION/eTutor.MailService/obj/",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "/Users/juanozuna/.config/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp2.2"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp2.2": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp2.2": {
+          "dependencies": {
+            "Microsoft.NETCore.App": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.2.0, )",
+              "autoReferenced": true
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/3.0.100/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
