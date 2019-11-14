@@ -18,3 +18,7 @@ eTutor.SOLUTION/eTutor.ServerApi/obj/
 eTutor.SOLUTION/eTutor.Core/bin/
 
 eTutor.SOLUTION/eTutor.Persistence/bin/
+
+eTutor.SOLUTION/eTutor.MailService/bin/
+
+eTutor.SOLUTION/eTutor.MailService/obj/

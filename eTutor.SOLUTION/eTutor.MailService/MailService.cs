@@ -29,7 +29,7 @@ namespace eTutor.SendGridMail
             var sendGridClient = new SendGridClient(_apiKey);
             var from = new EmailAddress("no_reply@etutor.com", "Etutor");
             var to = new EmailAddress("juandanielozuna2@gmail.com", "Juan Daniel Ozuna");
-            var msg = MailHelper.CreateSingleTemplateEmail(from, to, "d-307bb4ffcd3747d5bb22f5cf096cc689", new { Name = "Juan Daniel Ozuna" });
+            var msg = MailHelper.CreateSingleTemplateEmail(from, to, "d-307bb4ffcd3747d5bb22f5cf096cc689", new { name = "Juan Daniel Ozuna" });
             var response = await sendGridClient.SendEmailAsync(msg);
 
             if (response.StatusCode >= System.Net.HttpStatusCode.BadRequest)
