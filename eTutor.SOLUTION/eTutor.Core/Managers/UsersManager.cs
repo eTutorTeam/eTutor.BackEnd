@@ -92,11 +92,6 @@ namespace eTutor.Core.Managers
             
         }
 
-        public async void SendTestEmail()
-        {
-            IOperationResult<int> res = await _mailService.SendEmailToRegisteredUser(2);
-        }
-
         public async Task<IEnumerable<Role>> GetRolesForUser(int userId) 
             => await _roleRepository.Set
                 .Include(ur => ur.UserRoles)
@@ -118,6 +113,41 @@ namespace eTutor.Core.Managers
 
             return text;
         }
-        
+
+        public async Task<IOperationResult<string>> UserForgotPassword(string email)
+        {
+            User user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return BasicOperationResult<string>.Fail($"There's no user registered with the email {email}");
+            }
+
+            string passwordResetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            var result = await _mailService.SendPasswordResetEmail(user, passwordResetToken);
+
+            if (!result.Success)
+            {
+                return BasicOperationResult<string>.Fail("There was a problem, and couldn't send the email");
+            }
+
+            return BasicOperationResult<string>.Ok("Email Sent");
+        }
+
+        public async Task<IOperationResult<User>> ChangeUserPassword(int userId, string newPassword, string token)
+        {
+            User user = await _userManager.FindByIdAsync(userId.ToString());
+
+            var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+
+            if (!result.Succeeded)
+            {
+                return BasicOperationResult<User>.Fail(GetErrorsFromIdentityResult(result.Errors));
+            }
+
+            return BasicOperationResult<User>.Ok(user);
+
+        }
     }
 }
