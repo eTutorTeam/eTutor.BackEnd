@@ -18,6 +18,8 @@ namespace eTutor.ServerApi.MapperProfiles
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
                 .ForMember(dest => dest.PersonalId, opt => opt.MapFrom(src => src.PersonalId ?? ""));
+
+            CreateMap<User, UserResponse>().ReverseMap();
         }
     }
 }

@@ -58,10 +58,9 @@ namespace eTutor.Core.Models
         /// Represents the user's home Latitude Coordinates
         /// </summary>
         public float? Latitude { get; set; }
-        
-        /// <summary>
-        /// Represente the users roles
-        /// </summary>
+
+        public string FullName => Name + " " + LastName;
+
         public ISet<UserRole> UserRoles { get; set; }
         
         public ISet<UserClaim> UserClaims { get; set; }

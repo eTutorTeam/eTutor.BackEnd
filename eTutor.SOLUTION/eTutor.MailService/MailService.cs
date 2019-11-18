@@ -14,23 +14,34 @@ namespace eTutor.SendGridMail
         private readonly IConfiguration _configuration;
         private readonly string _apiKey;
 
+
         public MailService(IConfiguration configuration)
         {
             _configuration = configuration;
-
-             _apiKey = _configuration.GetSection("SendGrid")["ApiKey"];
+            _apiKey = _configuration.GetSection("SendGrid")["ApiKey"];
             
             
         }
 
 
-        public async Task<IOperationResult<int>> SendEmailToRegisteredUser(int userId)
+        public async Task<IOperationResult<int>> SendEmailToRegisteredUser(User user)
         {
+            throw new NotImplementedException();
+        }
+
+        public async Task<IOperationResult<int>> SendPasswordResetEmail(User user, string token)
+        {
+            var passwordRecoveryUrl = _configuration.GetSection("Settings")["PasswordRecoveryUrl"];
+            passwordRecoveryUrl = passwordRecoveryUrl.Replace("{userId}", token);
+
             var sendGridClient = new SendGridClient(_apiKey);
             var from = new EmailAddress("no_reply@etutor.com", "Etutor");
-            var to = new EmailAddress("juandanielozuna2@gmail.com", "Juan Daniel Ozuna");
-            var msg = MailHelper.CreateSingleTemplateEmail(from, to, "d-307bb4ffcd3747d5bb22f5cf096cc689", new { name = "Juan Daniel Ozuna" });
-            var response = await sendGridClient.SendEmailAsync(msg);
+            var to = new EmailAddress(user.Email, user.FullName);
+            var msg = MailHelper.CreateSingleTemplateEmail(from, to, "d-307bb4ffcd3747d5bb22f5cf096cc689",
+                new { Name = "Juan Daniel Ozuna", ResetLink = "https://google.com" });
+            Response response = await sendGridClient.SendEmailAsync(msg);
+
+            //d-307bb4ffcd3747d5bb22f5cf096cc689
 
             if (response.StatusCode >= System.Net.HttpStatusCode.BadRequest)
             {
@@ -38,11 +49,6 @@ namespace eTutor.SendGridMail
             }
 
             return BasicOperationResult<int>.Ok();
-        }
-
-        public async Task<IOperationResult<int>> SendPasswordResetEmail(int userId)
-        {
-            throw new NotImplementedException();
         }
     }
 }

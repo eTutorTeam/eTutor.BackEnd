@@ -22,10 +22,11 @@ using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace eTutor.ServerApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/accounts")]
     [ApiController]
+    [Authorize]
     [Produces("application/json")]
-    public class AccountsController : ControllerBase
+    public class AccountsController : EtutorBaseController
     {
         private readonly UsersManager _usersManager;
         private readonly IConfiguration _configuration;
@@ -38,7 +39,7 @@ namespace eTutor.ServerApi.Controllers
             _configuration = configuration;
         }
 
-        [HttpPost]
+        [HttpPost("login")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(UserTokenResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
@@ -80,15 +81,41 @@ namespace eTutor.ServerApi.Controllers
             return Ok(token);
         }
 
-        [HttpGet("test-mail")]
+        [HttpPost("forgot-password")]
         [AllowAnonymous]
-
-        public async Task<IActionResult> SendTestMail()
+        [ProducesResponseType(typeof(IOperationResult<string>), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
         {
-             _usersManager.SendTestEmail();
-            return Ok();
+
+            IOperationResult<string> operationResult = await _usersManager.UserForgotPassword(request.Email);
+
+            if (!operationResult.Success)
+            {
+                return BadRequest(operationResult.Message);
+            }
+
+            return Ok(BasicOperationResult<string>.Ok("Email sent with further instructions"));
         }
 
+        [HttpPut("forgot-password")]
+        [ProducesResponseType(typeof(UserResponse), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        public async Task<IActionResult> ForgetChangePassword([FromBody] ForgotChangePasswordRequest changeRequest)
+        {
+            IOperationResult<User> operationResult =
+                await _usersManager.ChangeUserPassword(changeRequest.UserId, changeRequest.NewPassword, changeRequest.ChangePasswordToken);
+
+            if (!operationResult.Success)
+            {
+                return BadRequest(operationResult.Message);
+            }
+
+            var user = operationResult.Entity;
+            var response = _mapper.Map<UserResponse>(user);
+
+            return Ok(user);
+        }
 
         private async Task<UserTokenResponse> GenerateJwtToken(User user)
         {
