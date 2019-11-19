@@ -101,6 +101,7 @@ namespace eTutor.ServerApi.Controllers
         [HttpPut("forgot-password")]
         [ProducesResponseType(typeof(UserResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
+        [AllowAnonymous]
         public async Task<IActionResult> ForgetChangePassword([FromBody] ForgotChangePasswordRequest changeRequest)
         {
             IOperationResult<User> operationResult =
