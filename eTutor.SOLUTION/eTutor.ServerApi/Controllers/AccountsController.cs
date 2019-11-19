@@ -104,7 +104,26 @@ namespace eTutor.ServerApi.Controllers
         public async Task<IActionResult> ForgetChangePassword([FromBody] ForgotChangePasswordRequest changeRequest)
         {
             IOperationResult<User> operationResult =
-                await _usersManager.ChangeUserPassword(changeRequest.UserId, changeRequest.NewPassword, changeRequest.ChangePasswordToken);
+                await _usersManager.ChangePasswordUserForgot(changeRequest.UserId, changeRequest.NewPassword, changeRequest.ChangePasswordToken);
+
+            if (!operationResult.Success)
+            {
+                return BadRequest(operationResult.Message);
+            }
+
+            var user = operationResult.Entity;
+            var response = _mapper.Map<UserResponse>(user);
+
+            return Ok(user);
+        }
+
+        [HttpPut("change-password")]
+        [ProducesResponseType(typeof(UserResponse), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest changeRequest)
+        {
+            IOperationResult<User> operationResult = await _usersManager.ChangePassword(changeRequest.UserId,
+                changeRequest.NewPassword, changeRequest.CurrentPassword);
 
             if (!operationResult.Success)
             {
