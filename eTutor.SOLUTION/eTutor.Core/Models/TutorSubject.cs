@@ -1,6 +1,6 @@
 namespace eTutor.Core.Models
 {
-    public sealed class TutorTopic : EntityBase, IEntityBase
+    public sealed class TutorSubject : EntityBase, IEntityBase
     {
         public int TutorId { get; set; }
 
@@ -8,6 +8,6 @@ namespace eTutor.Core.Models
 
         public int TopicId { get; set; }
 
-        public Topic Topic { get; set; }
+        public Subject Subject { get; set; }
     }
 }

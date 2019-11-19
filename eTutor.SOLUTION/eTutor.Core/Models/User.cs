@@ -73,7 +73,7 @@ namespace eTutor.Core.Models
         
         public ISet<ParentStudent> Parents { get; set; }
         
-        public ISet<TutorTopic> TutorTopics { get; set; }
+        public ISet<TutorSubject> TutorSubjects { get; set; }
         
         public ISet<ParentAutorization> Autorizations { get; set; }
         

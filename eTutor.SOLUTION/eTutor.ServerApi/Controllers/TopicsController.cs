@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,13 @@ namespace eTutor.ServerApi.Controllers
     [ApiController]
     public class TopicsController : EtutorBaseController
     {
+
+
+        public TopicsController()
+        {
+
+        }
+
         // GET: api/Topics
         [HttpGet]
         public IEnumerable<string> Get()
@@ -19,7 +27,7 @@ namespace eTutor.ServerApi.Controllers
         }
 
         // GET: api/Topics/5
-        [HttpGet("{id}", Name = "Get")]
+        [HttpGet("{id}", Name = "Geter")]
         public string Get(int id)
         {
             return "value";
@@ -27,6 +35,7 @@ namespace eTutor.ServerApi.Controllers
 
         // POST: api/Topics
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public void Post([FromBody] string value)
         {
         }
