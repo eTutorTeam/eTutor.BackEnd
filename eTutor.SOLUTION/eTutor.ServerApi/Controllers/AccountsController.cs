@@ -139,6 +139,7 @@ namespace eTutor.ServerApi.Controllers
 
         [HttpGet("roles")]
         [ProducesResponseType(typeof(IEnumerable<Role>), 200)]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAvailableRoles()
         {
             IOperationResult<IEnumerable<Role>> roles = await _usersManager.GetAllRoles();
