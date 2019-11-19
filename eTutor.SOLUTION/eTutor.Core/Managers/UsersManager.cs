@@ -135,7 +135,7 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<string>.Ok("Email Sent");
         }
 
-        public async Task<IOperationResult<User>> ChangeUserPassword(int userId, string newPassword, string token)
+        public async Task<IOperationResult<User>> ChangePasswordUserForgot(int userId, string newPassword, string token)
         {
             User user = await _userManager.FindByIdAsync(userId.ToString());
 
@@ -148,6 +148,21 @@ namespace eTutor.Core.Managers
 
             return BasicOperationResult<User>.Ok(user);
 
+        }
+
+        public async Task<IOperationResult<User>> ChangePassword(int userId, string newPassword, string currentPassword)
+        {
+            User user = await _userManager.FindByIdAsync(userId.ToString());
+
+            var result =
+                await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+
+            if (!result.Succeeded)
+            {
+                return BasicOperationResult<User>.Fail(GetErrorsFromIdentityResult(result.Errors));
+            }
+
+            return BasicOperationResult<User>.Ok(user);
         }
     }
 }
