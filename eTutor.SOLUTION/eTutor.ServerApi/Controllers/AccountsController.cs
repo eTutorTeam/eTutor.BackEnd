@@ -137,6 +137,20 @@ namespace eTutor.ServerApi.Controllers
             return Ok(user);
         }
 
+        [HttpGet("roles")]
+        [ProducesResponseType(typeof(IEnumerable<Role>), 200)]
+        public async Task<IActionResult> GetAvailableRoles()
+        {
+            IOperationResult<IEnumerable<Role>> roles = await _usersManager.GetAllRoles();
+
+            if (!roles.Success)
+            {
+                return BadRequest(roles.Message);
+            }
+
+            return Ok(roles.Entity);
+        }
+
         private async Task<UserTokenResponse> GenerateJwtToken(User user)
         {
             var claims = new List<Claim>

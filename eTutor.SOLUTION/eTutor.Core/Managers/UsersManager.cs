@@ -164,5 +164,19 @@ namespace eTutor.Core.Managers
 
             return BasicOperationResult<User>.Ok(user);
         }
+
+        public async Task<IOperationResult<IEnumerable<Role>>> GetAllRoles()
+        {
+            var roles = await _roleRepository.Set
+                .OrderBy(r => r.Name)
+                .ToListAsync();
+
+            if (roles.Count == 0)
+            {
+                return BasicOperationResult<IEnumerable<Role>>.Fail("No roles where found");
+            }
+
+            return BasicOperationResult<IEnumerable<Role>>.Ok(roles);
+        }
     }
 }
