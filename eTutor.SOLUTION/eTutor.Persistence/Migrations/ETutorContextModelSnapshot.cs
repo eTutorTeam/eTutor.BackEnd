@@ -58,6 +58,8 @@ namespace eTutor.Persistence.Migrations
 
                     b.Property<int>("StudentId");
 
+                    b.Property<int?>("SubjectId");
+
                     b.Property<int>("TopicId");
 
                     b.Property<int>("TutorId");
@@ -70,7 +72,7 @@ namespace eTutor.Persistence.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.HasIndex("TopicId");
+                    b.HasIndex("SubjectId");
 
                     b.HasIndex("TutorId");
 
@@ -202,7 +204,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "dac724af-9ff7-4649-a3d2-da5f22df17b8",
+                            ConcurrencyStamp = "723b9def-4215-46d1-b1b0-36f62acf7b97",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "admin",
                             NormalizedName = "admin",
@@ -211,7 +213,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "4940e081-5158-4365-8fc3-3aa904733160",
+                            ConcurrencyStamp = "6da36115-9f00-401a-882c-10d5870ddac1",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "tutor",
                             NormalizedName = "tutor",
@@ -220,7 +222,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "aaf0b375-6732-46ce-b9d4-0849e9b025fc",
+                            ConcurrencyStamp = "88be5a75-8dd2-4d59-9d80-17a4926f9f50",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "student",
                             NormalizedName = "student",
@@ -229,7 +231,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "bcd2914b-45a5-46c9-8ee1-621679e68608",
+                            ConcurrencyStamp = "7d97919f-b913-42ea-b452-ddf69057aa7e",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "parent",
                             NormalizedName = "parent",
@@ -259,7 +261,7 @@ namespace eTutor.Persistence.Migrations
                     b.ToTable("RoleClaims");
                 });
 
-            modelBuilder.Entity("eTutor.Core.Models.Topic", b =>
+            modelBuilder.Entity("eTutor.Core.Models.Subject", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -274,7 +276,7 @@ namespace eTutor.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Topics");
+                    b.ToTable("Subjects");
                 });
 
             modelBuilder.Entity("eTutor.Core.Models.TopicInterest", b =>
@@ -286,6 +288,8 @@ namespace eTutor.Persistence.Migrations
 
                     b.Property<int>("StudentId");
 
+                    b.Property<int?>("SubjectId");
+
                     b.Property<int>("TopicId");
 
                     b.Property<DateTime>("UpdatedDate");
@@ -294,19 +298,19 @@ namespace eTutor.Persistence.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.HasIndex("TopicId");
+                    b.HasIndex("SubjectId");
 
                     b.ToTable("TopicInterests");
                 });
 
-            modelBuilder.Entity("eTutor.Core.Models.TutorTopic", b =>
+            modelBuilder.Entity("eTutor.Core.Models.TutorSubject", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("CreatedDate");
 
-                    b.Property<int>("TopicId");
+                    b.Property<int>("SubjectId");
 
                     b.Property<int>("TutorId");
 
@@ -314,11 +318,11 @@ namespace eTutor.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TopicId");
+                    b.HasIndex("SubjectId");
 
                     b.HasIndex("TutorId");
 
-                    b.ToTable("TutorTopics");
+                    b.ToTable("TutorSubjects");
                 });
 
             modelBuilder.Entity("eTutor.Core.Models.User", b =>
@@ -466,21 +470,13 @@ namespace eTutor.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("RoleId1");
-
                     b.Property<DateTime>("UpdatedDate");
-
-                    b.Property<int?>("UserId1");
 
                     b.HasKey("UserId", "RoleId");
 
                     b.HasAlternateKey("Id");
 
                     b.HasIndex("RoleId");
-
-                    b.HasIndex("RoleId1");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("UserRoles");
                 });
@@ -537,10 +533,9 @@ namespace eTutor.Persistence.Migrations
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("eTutor.Core.Models.Topic", "Topic")
+                    b.HasOne("eTutor.Core.Models.Subject", "Subject")
                         .WithMany()
-                        .HasForeignKey("TopicId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("SubjectId");
 
                     b.HasOne("eTutor.Core.Models.User", "Tutor")
                         .WithMany()
@@ -614,21 +609,20 @@ namespace eTutor.Persistence.Migrations
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("eTutor.Core.Models.Topic", "Topic")
+                    b.HasOne("eTutor.Core.Models.Subject", "Subject")
                         .WithMany()
-                        .HasForeignKey("TopicId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("SubjectId");
                 });
 
-            modelBuilder.Entity("eTutor.Core.Models.TutorTopic", b =>
+            modelBuilder.Entity("eTutor.Core.Models.TutorSubject", b =>
                 {
-                    b.HasOne("eTutor.Core.Models.Topic", "Topic")
+                    b.HasOne("eTutor.Core.Models.Subject", "Subject")
                         .WithMany("Tutors")
-                        .HasForeignKey("TopicId")
+                        .HasForeignKey("SubjectId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("eTutor.Core.Models.User", "Tutor")
-                        .WithMany("TutorTopics")
+                        .WithMany("TutorSubjects")
                         .HasForeignKey("TutorId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
@@ -659,23 +653,15 @@ namespace eTutor.Persistence.Migrations
 
             modelBuilder.Entity("eTutor.Core.Models.UserRole", b =>
                 {
-                    b.HasOne("eTutor.Core.Models.Role")
-                        .WithMany()
+                    b.HasOne("eTutor.Core.Models.Role", "Role")
+                        .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("eTutor.Core.Models.Role")
+                    b.HasOne("eTutor.Core.Models.User", "User")
                         .WithMany("UserRoles")
-                        .HasForeignKey("RoleId1");
-
-                    b.HasOne("eTutor.Core.Models.User")
-                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("eTutor.Core.Models.User")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("UserId1");
                 });
 
             modelBuilder.Entity("eTutor.Core.Models.UserToken", b =>

@@ -8,7 +8,7 @@ namespace eTutor.Core.Models
     {
         public int TopicId { get; set; }
 
-        public Topic Topic { get; set; }
+        public Subject Subject { get; set; }
 
         public int StudentId { get; set; }
 

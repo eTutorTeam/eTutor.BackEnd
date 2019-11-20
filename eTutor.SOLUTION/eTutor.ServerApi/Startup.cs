@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -92,6 +94,10 @@ namespace eTutor.ServerApi
                 {
                     Keys = { }
                 });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                config.IncludeXmlComments(xmlPath);
             });
         }
 
@@ -105,11 +111,14 @@ namespace eTutor.ServerApi
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserRoleRepository, UserRoleRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<ISubjectRepository, SubjectRepository>();
+            services.AddScoped<ITutorSubjectRepository, TutorSubjectRepository>();
         }
 
         private void ConfigureManagers(IServiceCollection services)
         {
             services.AddScoped<UsersManager, UsersManager>();
+            services.AddScoped<SubjectsManager, SubjectsManager>();
         }
 
         private void AuthenticationServiceConfiguration(IServiceCollection services)

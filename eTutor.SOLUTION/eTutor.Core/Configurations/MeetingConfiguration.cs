@@ -10,7 +10,7 @@ namespace eTutor.Core.Configurations
         {
             builder.HasOne(b => b.Student);
 
-            builder.HasOne(b => b.Topic);
+            builder.HasOne(b => b.Subject);
         }
     }
 }

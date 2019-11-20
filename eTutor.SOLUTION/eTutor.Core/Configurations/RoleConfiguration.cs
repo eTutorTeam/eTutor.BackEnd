@@ -17,6 +17,8 @@ namespace eTutor.Core.Configurations
         {
             builder.HasIndex(r => r.Name).IsUnique();
 
+            builder.HasMany(r => r.UserRoles).WithOne(ur => ur.Role).HasForeignKey(ur => ur.RoleId);
+
             IEnumerable<RoleTypes> enumValues = Enum
                 .GetValues(typeof(RoleTypes)).Cast<RoleTypes>();
 

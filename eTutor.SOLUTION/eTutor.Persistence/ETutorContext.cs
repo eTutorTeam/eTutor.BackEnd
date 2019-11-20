@@ -10,8 +10,8 @@ namespace eTutor.Persistence
     public class ETutorContext : IdentityDbContext<User, Role, int, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>
     {
         public DbSet<ParentStudent> ParentStudents { get; set;}
-        public DbSet<Topic> Topics { get; set; }
-        public DbSet<TutorTopic> TutorTopics { get; set; }
+        public DbSet<Subject> Subjects { get; set; }
+        public DbSet<TutorSubject> TutorSubjects { get; set; }
         public DbSet<TopicInterest> TopicInterests { get; set; }
         public DbSet<Meeting> Meetings { get; set; }
         public DbSet<ParentAutorization> ParentAutorizations { get; set; }
