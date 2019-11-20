@@ -46,6 +46,10 @@ namespace eTutor.ServerApi.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// Allows Guests
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("all-unrestricted")]
         [ProducesResponseType(typeof(IEnumerable<SubjectUnrestrictedResponse>), 200)]
         [ProducesResponseType(typeof(Error), 400)]

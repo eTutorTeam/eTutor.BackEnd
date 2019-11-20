@@ -39,6 +39,10 @@ namespace eTutor.ServerApi.Controllers
             _configuration = configuration;
         }
 
+        /// <summary>
+        /// Allows Guests
+        /// </summary>
+        /// <returns></returns>
         [HttpPost("login")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(UserTokenResponse), 200)]
@@ -59,6 +63,10 @@ namespace eTutor.ServerApi.Controllers
             return Ok(token);
         }
 
+        /// <summary>
+        /// Allows Guests
+        /// </summary>
+        /// <returns></returns>
         [HttpPost("register")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(UserTokenResponse), 200)]
@@ -81,6 +89,10 @@ namespace eTutor.ServerApi.Controllers
             return Ok(token);
         }
 
+        /// <summary>
+        /// Allows Guests
+        /// </summary>
+        /// <returns></returns>
         [HttpPost("forgot-password")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(IOperationResult<string>), 200)]
@@ -98,6 +110,10 @@ namespace eTutor.ServerApi.Controllers
             return Ok(BasicOperationResult<string>.Ok("Email sent with further instructions"));
         }
 
+        /// <summary>
+        /// Allows Guests
+        /// </summary>
+        /// <returns></returns>
         [HttpPut("forgot-password")]
         [ProducesResponseType(typeof(UserResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
@@ -137,6 +153,10 @@ namespace eTutor.ServerApi.Controllers
             return Ok(user);
         }
 
+        /// <summary>
+        /// Allows Guests
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("roles")]
         [ProducesResponseType(typeof(IEnumerable<Role>), 200)]
         [AllowAnonymous]
