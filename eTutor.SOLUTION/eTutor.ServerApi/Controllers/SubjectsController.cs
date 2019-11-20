@@ -82,15 +82,16 @@ namespace eTutor.ServerApi.Controllers
         }
 
         /// <summary>
-        /// Required admin role
+        /// Required Role: admin
         /// </summary>
         [HttpPost]
         [Authorize(Roles = "admin")]
         [ProducesResponseType(typeof(SubjectResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
-        public async Task<IActionResult> CreateSubject([FromBody] SubjectCreateRequest createRequest)
+        [ProducesResponseType(401)]
+        public async Task<IActionResult> CreateSubject([FromBody] SubjectRequest request)
         {
-            Subject model = _mapper.Map<Subject>(createRequest);
+            Subject model = _mapper.Map<Subject>(request);
 
             IOperationResult<Subject> operationResult = await _subjectsManager.CreateSubject(model);
 
@@ -104,16 +105,50 @@ namespace eTutor.ServerApi.Controllers
             return Ok(response);
         }
 
-        // PUT: api/Topics/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        /// <summary>
+        /// Required Role: admin
+        /// </summary>
+        [HttpPut]
+        [Authorize(Roles = "admin")]
+        [ProducesResponseType(typeof(SubjectResponse), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        [ProducesResponseType(401)]
+        public async Task<IActionResult> UpdateSubject([FromBody] SubjectRequest request)
         {
+            Subject model = _mapper.Map<Subject>(request);
+
+            IOperationResult<Subject> operationResult = await _subjectsManager.UpdateSubject(model);
+
+            if (!operationResult.Success)
+            {
+                return BadRequest(operationResult.Message);
+            }
+
+            var response = _mapper.Map<SubjectResponse>(operationResult.Entity);
+
+            return Ok(response);
         }
 
-        // DELETE: api/ApiWithActions/5
+        /// <summary>
+        /// Required Role: admin
+        /// </summary>
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        [Authorize(Roles = "admin")]
+        [ProducesResponseType(typeof(SubjectResponse), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        [ProducesResponseType(401)]
+        public async Task<IActionResult> Delete(int id)
         {
+            var res = await _subjectsManager.RemoveSubject(id);
+
+            if (!res.Success)
+            {
+                return BadRequest(res.Message);
+            }
+
+            var response = _mapper.Map<SubjectResponse>(res.Entity);
+
+            return Ok(response);
         }
     }
 }

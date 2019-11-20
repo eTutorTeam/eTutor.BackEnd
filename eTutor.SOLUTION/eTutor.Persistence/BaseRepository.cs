@@ -52,6 +52,7 @@ namespace eTutor.Persistence
 
         public IOperationResult<T> Update(T entity)
         {
+            entity.UpdatedDate = DateTime.Now;
             var entityEntry = _context.Entry(entity);
             entityEntry.State = EntityState.Modified;
             

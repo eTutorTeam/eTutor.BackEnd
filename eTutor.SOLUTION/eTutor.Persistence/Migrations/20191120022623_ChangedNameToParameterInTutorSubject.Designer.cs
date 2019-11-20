@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eTutor.Persistence;
 
 namespace eTutor.Persistence.Migrations
 {
     [DbContext(typeof(ETutorContext))]
-    partial class ETutorContextModelSnapshot : ModelSnapshot
+    [Migration("20191120022623_ChangedNameToParameterInTutorSubject")]
+    partial class ChangedNameToParameterInTutorSubject
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -204,7 +206,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "723b9def-4215-46d1-b1b0-36f62acf7b97",
+                            ConcurrencyStamp = "1fcb3117-61cd-47ce-a27f-94cf3b22ec14",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "admin",
                             NormalizedName = "admin",
@@ -213,7 +215,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "6da36115-9f00-401a-882c-10d5870ddac1",
+                            ConcurrencyStamp = "3a95437f-d55d-4f98-91e2-63c7e65b0073",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "tutor",
                             NormalizedName = "tutor",
@@ -222,7 +224,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "88be5a75-8dd2-4d59-9d80-17a4926f9f50",
+                            ConcurrencyStamp = "60ec79fd-0c92-4f0e-a71d-a6ebf93f37ca",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "student",
                             NormalizedName = "student",
@@ -231,7 +233,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "7d97919f-b913-42ea-b452-ddf69057aa7e",
+                            ConcurrencyStamp = "6334dd34-87f2-4f48-8a87-946cffa2d6f4",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "parent",
                             NormalizedName = "parent",
@@ -322,7 +324,7 @@ namespace eTutor.Persistence.Migrations
 
                     b.HasIndex("TutorId");
 
-                    b.ToTable("TutorSubjects");
+                    b.ToTable("TutorTopics");
                 });
 
             modelBuilder.Entity("eTutor.Core.Models.User", b =>

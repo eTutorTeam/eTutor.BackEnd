@@ -6,7 +6,7 @@ namespace eTutor.Core.Models
 
         public User Tutor { get; set; }
 
-        public int TopicId { get; set; }
+        public int SubjectId { get; set; }
 
         public Subject Subject { get; set; }
     }

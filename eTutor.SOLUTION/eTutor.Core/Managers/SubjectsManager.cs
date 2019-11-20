@@ -16,10 +16,12 @@ namespace eTutor.Core.Managers
     {
 
         private readonly ISubjectRepository _subjectRepository;
+        private readonly ITutorSubjectRepository _tutorSubjectRepository;
 
-        public SubjectsManager(ISubjectRepository subjectRepository)
+        public SubjectsManager(ISubjectRepository subjectRepository, ITutorSubjectRepository tutorSubjectRepository)
         {
             _subjectRepository = subjectRepository;
+            _tutorSubjectRepository = tutorSubjectRepository;
         }
 
         public async Task<IOperationResult<IEnumerable<Subject>>> GetAllSubjects()
@@ -43,6 +45,56 @@ namespace eTutor.Core.Managers
 
         public async Task<IOperationResult<Subject>> CreateSubject(Subject subject)
         {
+            var validation = await ValidateSubject(subject);
+
+            if (!validation.Success) return validation;
+
+            var res = _subjectRepository.Create(subject);
+
+            if (!res.Success) return res;
+
+            await _subjectRepository.Save();
+
+            return BasicOperationResult<Subject>.Ok(res.Entity);
+        }
+
+        public async Task<IOperationResult<Subject>> UpdateSubject(Subject subject)
+        {
+            Subject currentSubject = await _subjectRepository.Set.FindAsync(subject.Id);
+
+            if (currentSubject == null) return BasicOperationResult<Subject>.Fail("Subject not found");
+
+            if (!string.IsNullOrEmpty(subject.Name)) currentSubject.Name = subject.Name;
+            if (!string.IsNullOrEmpty(subject.Description)) currentSubject.Description = subject.Description;
+
+            var validationResult = await ValidateSubject(currentSubject);
+            if (!validationResult.Success) return validationResult;
+
+            _subjectRepository.Update(currentSubject);
+            await _subjectRepository.Save();
+
+            return BasicOperationResult<Subject>.Ok(currentSubject);
+        }
+
+
+        public async Task<IOperationResult<Subject>> RemoveSubject(int subjectId)
+        {
+            Subject subject = await _subjectRepository.Set.FindAsync(subjectId);
+
+            if (subject == null) return BasicOperationResult<Subject>.Fail("Subject not found");
+
+            var tutorRelations = await _tutorSubjectRepository.FindAll(ts => ts.SubjectId == subjectId);
+            _tutorSubjectRepository.Set.RemoveRange(tutorRelations);
+            await _tutorSubjectRepository.Save();
+
+            _subjectRepository.Remove(subject);
+            await _subjectRepository.Save();
+
+            return BasicOperationResult<Subject>.Ok(subject);
+        }
+
+        private async Task<IOperationResult<Subject>> ValidateSubject(Subject subject)
+        {
             var validator = new SubjectValidator();
 
             ValidationResult validationResult = await validator.ValidateAsync(subject);
@@ -52,13 +104,7 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<Subject>.Fail(validationResult.JSONFormatErrors());
             }
 
-           var res = _subjectRepository.Create(subject);
-
-           if (!res.Success) return res;
-
-           await _subjectRepository.Save();
-
-           return BasicOperationResult<Subject>.Ok(res.Entity);
+            return BasicOperationResult<Subject>.Ok();
         }
     }
 }

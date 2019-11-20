@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace eTutor.ServerApi.ViewModels
 {
-    public sealed class SubjectCreateRequest
+    public sealed class SubjectRequest
     {
+        public int Id { get; set; }
         public string Name { get; set; }
 
         public string Description { get; set; }

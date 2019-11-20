@@ -20,7 +20,7 @@ namespace eTutor.ServerApi.MapperProfiles
 
             CreateMap<Subject, SubjectResponseTutorDetail>();
 
-            CreateMap<SubjectCreateRequest, Subject>();
+            CreateMap<SubjectRequest, Subject>();
         }
     }
 }

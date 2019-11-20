@@ -11,7 +11,7 @@ namespace eTutor.Persistence
     {
         public DbSet<ParentStudent> ParentStudents { get; set;}
         public DbSet<Subject> Subjects { get; set; }
-        public DbSet<TutorSubject> TutorTopics { get; set; }
+        public DbSet<TutorSubject> TutorSubjects { get; set; }
         public DbSet<TopicInterest> TopicInterests { get; set; }
         public DbSet<Meeting> Meetings { get; set; }
         public DbSet<ParentAutorization> ParentAutorizations { get; set; }
