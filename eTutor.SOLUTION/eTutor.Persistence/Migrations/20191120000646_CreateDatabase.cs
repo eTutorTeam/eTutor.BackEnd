@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace eTutor.Persistence.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class CreateDatabase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -26,7 +26,7 @@ namespace eTutor.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Topics",
+                name: "Subjects",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -38,7 +38,7 @@ namespace eTutor.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Topics", x => x.Id);
+                    table.PrimaryKey("PK_Subjects", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -63,6 +63,7 @@ namespace eTutor.Persistence.Migrations
                     AccessFailedCount = table.Column<int>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     LastName = table.Column<string>(nullable: true),
+                    PersonalId = table.Column<string>(nullable: true),
                     IsEmailValidated = table.Column<bool>(nullable: false),
                     IsTemporaryPassword = table.Column<bool>(nullable: false),
                     Gender = table.Column<int>(nullable: false),
@@ -165,6 +166,7 @@ namespace eTutor.Persistence.Migrations
                     CreatedDate = table.Column<DateTime>(nullable: false),
                     UpdatedDate = table.Column<DateTime>(nullable: false),
                     TopicId = table.Column<int>(nullable: false),
+                    SubjectId = table.Column<int>(nullable: true),
                     StudentId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -177,11 +179,11 @@ namespace eTutor.Persistence.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TopicInterests_Topics_TopicId",
-                        column: x => x.TopicId,
-                        principalTable: "Topics",
+                        name: "FK_TopicInterests_Subjects_SubjectId",
+                        column: x => x.SubjectId,
+                        principalTable: "Subjects",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -193,17 +195,18 @@ namespace eTutor.Persistence.Migrations
                     CreatedDate = table.Column<DateTime>(nullable: false),
                     UpdatedDate = table.Column<DateTime>(nullable: false),
                     TutorId = table.Column<int>(nullable: false),
-                    TopicId = table.Column<int>(nullable: false)
+                    TopicId = table.Column<int>(nullable: false),
+                    SubjectId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TutorTopics", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TutorTopics_Topics_TopicId",
-                        column: x => x.TopicId,
-                        principalTable: "Topics",
+                        name: "FK_TutorTopics_Subjects_SubjectId",
+                        column: x => x.SubjectId,
+                        principalTable: "Subjects",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_TutorTopics_Users_TutorId",
                         column: x => x.TutorId,
@@ -283,9 +286,7 @@ namespace eTutor.Persistence.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     CreatedDate = table.Column<DateTime>(nullable: false),
-                    UpdatedDate = table.Column<DateTime>(nullable: false),
-                    RoleId1 = table.Column<int>(nullable: true),
-                    UserId1 = table.Column<int>(nullable: true)
+                    UpdatedDate = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -298,23 +299,11 @@ namespace eTutor.Persistence.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserRoles_Roles_RoleId1",
-                        column: x => x.RoleId1,
-                        principalTable: "Roles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_UserRoles_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserRoles_Users_UserId1",
-                        column: x => x.UserId1,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -358,6 +347,7 @@ namespace eTutor.Persistence.Migrations
                     CreatedDate = table.Column<DateTime>(nullable: false),
                     UpdatedDate = table.Column<DateTime>(nullable: false),
                     TopicId = table.Column<int>(nullable: false),
+                    SubjectId = table.Column<int>(nullable: true),
                     StudentId = table.Column<int>(nullable: false),
                     TutorId = table.Column<int>(nullable: false),
                     ParentAutorizationId = table.Column<int>(nullable: true),
@@ -381,11 +371,11 @@ namespace eTutor.Persistence.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Meetings_Topics_TopicId",
-                        column: x => x.TopicId,
-                        principalTable: "Topics",
+                        name: "FK_Meetings_Subjects_SubjectId",
+                        column: x => x.SubjectId,
+                        principalTable: "Subjects",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Meetings_Users_TutorId",
                         column: x => x.TutorId,
@@ -486,10 +476,10 @@ namespace eTutor.Persistence.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "CreatedDate", "Name", "NormalizedName", "UpdatedDate" },
                 values: new object[,]
                 {
-                    { 1, "58a97890-2e14-4c96-afae-31266551c4a5", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769), "admin", "admin", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769) },
-                    { 2, "1d499dee-aba5-4a11-9a14-fca21a672bcc", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769), "tutor", "tutor", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769) },
-                    { 3, "3a843c45-a908-4edd-a257-05473a0ca628", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769), "student", "student", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769) },
-                    { 4, "78b85bdb-add8-4b1e-b2d1-cc378e2dd7d7", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769), "parent", "parent", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769) }
+                    { 1, "6f61c212-b02f-4062-b743-e2af22a186bc", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769), "admin", "admin", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769) },
+                    { 2, "a5e4c90d-ac79-4fb4-aee4-b98c9ec41cad", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769), "tutor", "tutor", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769) },
+                    { 3, "69a4f3a4-2900-4e98-af39-912c6e4e9966", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769), "student", "student", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769) },
+                    { 4, "fd5e5489-55ce-49cf-be0d-aa763d5322bd", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769), "parent", "parent", new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769) }
                 });
 
             migrationBuilder.CreateIndex(
@@ -513,9 +503,9 @@ namespace eTutor.Persistence.Migrations
                 column: "StudentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Meetings_TopicId",
+                name: "IX_Meetings_SubjectId",
                 table: "Meetings",
-                column: "TopicId");
+                column: "SubjectId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Meetings_TutorId",
@@ -585,14 +575,14 @@ namespace eTutor.Persistence.Migrations
                 column: "StudentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TopicInterests_TopicId",
+                name: "IX_TopicInterests_SubjectId",
                 table: "TopicInterests",
-                column: "TopicId");
+                column: "SubjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TutorTopics_TopicId",
+                name: "IX_TutorTopics_SubjectId",
                 table: "TutorTopics",
-                column: "TopicId");
+                column: "SubjectId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TutorTopics_TutorId",
@@ -625,16 +615,6 @@ namespace eTutor.Persistence.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserRoles_RoleId1",
-                table: "UserRoles",
-                column: "RoleId1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserRoles_UserId1",
-                table: "UserRoles",
-                column: "UserId1");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
                 table: "Users",
                 column: "Email",
@@ -649,6 +629,12 @@ namespace eTutor.Persistence.Migrations
                 name: "UserNameIndex",
                 table: "Users",
                 column: "NormalizedUserName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_PersonalId",
+                table: "Users",
+                column: "PersonalId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -702,7 +688,7 @@ namespace eTutor.Persistence.Migrations
                 name: "ParentAutorizations");
 
             migrationBuilder.DropTable(
-                name: "Topics");
+                name: "Subjects");
 
             migrationBuilder.DropTable(
                 name: "Users");

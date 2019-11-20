@@ -183,7 +183,7 @@ namespace eTutor.ServerApi.Controllers
                 UserName = user.UserName,
                 Email = user.Email,
                 Token = writtenToken,
-                Roles = user.UserRoles.Select(r => r.RoleId).ToArray()
+                Roles = roles.Select(r => r.Id).ToArray()
             };
         }
     }

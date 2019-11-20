@@ -17,6 +17,10 @@ namespace eTutor.Core.Configurations
 
             builder.HasIndex(u => u.PersonalId)
                 .IsUnique();
+
+            builder.HasMany(u => u.UserRoles)
+                .WithOne(ur => ur.User)
+                .HasForeignKey(ur => ur.UserId);
         }
     }
 }

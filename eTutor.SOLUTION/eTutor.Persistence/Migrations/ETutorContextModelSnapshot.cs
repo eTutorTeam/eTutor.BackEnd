@@ -204,7 +204,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "e5cf09a6-cb20-422b-b508-ad44148b0576",
+                            ConcurrencyStamp = "6f61c212-b02f-4062-b743-e2af22a186bc",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "admin",
                             NormalizedName = "admin",
@@ -213,7 +213,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "5ee8f3ef-1eec-4964-aefc-0ef32d191568",
+                            ConcurrencyStamp = "a5e4c90d-ac79-4fb4-aee4-b98c9ec41cad",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "tutor",
                             NormalizedName = "tutor",
@@ -222,7 +222,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "c77cf769-3cfb-4f04-bdf4-9ecb1329b51d",
+                            ConcurrencyStamp = "69a4f3a4-2900-4e98-af39-912c6e4e9966",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "student",
                             NormalizedName = "student",
@@ -231,7 +231,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "828a538c-95f7-4617-9ff8-ea737054eca7",
+                            ConcurrencyStamp = "fd5e5489-55ce-49cf-be0d-aa763d5322bd",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "parent",
                             NormalizedName = "parent",
@@ -472,21 +472,13 @@ namespace eTutor.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("RoleId1");
-
                     b.Property<DateTime>("UpdatedDate");
-
-                    b.Property<int?>("UserId1");
 
                     b.HasKey("UserId", "RoleId");
 
                     b.HasAlternateKey("Id");
 
                     b.HasIndex("RoleId");
-
-                    b.HasIndex("RoleId1");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("UserRoles");
                 });
@@ -662,23 +654,15 @@ namespace eTutor.Persistence.Migrations
 
             modelBuilder.Entity("eTutor.Core.Models.UserRole", b =>
                 {
-                    b.HasOne("eTutor.Core.Models.Role")
-                        .WithMany()
+                    b.HasOne("eTutor.Core.Models.Role", "Role")
+                        .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("eTutor.Core.Models.Role")
+                    b.HasOne("eTutor.Core.Models.User", "User")
                         .WithMany("UserRoles")
-                        .HasForeignKey("RoleId1");
-
-                    b.HasOne("eTutor.Core.Models.User")
-                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("eTutor.Core.Models.User")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("UserId1");
                 });
 
             modelBuilder.Entity("eTutor.Core.Models.UserToken", b =>

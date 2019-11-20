@@ -20,5 +20,9 @@ namespace eTutor.Core.Models
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         
         public DateTime UpdatedDate { get; set; } = DateTime.Now;
+
+        public User User { get; set; }
+
+        public Role Role { get; set; }
     }
 }

@@ -105,11 +105,13 @@ namespace eTutor.ServerApi
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserRoleRepository, UserRoleRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<ISubjectRepository, SubjectRepository>();
         }
 
         private void ConfigureManagers(IServiceCollection services)
         {
             services.AddScoped<UsersManager, UsersManager>();
+            services.AddScoped<SubjectsManager, SubjectsManager>();
         }
 
         private void AuthenticationServiceConfiguration(IServiceCollection services)
