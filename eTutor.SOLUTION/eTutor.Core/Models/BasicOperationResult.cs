@@ -25,6 +25,6 @@ namespace eTutor.Core.Models
             => new BasicOperationResult<T>(entity, true, null);
         
         public static IOperationResult<T> Fail(string message) 
-            => new BasicOperationResult<T>(default, false, new Error{Code = 400, Description = message, ReasonPhrase = "Error"});
+            => new BasicOperationResult<T>(default, false, new Error{Code = 400, Message = message, ReasonPhrase = "Error"});
     }
 }

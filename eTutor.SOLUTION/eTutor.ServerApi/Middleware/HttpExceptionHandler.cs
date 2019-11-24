@@ -81,7 +81,7 @@ namespace eTutor.ServerApi.Helpers
             => new Error
             {
                 Code = 500,
-                Description = ex.Message,
+                Message = ex.Message,
                 ReasonPhrase = "InternalServerError"
             };
 
@@ -89,7 +89,7 @@ namespace eTutor.ServerApi.Helpers
             => new Error
             {
                 Code = 401,
-                Description = "Unauthorized",
+                Message = "Unauthorized",
                 ReasonPhrase = "Unauthorized"
             };
     }
