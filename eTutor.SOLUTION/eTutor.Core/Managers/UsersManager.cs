@@ -209,5 +209,48 @@ namespace eTutor.Core.Managers
 
             return BasicOperationResult<IEnumerable<Role>>.Ok(roles);
         }
+
+        public async Task<IOperationResult<User>> GetUserProfile(int userId)
+        {
+            var user = await _userRepository.Set.Include(u => u.UserRoles).FirstAsync(u => u.Id == userId);
+
+            if (user == null)
+            {
+                return BasicOperationResult<User>.Fail("User was not found");
+            }
+
+            return BasicOperationResult<User>.Ok(user);
+        }
+
+
+        public async Task<IOperationResult<bool>> UpdateUserProfile(User user, int userId)
+        {
+            try
+            {
+                var oldUser = await _userRepository.Find(u => u.Id == userId);
+
+                oldUser.Address = user.Address;
+                oldUser.Name = user.Name;
+                oldUser.LastName = user.LastName;
+                oldUser.Gender = user.Gender;
+                oldUser.Latitude = user.Latitude;
+                oldUser.Longitude = user.Longitude;
+                oldUser.Email = user.Email;
+                oldUser.PersonalId = user.PersonalId;
+                oldUser.UserName = user.UserName;
+                oldUser.NormalizedUserName = user.UserName.ToUpper();
+                oldUser.NormalizedEmail = user.Email.ToUpper();
+
+                _userRepository.Update(oldUser);
+
+                await _userRepository.Save();
+
+                return BasicOperationResult<bool>.Ok(true);
+            }
+            catch (Exception e)
+            {
+                return BasicOperationResult<bool>.Fail(e.Message);
+            }
+        }
     }
 }
