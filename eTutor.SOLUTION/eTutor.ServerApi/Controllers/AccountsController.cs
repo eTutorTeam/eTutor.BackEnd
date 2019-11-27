@@ -30,13 +30,15 @@ namespace eTutor.ServerApi.Controllers
     {
         private readonly UsersManager _usersManager;
         private readonly IConfiguration _configuration;
+        private readonly IMailService _mailService;
         private readonly IMapper _mapper;
 
-        public AccountsController(UsersManager usersManager, IMapper mapper, IConfiguration configuration)
+        public AccountsController(UsersManager usersManager, IMapper mapper, IConfiguration configuration, IMailService mailService)
         {
             _usersManager = usersManager;
             _mapper = mapper;
             _configuration = configuration;
+            _mailService = mailService;
         }
 
         /// <summary>
@@ -195,6 +197,16 @@ namespace eTutor.ServerApi.Controllers
             }
 
             return Ok(roles.Entity);
+        }
+
+
+        [HttpGet("send-email")]
+        [AllowAnonymous]
+        public IActionResult SendDemoEmail()
+        {
+            _mailService.SendEmailToValidateParent("juandanielozuna2@gmail.com");
+
+            return Ok();
         }
 
         private async Task<UserTokenResponse> GenerateJwtToken(User user)

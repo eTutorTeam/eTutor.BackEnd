@@ -27,6 +27,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NETCore.MailKit.Extensions;
+using NETCore.MailKit.Infrastructure.Internal;
 using Newtonsoft.Json;
 
 namespace eTutor.ServerApi
@@ -110,10 +112,25 @@ namespace eTutor.ServerApi
         {
             var smpt = Configuration.GetSection("SMTP").Get<SMTPConfiguration>();
             services.AddScoped(typeof(SMTPConfiguration), s => smpt);
+
+            services.AddMailKit(optsBuilder =>
+            {
+                optsBuilder.UseMailKit(new MailKitOptions
+                {
+                    Account = smpt.User,
+                    Password = smpt.Password,
+                    Port = smpt.Port,
+                    Server = smpt.Server,
+                    SenderName = smpt.Name,
+                    SenderEmail = smpt.Email,
+                    Security = true
+                });
+            });
         }
 
         private void ConfigureContractServices(IServiceCollection services)
         {
+            
             //services.AddScoped<IMailService, SendGridMailService>();
             services.AddScoped<IMailService, SMTPMailService>();
         }
