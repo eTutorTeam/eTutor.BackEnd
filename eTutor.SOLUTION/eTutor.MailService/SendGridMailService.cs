@@ -8,28 +8,26 @@ using SendGrid.Helpers.Mail;
 
 namespace eTutor.SendGridMail
 {
-    public class MailService : IMailService
+    public class SendGridMailService : IMailService
     {
 
         private readonly IConfiguration _configuration;
         private readonly string _apiKey;
 
 
-        public MailService(IConfiguration configuration)
+        public SendGridMailService(IConfiguration configuration)
         {
             _configuration = configuration;
             _apiKey = _configuration.GetSection("SendGrid")["ApiKey"];
-            
-            
         }
 
 
-        public async Task<IOperationResult<int>> SendEmailToRegisteredUser(User user)
+        public async Task SendEmailToRegisteredUser(User user)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<IOperationResult<int>> SendPasswordResetEmail(User user, string token)
+        public async Task SendPasswordResetEmail(User user, string token)
         {
             var passwordRecoveryUrl = _configuration.GetSection("Settings")["PasswordRecoveryUrl"];
             passwordRecoveryUrl = passwordRecoveryUrl.Replace("{userId}", token);
@@ -40,15 +38,11 @@ namespace eTutor.SendGridMail
             var msg = MailHelper.CreateSingleTemplateEmail(from, to, "d-307bb4ffcd3747d5bb22f5cf096cc689",
                 new { Name = "Juan Daniel Ozuna", ResetLink = "https://google.com" });
             Response response = await sendGridClient.SendEmailAsync(msg);
+        }
 
-            //d-307bb4ffcd3747d5bb22f5cf096cc689
-
-            if (response.StatusCode >= System.Net.HttpStatusCode.BadRequest)
-            {
-                return BasicOperationResult<int>.Fail("Error sending mail");
-            }
-
-            return BasicOperationResult<int>.Ok();
+        public Task SendEmailToValidateParent(string parentEmail)
+        {
+            throw new NotImplementedException();
         }
     }
 }

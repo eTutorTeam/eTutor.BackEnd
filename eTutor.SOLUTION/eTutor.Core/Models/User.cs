@@ -28,6 +28,11 @@ namespace eTutor.Core.Models
         /// Represents the personal Id
         /// </summary>
         public string PersonalId { get; set; }
+
+        /// <summary>
+        /// Represents whether the user is active or not
+        /// </summary>
+        public bool IsActive { get; set; }
         
         /// <summary>
         /// Represents whether the email is validated

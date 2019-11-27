@@ -10,7 +10,9 @@ using AutoMapper;
 using eTutor.Core.Contracts;
 using eTutor.Core.Managers;
 using eTutor.Core.Models;
+using eTutor.Core.Models.Configuration;
 using eTutor.Core.Repositories;
+using eTutor.MailService;
 using eTutor.Persistence;
 using eTutor.Persistence.Repositories;
 using eTutor.SendGridMail;
@@ -66,6 +68,8 @@ namespace eTutor.ServerApi
 
             ConfigureContractServices(services);
 
+            SetupConfigurationServices(services);
+
             services.AddAutoMapper();
             
             services.AddMvc()
@@ -101,9 +105,17 @@ namespace eTutor.ServerApi
             });
         }
 
+
+        private void SetupConfigurationServices(IServiceCollection services)
+        {
+            var smpt = Configuration.GetSection("SMTP").Get<SMTPConfiguration>();
+            services.AddScoped(typeof(SMTPConfiguration), s => smpt);
+        }
+
         private void ConfigureContractServices(IServiceCollection services)
         {
-            services.AddScoped<IMailService, MailService>();
+            //services.AddScoped<IMailService, SendGridMailService>();
+            services.AddScoped<IMailService, SMTPMailService>();
         }
 
         private void ConfigureRepositories(IServiceCollection services)

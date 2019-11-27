@@ -67,15 +67,15 @@ namespace eTutor.ServerApi.Controllers
         /// Allows Guests
         /// </summary>
         /// <returns></returns>
-        [HttpPost("register")]
+        [HttpPost("register-tutor")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(UserTokenResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
-        public async Task<IActionResult> RegisterUser([FromBody] UserRegistrationRequest request)
+        public async Task<IActionResult> RegisterTutor([FromBody] TutorUserRegistrationRequest request)
         {
             User newUser = _mapper.Map<User>(request);
             string password = request.Password;
-            var roles = request.Roles;
+            ISet<RoleTypes> roles = new HashSet<RoleTypes>() {RoleTypes.Tutor};
 
             IOperationResult<User> operationResult = await _usersManager.RegisterUser(newUser, password, roles);
 
@@ -85,6 +85,31 @@ namespace eTutor.ServerApi.Controllers
             }
 
             var token = await GenerateJwtToken(operationResult.Entity);
+
+            return Ok(token);
+        }
+
+        /// <summary>
+        /// Allows Guests
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("register-student")]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(UserTokenResponse), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        public async Task<IActionResult> RegisterStudent([FromBody] StudentUserRegistrationRequest request)
+        {
+            User newUser = _mapper.Map<User>(request);
+            string password = request.Password;
+
+            var result = await _usersManager.RegisterStudentUser(newUser, password, request.ParentEmail);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            var token = await GenerateJwtToken(result.Entity);
 
             return Ok(token);
         }

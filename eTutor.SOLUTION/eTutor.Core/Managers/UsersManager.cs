@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -59,6 +60,11 @@ namespace eTutor.Core.Managers
                 .Include(u => u.UserRoles)
                 .FirstOrDefaultAsync(u => u.Email == email);
 
+            if (!user.IsActive)
+            {
+                return BasicOperationResult<User>.Fail("The user still needs to be activated");
+            }
+
             return BasicOperationResult<User>.Ok(user);
         }
 
@@ -69,7 +75,8 @@ namespace eTutor.Core.Managers
             {
                 return BasicOperationResult<User>.Fail("No roles given to create user");
             }
-            
+
+            newUser.IsActive = true;
             IdentityResult userCreateResult = await _userManager.CreateAsync(newUser, password);
 
             if (!userCreateResult.Succeeded)
@@ -78,6 +85,7 @@ namespace eTutor.Core.Managers
             }
             
             User createdUser = await _userManager.FindByEmailAsync(newUser.Email);
+            await _mailService.SendEmailToRegisteredUser(newUser);
 
             IEnumerable<UserRole> userRoles = roles.Select(r => new UserRole {RoleId = (int) r, UserId = createdUser.Id});
             _userRoleRepository.Set.AddRange(userRoles);
@@ -89,7 +97,35 @@ namespace eTutor.Core.Managers
                 .FirstOrDefaultAsync(u => u.Email == createdUser.Email);
 
             return BasicOperationResult<User>.Ok(user);
-            
+        }
+
+        public async Task<IOperationResult<User>> RegisterStudentUser(User newUser, string password, string parentEmail)
+        {
+            IdentityResult userCreateResult = await _userManager.CreateAsync(newUser, password);
+            newUser.IsActive = false;
+
+            if (!userCreateResult.Succeeded)
+            {
+                return BasicOperationResult<User>.Fail(GetErrorsFromIdentityResult(userCreateResult.Errors));
+            }
+
+            User createdUser = await _userManager.FindByEmailAsync(newUser.Email);
+            await _mailService.SendEmailToRegisteredUser(newUser);
+
+            _userRoleRepository.Create(new UserRole {UserId = createdUser.Id, RoleId = (int) RoleTypes.Student});
+
+            await _userRoleRepository.Save();
+
+            User user = await _userRepository.Set
+                .Include(u => u.UserRoles)
+                .FirstOrDefaultAsync(u => u.Email == createdUser.Email);
+
+            return BasicOperationResult<User>.Ok(user);
+        }
+
+        public async Task<IOperationResult<User>> RegisterParentEmailForStudentUser(User studentUser, string parentEmail)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<IEnumerable<Role>> GetRolesForUser(int userId) 
@@ -125,12 +161,7 @@ namespace eTutor.Core.Managers
 
             string passwordResetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-            var result = await _mailService.SendPasswordResetEmail(user, passwordResetToken);
-
-            if (!result.Success)
-            {
-                return BasicOperationResult<string>.Fail("There was a problem, and couldn't send the email");
-            }
+            await _mailService.SendPasswordResetEmail(user, passwordResetToken);
 
             return BasicOperationResult<string>.Ok("Email Sent");
         }

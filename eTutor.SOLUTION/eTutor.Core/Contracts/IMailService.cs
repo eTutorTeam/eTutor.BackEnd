@@ -6,8 +6,10 @@ namespace eTutor.Core.Contracts
 {
     public interface IMailService
     {
-        Task<IOperationResult<int>> SendEmailToRegisteredUser(User user);
+        Task SendEmailToRegisteredUser(User user);
 
-        Task<IOperationResult<int>> SendPasswordResetEmail(User user, string token);
+        Task SendPasswordResetEmail(User user, string token);
+
+        Task SendEmailToValidateParent(string parentEmail);
     } 
 }
