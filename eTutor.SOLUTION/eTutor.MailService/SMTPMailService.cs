@@ -7,16 +7,19 @@ using System.Threading.Tasks;
 using eTutor.Core.Contracts;
 using eTutor.Core.Models;
 using eTutor.Core.Models.Configuration;
+using NETCore.MailKit.Core;
 
 namespace eTutor.MailService
 {
     public sealed class SMTPMailService : IMailService
     {
         private readonly SMTPConfiguration _smtpConfiguration;
+        private readonly IEmailService _emailService;
 
-        public SMTPMailService(SMTPConfiguration smtpConfiguration)
+        public SMTPMailService(SMTPConfiguration smtpConfiguration, IEmailService emailService)
         {
             _smtpConfiguration = smtpConfiguration;
+            _emailService = emailService;
         }
 
         public Task SendEmailToRegisteredUser(User user)
@@ -37,7 +40,7 @@ namespace eTutor.MailService
         {
             string message = $"Su hijo se ha registrado recientemente en el sistema {parentEmail}";
 
-            return SendEmail(parentEmail, "eTutor Student Registration", message);
+            return _emailService.SendAsync(parentEmail, "Padre email", message, true);
         }
 
         private SmtpClient BuildSmtpClient()
