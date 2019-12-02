@@ -50,18 +50,8 @@ namespace eTutor.ServerApi
                 {
                     opts.UseMySql(Configuration.GetConnectionString("MainConnection"));
                 });
-            
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials()
-                        .Build());
-            });
-            
-            
+
+
             AuthenticationServiceConfiguration(services);
             
             ConfigureRepositories(services);
@@ -104,6 +94,16 @@ namespace eTutor.ServerApi
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 config.IncludeXmlComments(xmlPath);
+            });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials()
+                        .Build());
             });
         }
 
