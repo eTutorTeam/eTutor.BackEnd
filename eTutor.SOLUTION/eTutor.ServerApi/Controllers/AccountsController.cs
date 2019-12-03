@@ -116,6 +116,17 @@ namespace eTutor.ServerApi.Controllers
             return Ok(token);
         }
 
+        [HttpPost("register-parent")]
+        [AllowAnonymous]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        public async Task<IActionResult> RegisterParent([FromBody] ParentUserRegistrationRequest request)
+        {
+            User newUser = _mapper.Map<User>(request);
+
+            var result = await _usersManager.RegisterParent(newUser, request.Password, request.StudentId);
+        }
+
         /// <summary>
         /// Allows Guests
         /// </summary>

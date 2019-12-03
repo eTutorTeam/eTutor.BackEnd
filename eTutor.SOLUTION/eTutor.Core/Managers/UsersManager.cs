@@ -110,7 +110,8 @@ namespace eTutor.Core.Managers
             }
 
             User createdUser = await _userManager.FindByEmailAsync(newUser.Email);
-            await _mailService.SendEmailToRegisteredUser(newUser);
+            await _mailService.SendEmailToCreatedStudentUser(newUser);
+            await _mailService.SendEmailToParentToCreateAccountAndValidateStudent(newUser, parentEmail);
 
             _userRoleRepository.Create(new UserRole {UserId = createdUser.Id, RoleId = (int) RoleTypes.Student});
 
@@ -123,9 +124,18 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<User>.Ok(user);
         }
 
-        public async Task<IOperationResult<User>> RegisterParentEmailForStudentUser(User studentUser, string parentEmail)
+        public async Task<IOperationResult<User>> RegisterParent(User newUser, string password, int requestStudentId)
         {
-            throw new NotImplementedException();
+            var userCreateResult = await _userManager.CreateAsync(newUser, password);
+            newUser.IsActive = true;
+
+            if (!userCreateResult.Succeeded)
+            {
+                return BasicOperationResult<User>.Fail(GetErrorsFromIdentityResult(userCreateResult.Errors));
+            }
+
+            int userId =  _userRepository.Set.FirstOrDefault(u => u.Email == newUser.Email).Id;
+
         }
 
         public async Task<IEnumerable<Role>> GetRolesForUser(int userId) 

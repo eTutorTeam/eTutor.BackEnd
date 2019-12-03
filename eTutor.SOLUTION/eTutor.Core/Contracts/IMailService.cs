@@ -11,5 +11,9 @@ namespace eTutor.Core.Contracts
         Task SendPasswordResetEmail(User user, string token);
 
         Task SendEmailToValidateParent(string parentEmail);
+
+        Task SendEmailToCreatedStudentUser(User user);
+
+        Task SendEmailToParentToCreateAccountAndValidateStudent(User user, string parentEmail);
     } 
 }

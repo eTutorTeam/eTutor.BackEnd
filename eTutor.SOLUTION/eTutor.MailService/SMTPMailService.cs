@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
@@ -39,6 +40,22 @@ namespace eTutor.MailService
             string message = $"Su hijo se ha registrado recientemente en el sistema {parentEmail}";
 
             return _emailService.SendAsync(parentEmail, "Padre email", message, true);
+        }
+
+        public Task SendEmailToCreatedStudentUser(User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SendEmailToParentToCreateAccountAndValidateStudent(User user, string parentEmail)
+        {
+            throw new NotImplementedException();
+        }
+
+        private async Task<string> ReadEmailTemplate(string fileName)
+        {
+            var directory = Directory.GetCurrentDirectory();
+            return "";
         }
 
         private Task SendEmail(string reciepents, string subject, string content)
