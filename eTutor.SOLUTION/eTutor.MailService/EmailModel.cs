@@ -7,8 +7,8 @@ namespace eTutor.MailService
     internal class EmailModel
     {
         public string HtmlContent;
-        public string BtnText;
+        public string BtnText = "#";
         public string Link = "#";
-        public string BtnDisplay = "block";
+        public string BtnDisplay = "none";
     }
 }

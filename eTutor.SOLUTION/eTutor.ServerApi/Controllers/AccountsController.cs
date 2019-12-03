@@ -217,16 +217,6 @@ namespace eTutor.ServerApi.Controllers
             return Ok(roles.Entity);
         }
 
-
-        [HttpGet("send-email")]
-        [AllowAnonymous]
-        public IActionResult SendDemoEmail()
-        {
-            _mailService.SendEmailToValidateParent("juandanielozuna2@gmail.com");
-
-            return Ok();
-        }
-
         private async Task<UserTokenResponse> GenerateJwtToken(User user)
         {
             var claims = new List<Claim>

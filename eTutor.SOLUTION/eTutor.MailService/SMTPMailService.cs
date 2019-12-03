@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using eTutor.Core.Contracts;
 using eTutor.Core.Models;
 using eTutor.Core.Models.Configuration;
+using Microsoft.Extensions.Configuration;
 using NETCore.MailKit.Core;
 
 namespace eTutor.MailService
@@ -15,10 +16,14 @@ namespace eTutor.MailService
     public sealed class SMTPMailService : IMailService
     {
         private readonly IEmailService _emailService;
+        private readonly IConfiguration _configuration;
+        private readonly string _baseUrl;
 
-        public SMTPMailService(IEmailService emailService)
+        public SMTPMailService(IEmailService emailService, IConfiguration configuration)
         {
             _emailService = emailService;
+            _configuration = configuration;
+            _baseUrl = _configuration["BaseSiteUrl"];
         }
 
         public Task SendEmailToRegisteredUser(User user)
@@ -35,21 +40,33 @@ namespace eTutor.MailService
             return SendEmail(user.Email, "eTutor Password Reset", message);
         }
 
-        public Task SendEmailToValidateParent(string parentEmail)
-        {
-            string message = $"Su hijo se ha registrado recientemente en el sistema {parentEmail}";
-
-            return _emailService.SendAsync(parentEmail, "Padre email", message, true);
-        }
-
         public Task SendEmailToCreatedStudentUser(User user)
         {
-            throw new NotImplementedException();
+            string message = $"<h1>Hola {user.FullName}</h1>\r\n\r\n" +
+                             $"<p>Su cuenta ha sido creada exitosamente,\r\nle hemos enviado un mensaje a al correo electronico del padre\r\nsuministrado," +
+                             $" para que el mismo pueda proceder a activar su cuenta </p>\r\n\r\n<p>Le dejaremos saber cuando su cuenta haya sido activada, por su Padre</p>";
+
+            return SendEmail($"{user.Email}, juandanielozuna2@gmail.com", $"Tu cuenta ha sido creada: {user.FullName}",
+                new EmailModel {HtmlContent = message});
         }
 
         public Task SendEmailToParentToCreateAccountAndValidateStudent(User user, string parentEmail)
         {
-            throw new NotImplementedException();
+            string message = $"<h1>Buenas Sr/Sra</h1>\r\n<p>Le queremos comunicar que su hijo/a {user.FullName}\r\n   " +
+                             $" a creado una cuenta en nuestro sistema con el correo\r\n    electronico {user.Email}\r\n</p>\r\n\r\n" +
+                             "<p>Para que su hijo pueda proceder con el registro,\r\n   " +
+                             " debe de proceder a registrarse como usuario y validar a su \r\n    hijo presionando el boton de abajo\r\n</p>";
+
+            var emailModel = new EmailModel
+            {
+                BtnDisplay = "block",
+                BtnText = "Continuar Registro",
+                HtmlContent = message,
+                Link = $"{_baseUrl}/#/student/{user.Id}"
+            };
+
+            return SendEmail($"{user.Email}, juandanielozuna2@gmail.com", "Proceso de Registro Aplicacion eTutor",
+                emailModel);
         }
 
         public Task SendEmailForSuccesfullAcountCreation(User user)
