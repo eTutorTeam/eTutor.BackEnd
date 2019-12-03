@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using eTutor.Core.Models;
 
 namespace eTutor.Core.Repositories
 {
-    interface IParentStudentRepository
+    public interface IParentStudentRepository : IGenericRepository<ParentStudent>
     {
     }
 }

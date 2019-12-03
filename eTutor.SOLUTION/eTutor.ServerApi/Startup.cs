@@ -142,6 +142,7 @@ namespace eTutor.ServerApi
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<ISubjectRepository, SubjectRepository>();
             services.AddScoped<ITutorSubjectRepository, TutorSubjectRepository>();
+            services.AddScoped<IParentStudentRepository, ParentStudentRepository>();
         }
 
         private void ConfigureManagers(IServiceCollection services)

@@ -18,10 +18,11 @@ namespace eTutor.Core.Managers
         private readonly IUserRepository _userRepository;
         private readonly IRoleRepository _roleRepository;
         private readonly IUserRoleRepository _userRoleRepository;
+        private readonly IParentStudentRepository _parentStudentRepository;
         private readonly IMailService _mailService;
 
         public UsersManager(SignInManager<User> signInManager, UserManager<User> userManager, IUserRepository userRepository, 
-            IRoleRepository roleRepository, IUserRoleRepository userRoleRepository, IMailService mailService)
+            IRoleRepository roleRepository, IUserRoleRepository userRoleRepository, IMailService mailService, IParentStudentRepository parentStudentRepository)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -29,8 +30,8 @@ namespace eTutor.Core.Managers
             _roleRepository = roleRepository;
             _userRoleRepository = userRoleRepository;
             _mailService = mailService;
+            _parentStudentRepository = parentStudentRepository;
         }
-
 
         public async Task<IOperationResult<User>> AuthenticateUser(string email, string password)
         {
@@ -67,7 +68,6 @@ namespace eTutor.Core.Managers
 
             return BasicOperationResult<User>.Ok(user);
         }
-
 
         public async Task<IOperationResult<User>> RegisterUser(User newUser, string password, ISet<RoleTypes> roles)
         {
@@ -124,7 +124,7 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<User>.Ok(user);
         }
 
-        public async Task<IOperationResult<User>> RegisterParent(User newUser, string password, int requestStudentId)
+        public async Task<IOperationResult<User>> RegisterParentUser(User newUser, string password, int studentId)
         {
             var userCreateResult = await _userManager.CreateAsync(newUser, password);
             newUser.IsActive = true;
@@ -134,8 +134,26 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<User>.Fail(GetErrorsFromIdentityResult(userCreateResult.Errors));
             }
 
-            int userId =  _userRepository.Set.FirstOrDefault(u => u.Email == newUser.Email).Id;
+            var user = await _userRepository.Set.FirstOrDefaultAsync(u => u.Email == newUser.Email);
+            int userId = user.Id;
+            _userRoleRepository.Create(new UserRole {UserId = userId, RoleId = (int) RoleTypes.Parent});
+            await _mailService.SendEmailForSuccesfullAcountCreation(user);
+            
+            var parentStudent = new ParentStudent
+            {
+                ParentId = userId,
+                StudentId = studentId
+            };
 
+            var studentUser = await _userRepository.Find(u => u.Id == studentId);
+            studentUser.IsActive = true;
+            _userRepository.Update(studentUser);
+            _parentStudentRepository.Create(parentStudent);
+            await _parentStudentRepository.Save();
+
+            await _mailService.SendEmailStudentActivated();
+
+            return BasicOperationResult<User>.Ok(user);
         }
 
         public async Task<IEnumerable<Role>> GetRolesForUser(int userId) 
@@ -143,22 +161,6 @@ namespace eTutor.Core.Managers
                 .Include(ur => ur.UserRoles)
                 .Where(r => r.UserRoles.Any(ur => ur.UserId == userId))
                 .ToListAsync();
-
-
-        private string GetErrorsFromIdentityResult(IEnumerable<IdentityError> errors)
-        {
-            string text = string.Empty;
-
-            for (int i = 0; i < errors.Count(); i++)
-            {
-                if (i > 0) text += ", ";
-                    var error = errors.ElementAt(i);
-                text += $"({error.Code}) {error.Description}";
-                
-            }
-
-            return text;
-        }
 
         public async Task<IOperationResult<string>> UserForgotPassword(string email)
         {
@@ -232,7 +234,6 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<User>.Ok(user);
         }
 
-
         public async Task<IOperationResult<bool>> UpdateUserProfile(User user, int userId)
         {
             try
@@ -262,5 +263,21 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<bool>.Fail(e.Message);
             }
         }
+
+        private string GetErrorsFromIdentityResult(IEnumerable<IdentityError> errors)
+        {
+            string text = string.Empty;
+
+            for (int i = 0; i < errors.Count(); i++)
+            {
+                if (i > 0) text += ", ";
+                    var error = errors.ElementAt(i);
+                text += $"({error.Code}) {error.Description}";
+                
+            }
+
+            return text;
+        }
+
     }
 }

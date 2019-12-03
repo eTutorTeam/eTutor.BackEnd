@@ -15,5 +15,7 @@ namespace eTutor.Core.Contracts
         Task SendEmailToCreatedStudentUser(User user);
 
         Task SendEmailToParentToCreateAccountAndValidateStudent(User user, string parentEmail);
+        Task SendEmailForSuccesfullAcountCreation(User user);
+        Task SendEmailStudentActivated();
     } 
 }

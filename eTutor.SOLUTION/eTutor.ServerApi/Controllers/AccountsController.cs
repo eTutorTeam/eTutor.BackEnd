@@ -124,7 +124,14 @@ namespace eTutor.ServerApi.Controllers
         {
             User newUser = _mapper.Map<User>(request);
 
-            var result = await _usersManager.RegisterParent(newUser, request.Password, request.StudentId);
+            var result = await _usersManager.RegisterParentUser(newUser, request.Password, request.StudentId);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            return Ok();
         }
 
         /// <summary>

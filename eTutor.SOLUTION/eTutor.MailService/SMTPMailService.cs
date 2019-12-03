@@ -52,20 +52,55 @@ namespace eTutor.MailService
             throw new NotImplementedException();
         }
 
-        private async Task<string> ReadEmailTemplate(string fileName)
+        public Task SendEmailForSuccesfullAcountCreation(User user)
         {
-            var directory = Directory.GetCurrentDirectory();
-            return "";
+            throw new NotImplementedException();
         }
 
-        private Task SendEmail(string reciepents, string subject, string content)
+        public Task SendEmailStudentActivated()
         {
-            var message = new MailMessage("", reciepents);
-            message.Subject = subject;
-            message.Body = content;
-            message.IsBodyHtml = true;
+            throw new NotImplementedException();
+        }
 
-            return _emailService.SendAsync(reciepents, message.Subject, message.Body, message.IsBodyHtml);
+        private async Task<string> ReadEmailTemplate(string fileName = "generic-email.html")
+        {
+            var directory = Directory.GetCurrentDirectory();
+            var complete = Path.Combine(directory, "Templates", fileName);
+
+            string fileContent = await File.ReadAllTextAsync(complete);
+            return fileContent;
+        }
+
+        private async Task SendEmail(string reciepents, string subject, EmailModel model)
+        {
+            string templateContent = await ReadEmailTemplate();
+
+            templateContent = templateContent.Replace("{{html-content}}", model.HtmlContent);
+            templateContent = templateContent.Replace("{{btn-text}}", model.BtnText);
+            templateContent = templateContent.Replace("{{btn-display}}", model.BtnDisplay);
+            templateContent = templateContent.Replace("{{link}}", model.Link);
+
+            await _emailService.SendAsync(reciepents, subject, templateContent, true);
+        }
+
+        private async Task SendEmail(string reciepents, string subject, string htmlMessage)
+        {
+            var model = new EmailModel()
+            {
+                BtnDisplay = "none",
+                BtnText = "",
+                HtmlContent = htmlMessage,
+                Link = ""
+            };
+
+            string templateContent = await ReadEmailTemplate();
+
+            templateContent = templateContent.Replace("{{html-content}}", model.HtmlContent);
+            templateContent = templateContent.Replace("{{btn-text}}", model.BtnText);
+            templateContent = templateContent.Replace("{{btn-display}}", model.BtnDisplay);
+            templateContent = templateContent.Replace("{{link}}", model.Link);
+
+            await _emailService.SendAsync(reciepents, subject, templateContent, true);
         }
     }
 }
