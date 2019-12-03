@@ -18,12 +18,15 @@ namespace eTutor.MailService
         private readonly IEmailService _emailService;
         private readonly IConfiguration _configuration;
         private readonly string _baseUrl;
+        private readonly string _parentLink;
 
         public SMTPMailService(IEmailService emailService, IConfiguration configuration)
         {
             _emailService = emailService;
             _configuration = configuration;
             _baseUrl = _configuration["BaseSiteUrl"];
+            IConfigurationSection links = _configuration.GetSection("EmailLinks");
+            _parentLink = links["ParentLink"];
         }
 
         public Task SendEmailToRegisteredUser(User user)
@@ -57,12 +60,15 @@ namespace eTutor.MailService
                              "<p>Para que su hijo pueda proceder con el registro,\r\n   " +
                              " debe de proceder a registrarse como usuario y validar a su \r\n    hijo presionando el boton de abajo\r\n</p>";
 
+
+            string link = string.Format(_parentLink, user.Id);
+
             var emailModel = new EmailModel
             {
                 BtnDisplay = "block",
                 BtnText = "Continuar Registro",
                 HtmlContent = message,
-                Link = $"{_baseUrl}/#/student/{user.Id}"
+                Link = $"{_baseUrl}{link}"
             };
 
             return SendEmail($"{user.Email}, juandanielozuna2@gmail.com", "Proceso de Registro Aplicacion eTutor",
