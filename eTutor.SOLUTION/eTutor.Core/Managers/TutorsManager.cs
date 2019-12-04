@@ -50,6 +50,12 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<User>.Fail("El usuario no fue encontrado");
             }
 
+            tutor.IsActive = true;
+
+            _userRepository.Update(tutor);
+
+            await _userRepository.Save();
+
             return BasicOperationResult<User>.Ok(tutor);
 
         }
