@@ -101,6 +101,11 @@ namespace eTutor.Core.Managers
 
         public async Task<IOperationResult<User>> RegisterStudentUser(User newUser, string password, string parentEmail)
         {
+            if (string.IsNullOrEmpty(parentEmail))
+            {
+                return BasicOperationResult<User>.Fail("Debe suministrar el correo del padre, para continuar");
+            }
+
             IdentityResult userCreateResult = await _userManager.CreateAsync(newUser, password);
             newUser.IsActive = false;
 
