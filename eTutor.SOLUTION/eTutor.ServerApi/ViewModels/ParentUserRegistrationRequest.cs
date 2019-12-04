@@ -22,6 +22,8 @@ namespace eTutor.ServerApi.ViewModels
 
         public int StudentId { get; set; }
 
+        public string PersonalId { get; set; }
+
         public DateTime BirthDate { get; set; }
     }
 }
