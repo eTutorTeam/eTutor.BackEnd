@@ -97,7 +97,7 @@ namespace eTutor.ServerApi.Controllers
         /// <returns></returns>
         [HttpPost("register-student")]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(UserTokenResponse), 200)]
+        [ProducesResponseType(200)]
         [ProducesResponseType(typeof(Error), 400)]
         public async Task<IActionResult> RegisterStudent([FromBody] StudentUserRegistrationRequest request)
         {
@@ -111,9 +111,7 @@ namespace eTutor.ServerApi.Controllers
                 return BadRequest(result.Message);
             }
 
-            var token = await GenerateJwtToken(result.Entity);
-
-            return Ok(token);
+            return Ok();
         }
 
         [HttpPost("register-parent")]

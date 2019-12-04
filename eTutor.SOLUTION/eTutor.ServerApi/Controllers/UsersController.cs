@@ -27,6 +27,24 @@ namespace eTutor.ServerApi.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet("simple/{userId}")]
+        [ProducesResponseType(typeof(SimpleUserResponse), 200)]
+        [ProducesResponseType(typeof(Error), 404)]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetSimpleUserResponse(int userId)
+        {
+            IOperationResult<User> operationResult = await _usersManager.GetUserById(userId);
+
+            if (!operationResult.Success)
+            {
+                return NotFound(operationResult.Message);
+            }
+
+            var model = _mapper.Map<SimpleUserResponse>(operationResult.Entity);
+
+            return Ok(model);
+        }
+
         [HttpGet("profile")]
         [ProducesResponseType(typeof(User), 200)]
         [ProducesResponseType(typeof(Error), 400)]

@@ -151,7 +151,7 @@ namespace eTutor.Core.Managers
             _parentStudentRepository.Create(parentStudent);
             await _parentStudentRepository.Save();
 
-            await _mailService.SendEmailStudentActivated();
+            await _mailService.SendEmailStudentActivated(studentUser);
 
             return BasicOperationResult<User>.Ok(user);
         }
@@ -279,5 +279,16 @@ namespace eTutor.Core.Managers
             return text;
         }
 
+        public async Task<IOperationResult<User>> GetUserById(int userId)
+        {
+            var user = await _userRepository.Find(u => u.Id == userId);
+
+            if (user == null)
+            {
+                return BasicOperationResult<User>.Fail("Los datos del usuario no fueron encontrados");
+            }
+
+            return BasicOperationResult<User>.Ok(user);
+        }
     }
 }

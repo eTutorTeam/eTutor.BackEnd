@@ -77,12 +77,17 @@ namespace eTutor.MailService
 
         public Task SendEmailForSuccesfullAcountCreation(User user)
         {
-            throw new NotImplementedException();
+            string message = $"<h1>Buenas {user.FullName}</h1>\r\n<h2>Su cuenta ha sido creada exitosamente</h2>";
+
+            return SendEmail($"{user.Email}, juandanielozuna2@gmail.com", "Su cuenta ha sido activada", message);
         }
 
-        public Task SendEmailStudentActivated()
+        public Task SendEmailStudentActivated(User user)
         {
-            throw new NotImplementedException();
+            string message = $"<h1>Buenas {user.FullName}</h1>\r\n<h2>Su cuenta ha sido activada exitosamente</h2>" +
+                             "\r\n\r\n<p>Ya puede proceder a ingresar a la aplicacion\r\n</p>\r\n<br>";
+
+            return SendEmail($"{user.Email}, juandanielozuna2@gmail.com", "Su cuenta ha sido activada", message);
         }
 
         private async Task<string> ReadEmailTemplate(string fileName = "generic-email.html")

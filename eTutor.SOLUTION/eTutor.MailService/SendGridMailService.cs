@@ -60,6 +60,11 @@ namespace eTutor.SendGridMail
             throw new NotImplementedException();
         }
 
+        public Task SendEmailStudentActivated(User user)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task SendEmailStudentActivated()
         {
             throw new NotImplementedException();
