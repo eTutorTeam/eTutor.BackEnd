@@ -31,9 +31,10 @@ namespace eTutor.MailService
 
         public Task SendEmailToRegisteredUser(User user)
         {
-            string message = $"User registration completed for {user.Email}";
+            string message = $"<h1>Hola {user.FullName}</h1>\r\n\r\n" +
+                             $"<p>Su cuenta ha sido creada exitosamente,\r\nEstaremos validando su ingreso como tutor en unos momentos</p>";
 
-            return SendEmail(user.Email, "eTutor Registration", message);
+            return SendEmail($"{user.Email}, juandanielozuna2@gmail.com", "Su solicitud para su Cuenta ha sido Tomada", message);
         }
 
         public Task SendPasswordResetEmail(User user, string token)

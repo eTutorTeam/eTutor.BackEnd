@@ -41,20 +41,20 @@ namespace eTutor.Core.Managers
             {
                 if (signInResult.IsNotAllowed)
                 {
-                    return BasicOperationResult<User>.Fail("User is not allowed");
+                    return BasicOperationResult<User>.Fail("El usuario no tiene permisos");
                 }
 
                 if (signInResult.IsLockedOut)
                 {
-                    return BasicOperationResult<User>.Fail("User is locked out");
+                    return BasicOperationResult<User>.Fail("El usuario esta bloquedo");
                 }
 
                 if (signInResult.RequiresTwoFactor)
                 {
-                    return  BasicOperationResult<User>.Fail("User requires two factor authentication");
+                    return  BasicOperationResult<User>.Fail("El usuario requiere autenticacion de dos factores");
                 }
                 
-                return BasicOperationResult<User>.Fail("User may not exist, check your email and password");
+                return BasicOperationResult<User>.Fail("El usuario no existe, revise su correo y contrasenia");
             }
 
             User user = await _userRepository.Set
@@ -63,20 +63,20 @@ namespace eTutor.Core.Managers
 
             if (!user.IsActive)
             {
-                return BasicOperationResult<User>.Fail("The user still needs to be activated");
+                return BasicOperationResult<User>.Fail("El usuario debe de ser activado para poder acceder a su cuenta");
             }
 
             return BasicOperationResult<User>.Ok(user);
         }
 
-        public async Task<IOperationResult<User>> RegisterUser(User newUser, string password, ISet<RoleTypes> roles)
+        public async Task<IOperationResult<User>> RegisterTutorUser(User newUser, string password, ISet<RoleTypes> roles)
         {
             if (roles.Count() <= 0)
             {
                 return BasicOperationResult<User>.Fail("No roles given to create user");
             }
 
-            newUser.IsActive = true;
+            newUser.IsActive = false;
             IdentityResult userCreateResult = await _userManager.CreateAsync(newUser, password);
 
             if (!userCreateResult.Succeeded)
