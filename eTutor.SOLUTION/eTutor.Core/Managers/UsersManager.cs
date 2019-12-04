@@ -110,8 +110,6 @@ namespace eTutor.Core.Managers
             }
 
             User createdUser = await _userManager.FindByEmailAsync(newUser.Email);
-            await _mailService.SendEmailToCreatedStudentUser(newUser);
-            await _mailService.SendEmailToParentToCreateAccountAndValidateStudent(newUser, parentEmail);
 
             _userRoleRepository.Create(new UserRole {UserId = createdUser.Id, RoleId = (int) RoleTypes.Student});
 
@@ -120,6 +118,9 @@ namespace eTutor.Core.Managers
             User user = await _userRepository.Set
                 .Include(u => u.UserRoles)
                 .FirstOrDefaultAsync(u => u.Email == createdUser.Email);
+
+            await _mailService.SendEmailToCreatedStudentUser(createdUser);
+            await _mailService.SendEmailToParentToCreateAccountAndValidateStudent(createdUser, parentEmail);
 
             return BasicOperationResult<User>.Ok(user);
         }
@@ -142,10 +143,10 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<User>.Fail(GetErrorsFromIdentityResult(userCreateResult.Errors));
             }
 
-            var user = await _userRepository.Set.FirstOrDefaultAsync(u => u.Email == newUser.Email);
-            int userId = user.Id;
+            var parentUser = await _userRepository.Set.FirstOrDefaultAsync(u => u.Email == newUser.Email);
+            int userId = parentUser.Id;
             _userRoleRepository.Create(new UserRole {UserId = userId, RoleId = (int) RoleTypes.Parent});
-            await _mailService.SendEmailForSuccesfullAcountCreation(user);
+            
             
             var parentStudent = new ParentStudent
             {
@@ -160,9 +161,10 @@ namespace eTutor.Core.Managers
             _parentStudentRepository.Create(parentStudent);
             await _parentStudentRepository.Save();
 
+            await _mailService.SendEmailForSuccesfullAcountCreation(parentUser);
             await _mailService.SendEmailStudentActivated(studentUser);
 
-            return BasicOperationResult<User>.Ok(user);
+            return BasicOperationResult<User>.Ok(parentUser);
         }
 
         public async Task<IEnumerable<Role>> GetRolesForUser(int userId) 
