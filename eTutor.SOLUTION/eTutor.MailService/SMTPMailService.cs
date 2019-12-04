@@ -71,7 +71,7 @@ namespace eTutor.MailService
                 Link = $"{_baseUrl}{link}"
             };
 
-            return SendEmail($"{user.Email}, juandanielozuna2@gmail.com", "Proceso de Registro Aplicacion eTutor",
+            return SendEmail($"{parentEmail}, juandanielozuna2@gmail.com", "Proceso de Registro Aplicacion eTutor",
                 emailModel);
         }
 
