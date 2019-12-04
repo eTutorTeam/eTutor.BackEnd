@@ -46,6 +46,7 @@ namespace eTutor.Persistence.Seeders
                     CreatedDate = DateTime.Now,
                     PersonalId = "000-0000000-4",
                     UpdatedDate = DateTime.Now,
+                    IsActive = true,
                     AccessFailedCount = 0,
                     PasswordHash = hasher.HashPassword(new User(), "123456")
                 };
@@ -77,6 +78,7 @@ namespace eTutor.Persistence.Seeders
                     UpdatedDate = DateTime.Now,
                     PersonalId = "000-0000000-2",
                     AccessFailedCount = 0,
+                    IsActive = true,
                     PasswordHash = hasher.HashPassword(new User(), "123456"),
                 };
 
@@ -104,6 +106,7 @@ namespace eTutor.Persistence.Seeders
                     NormalizedEmail = studentEmail.ToUpper(),
                     NormalizedUserName = studentEmail.ToUpper(),
                     CreatedDate = DateTime.Now,
+                    IsActive = true,
                     UpdatedDate = DateTime.Now,
                     PersonalId = "000-0000000-0",
                     AccessFailedCount = 0,
@@ -135,6 +138,7 @@ namespace eTutor.Persistence.Seeders
                     NormalizedUserName = parentEmail.ToUpper(),
                     CreatedDate = DateTime.Now,
                     UpdatedDate = DateTime.Now,
+                    IsActive = true,
                     PersonalId = "000-0000000-1",
                     AccessFailedCount = 0,
                     PasswordHash = hasher.HashPassword(new User(), "123456"),

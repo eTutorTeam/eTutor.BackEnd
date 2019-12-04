@@ -44,5 +44,30 @@ namespace eTutor.SendGridMail
         {
             throw new NotImplementedException();
         }
+
+        public Task SendEmailToCreatedStudentUser(User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SendEmailToParentToCreateAccountAndValidateStudent(User user, string parentEmail)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SendEmailForSuccesfullAcountCreation(User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SendEmailStudentActivated(User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SendEmailStudentActivated()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

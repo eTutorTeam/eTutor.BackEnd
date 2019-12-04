@@ -27,6 +27,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NETCore.MailKit.Extensions;
+using NETCore.MailKit.Infrastructure.Internal;
 using Newtonsoft.Json;
 
 namespace eTutor.ServerApi
@@ -48,18 +50,8 @@ namespace eTutor.ServerApi
                 {
                     opts.UseMySql(Configuration.GetConnectionString("AzureConnection"));
                 });
-            
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials()
-                        .Build());
-            });
-            
-            
+
+
             AuthenticationServiceConfiguration(services);
             
             ConfigureRepositories(services);
@@ -99,9 +91,19 @@ namespace eTutor.ServerApi
                     Keys = { }
                 });
 
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                config.IncludeXmlComments(xmlPath);
+                //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                //config.IncludeXmlComments(xmlPath);
+            });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials()
+                        .Build());
             });
         }
 
@@ -110,10 +112,25 @@ namespace eTutor.ServerApi
         {
             var smpt = Configuration.GetSection("SMTP").Get<SMTPConfiguration>();
             services.AddScoped(typeof(SMTPConfiguration), s => smpt);
+
+            services.AddMailKit(optsBuilder =>
+            {
+                optsBuilder.UseMailKit(new MailKitOptions
+                {
+                    Account = smpt.User,
+                    Password = smpt.Password,
+                    Port = smpt.Port,
+                    Server = smpt.Server,
+                    SenderName = smpt.Name,
+                    SenderEmail = smpt.Email,
+                    Security = true
+                });
+            });
         }
 
         private void ConfigureContractServices(IServiceCollection services)
         {
+            
             //services.AddScoped<IMailService, SendGridMailService>();
             services.AddScoped<IMailService, SMTPMailService>();
         }
@@ -125,6 +142,7 @@ namespace eTutor.ServerApi
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<ISubjectRepository, SubjectRepository>();
             services.AddScoped<ITutorSubjectRepository, TutorSubjectRepository>();
+            services.AddScoped<IParentStudentRepository, ParentStudentRepository>();
         }
 
         private void ConfigureManagers(IServiceCollection services)

@@ -30,13 +30,15 @@ namespace eTutor.ServerApi.Controllers
     {
         private readonly UsersManager _usersManager;
         private readonly IConfiguration _configuration;
+        private readonly IMailService _mailService;
         private readonly IMapper _mapper;
 
-        public AccountsController(UsersManager usersManager, IMapper mapper, IConfiguration configuration)
+        public AccountsController(UsersManager usersManager, IMapper mapper, IConfiguration configuration, IMailService mailService)
         {
             _usersManager = usersManager;
             _mapper = mapper;
             _configuration = configuration;
+            _mailService = mailService;
         }
 
         /// <summary>
@@ -95,7 +97,7 @@ namespace eTutor.ServerApi.Controllers
         /// <returns></returns>
         [HttpPost("register-student")]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(UserTokenResponse), 200)]
+        [ProducesResponseType(200)]
         [ProducesResponseType(typeof(Error), 400)]
         public async Task<IActionResult> RegisterStudent([FromBody] StudentUserRegistrationRequest request)
         {
@@ -109,9 +111,25 @@ namespace eTutor.ServerApi.Controllers
                 return BadRequest(result.Message);
             }
 
-            var token = await GenerateJwtToken(result.Entity);
+            return Ok();
+        }
 
-            return Ok(token);
+        [HttpPost("register-parent")]
+        [AllowAnonymous]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        public async Task<IActionResult> RegisterParent([FromBody] ParentUserRegistrationRequest request)
+        {
+            User newUser = _mapper.Map<User>(request);
+
+            var result = await _usersManager.RegisterParentUser(newUser, request.Password, request.StudentId);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            return Ok();
         }
 
         /// <summary>
