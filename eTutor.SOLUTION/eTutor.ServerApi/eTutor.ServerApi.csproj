@@ -33,4 +33,8 @@
     <ProjectReference Include="..\eTutor.Persistence\eTutor.Persistence.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Properties\PublishProfiles\" />
+  </ItemGroup>
+
 </Project>
