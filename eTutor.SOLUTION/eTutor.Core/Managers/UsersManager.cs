@@ -69,14 +69,14 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<User>.Ok(user);
         }
 
-        public async Task<IOperationResult<User>> RegisterUser(User newUser, string password, ISet<RoleTypes> roles)
+        public async Task<IOperationResult<User>> RegisterTutorUser(User newUser, string password, ISet<RoleTypes> roles)
         {
             if (roles.Count() <= 0)
             {
                 return BasicOperationResult<User>.Fail("No roles given to create user");
             }
 
-            newUser.IsActive = true;
+            newUser.IsActive = false;
             IdentityResult userCreateResult = await _userManager.CreateAsync(newUser, password);
 
             if (!userCreateResult.Succeeded)

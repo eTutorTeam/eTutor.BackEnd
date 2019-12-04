@@ -79,7 +79,7 @@ namespace eTutor.ServerApi.Controllers
             string password = request.Password;
             ISet<RoleTypes> roles = new HashSet<RoleTypes>() {RoleTypes.Tutor};
 
-            IOperationResult<User> operationResult = await _usersManager.RegisterUser(newUser, password, roles);
+            IOperationResult<User> operationResult = await _usersManager.RegisterTutorUser(newUser, password, roles);
 
             if (!operationResult.Success)
             {
