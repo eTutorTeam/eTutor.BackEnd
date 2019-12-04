@@ -126,6 +126,14 @@ namespace eTutor.Core.Managers
 
         public async Task<IOperationResult<User>> RegisterParentUser(User newUser, string password, int studentId)
         {
+            var studentUser = await _userRepository.Set.Include(ur => ur.UserRoles)
+                .FirstOrDefaultAsync(u => u.Id == studentId);
+
+            if (studentUser.UserRoles.All(ur => ur.RoleId != (int) RoleTypes.Student))
+            {
+                return BasicOperationResult<User>.Fail("El usuario al que intenta asociar este padre, no es un estudiantess");
+            }
+
             var userCreateResult = await _userManager.CreateAsync(newUser, password);
             newUser.IsActive = true;
 
@@ -145,7 +153,7 @@ namespace eTutor.Core.Managers
                 StudentId = studentId
             };
 
-            var studentUser = await _userRepository.Find(u => u.Id == studentId);
+            
             studentUser.IsActive = true;
             _userRepository.Update(studentUser);
             _parentStudentRepository.Create(parentStudent);
