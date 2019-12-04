@@ -134,8 +134,8 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<User>.Fail("El usuario al que intenta asociar este padre, no es un estudiantess");
             }
 
-            var userCreateResult = await _userManager.CreateAsync(newUser, password);
             newUser.IsActive = true;
+            var userCreateResult = await _userManager.CreateAsync(newUser, password);
 
             if (!userCreateResult.Succeeded)
             {
@@ -150,7 +150,8 @@ namespace eTutor.Core.Managers
             var parentStudent = new ParentStudent
             {
                 ParentId = userId,
-                StudentId = studentId
+                StudentId = studentId,
+                Relationship = ParentRelationship.Father
             };
 
             

@@ -61,7 +61,7 @@ namespace eTutor.MailService
                              " debe de proceder a registrarse como usuario y validar a su \r\n    hijo presionando el boton de abajo\r\n</p>";
 
 
-            string link = string.Format(_parentLink, user.Id);
+            string link = string.Format(_parentLink, user.Id, parentEmail);
 
             var emailModel = new EmailModel
             {
