@@ -17,7 +17,7 @@ namespace eTutor.ServerApi.Controllers
     [ApiController]
     [Authorize]
     public class SubjectsController : EtutorBaseController
-    {
+    {C:\Users\Angel Ruiz\Desktop\eTutorProjects\eTutor.BackEnd\eTutor.SOLUTION\eTutor.ServerApi\Controllers\SubjectsController.cs
 
         private readonly SubjectsManager _subjectsManager;
         private readonly IMapper _mapper;
