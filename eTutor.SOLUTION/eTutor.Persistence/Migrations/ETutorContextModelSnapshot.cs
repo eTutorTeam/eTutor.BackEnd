@@ -230,7 +230,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "45fd03c8-4381-433c-bc88-7195ea240c3a",
+                            ConcurrencyStamp = "0933689e-c706-4759-8014-18cbee8a58b4",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "admin",
                             NormalizedName = "admin",
@@ -239,7 +239,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "824fd9f9-acbc-4644-b03e-0ff751a0dfdb",
+                            ConcurrencyStamp = "e2cd38fe-f4a3-42d2-b583-15be13a20fc0",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "tutor",
                             NormalizedName = "tutor",
@@ -248,7 +248,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "42ec3ff1-1457-48d9-a9dd-e66acf19a1de",
+                            ConcurrencyStamp = "699a2ab1-656b-4d11-a695-af0c7ebcad83",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "student",
                             NormalizedName = "student",
@@ -257,7 +257,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "8aea4e01-75a9-4640-9087-2b9bba699458",
+                            ConcurrencyStamp = "1c5cdb46-165a-4702-8752-3ad7e29d1e26",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "parent",
                             NormalizedName = "parent",
@@ -355,6 +355,8 @@ namespace eTutor.Persistence.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<string>("AboutMe");
 
                     b.Property<int>("AccessFailedCount");
 

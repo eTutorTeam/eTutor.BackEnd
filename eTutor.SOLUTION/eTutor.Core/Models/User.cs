@@ -74,6 +74,11 @@ namespace eTutor.Core.Models
         /// </summary>
         public string ProfileImageUrl { get; set; }
 
+        /// <summary>
+        /// Represents the AboutMe in the user's profile
+        /// </summary>
+        public string AboutMe { get; set; }
+
         public string FullName => Name + " " + LastName;
 
         public ISet<UserRole> UserRoles { get; set; }
