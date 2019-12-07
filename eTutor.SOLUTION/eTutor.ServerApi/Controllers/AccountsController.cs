@@ -243,6 +243,7 @@ namespace eTutor.ServerApi.Controllers
 
             return new UserTokenResponse
             {
+                uId = user.Id,
                 UserName = user.UserName,
                 Email = user.Email,
                 Token = writtenToken,
