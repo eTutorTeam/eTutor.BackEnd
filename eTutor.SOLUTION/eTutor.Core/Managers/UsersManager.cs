@@ -311,5 +311,24 @@ namespace eTutor.Core.Managers
         }
         
        
+        public async Task<IOperationResult<IEnumerable<User>>> GetStudentsByParentId(int userId)
+        {
+            var students = _parentStudentRepository.FindAll(x => x.ParentId == userId).Result;
+
+            if (students == null)
+            {
+                return BasicOperationResult<IEnumerable<User>>.Fail("Los datos del usuario no fueron encontrados");
+            }
+
+            List<User> studentsUsers = new List<User>();
+
+            foreach (var student in students)
+            {
+                User curUser = _userManager.FindByIdAsync(student.StudentId.ToString()).Result;
+                studentsUsers.Add(curUser);
+            }
+
+            return BasicOperationResult<IEnumerable<User>>.Ok(studentsUsers);
+        }
     }
 }

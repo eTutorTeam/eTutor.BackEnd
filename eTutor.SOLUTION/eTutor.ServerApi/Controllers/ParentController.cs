@@ -35,6 +35,21 @@ namespace eTutor.ServerApi.Controllers
             int parentId = GetUserId();
             
             IOperationResult<IEnumerable<User>> operationResult = await _parentsManager.GetStudentsByParentId(parentId);
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ParentController : ControllerBase
+    {
+        private readonly UsersManager _usersManager;
+        private readonly IMapper _mapper;
+        public ParentController(UsersManager usersManager, IMapper mapper)
+        {
+            _usersManager = usersManager;
+            _mapper = mapper;
+        }
+        [HttpGet("my-students")]
+        public async Task<IActionResult> GetSimpleUserResponse(int userId)
+        {
+            IOperationResult<IEnumerable<User>> operationResult = await _usersManager.GetStudentsByParentId(userId);
 
             if (!operationResult.Success)
             {
@@ -62,6 +77,11 @@ namespace eTutor.ServerApi.Controllers
             }
             
             return Ok();
+            var model = _mapper.Map<IEnumerable<User>>(operationResult.Entity);
+            
+            
+
+            return Ok(model);
         }
     }
 }
