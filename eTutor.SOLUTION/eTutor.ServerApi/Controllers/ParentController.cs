@@ -47,7 +47,7 @@ namespace eTutor.ServerApi.Controllers
             _mapper = mapper;
         }
         [HttpGet("my-students")]
-        public async Task<IActionResult> GetSimpleUserResponse(int userId)
+        public async Task<IActionResult> GetMyStudents(int userId)
         {
             IOperationResult<IEnumerable<User>> operationResult = await _usersManager.GetStudentsByParentId(userId);
 
@@ -82,6 +82,17 @@ namespace eTutor.ServerApi.Controllers
             
 
             return Ok(model);
+        }
+        [HttpPost("toggle-student-state")]
+        public async Task<IActionResult> ToggleStudentAccountState([FromBody]int userId)
+        {
+            IOperationResult<bool> operationResult = await _usersManager.ToggleUserAccountState(userId);
+
+            if (!operationResult.Success)
+            {
+                return NotFound(operationResult.Message);
+            }
+            return Ok();
         }
     }
 }
