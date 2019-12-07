@@ -24,6 +24,8 @@ namespace eTutor.ServerApi.Controllers
             _mapper = mapper;
         }
         [HttpGet("my-students")]
+        [ProducesResponseType(typeof(IEnumerable<UserAdminResponse>), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
         public async Task<IActionResult> GetSimpleUserResponse(int userId)
         {
             IOperationResult<IEnumerable<User>> operationResult = await _usersManager.GetStudentsByParentId(userId);
@@ -33,9 +35,7 @@ namespace eTutor.ServerApi.Controllers
                 return NotFound(operationResult.Message);
             }
 
-            var model = _mapper.Map<IEnumerable<User>>(operationResult.Entity);
-            
-            
+            IEnumerable<UserAdminResponse> model = _mapper.Map<IEnumerable<UserAdminResponse>>(operationResult.Entity);
 
             return Ok(model);
         }
