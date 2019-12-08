@@ -11,6 +11,7 @@ namespace eTutor.Core.Managers
 {
     public sealed class ParentsManager
     {
+    
         private readonly IUserRepository _userRepository;
         private readonly IParentStudentRepository _parentStudentRepository;
 
