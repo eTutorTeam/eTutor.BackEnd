@@ -64,6 +64,9 @@ namespace eTutor.Core.Models
         /// </summary>
         public float? Latitude { get; set; }
         
+        /// <summary>
+        /// Represents the birthdate for the user
+        /// </summary>
         public DateTime BirthDate { get; set; }
 
         public string FullName => Name + " " + LastName;

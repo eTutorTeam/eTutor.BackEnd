@@ -18,7 +18,8 @@ namespace eTutor.ServerApi.MapperProfiles
 
             CreateMap<User, UserAdminResponse>();
 
-            CreateMap<User, StudentUserViewModel>();
+            CreateMap<User, StudentUserViewModel>()
+                .ForMember(dest => dest.Age, opt => opt.MapFrom(src => DateTime.Now.Year - src.BirthDate.Year));
         }
     }
 }

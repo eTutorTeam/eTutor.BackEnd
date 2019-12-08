@@ -12,10 +12,10 @@ namespace eTutor.ServerApi.ViewModels
 
         public bool IsActive { get; set; }
 
-        public DateTime CreatedDate { get; set; }
-
-        public DateTime UpdatedDate { get; set; }
-
+        public DateTime BirthDate { get; set; }
+        
+        public int Age { get; set; }
+        
         public string FullName => $"{Name} {LastName}";
     }
 }
