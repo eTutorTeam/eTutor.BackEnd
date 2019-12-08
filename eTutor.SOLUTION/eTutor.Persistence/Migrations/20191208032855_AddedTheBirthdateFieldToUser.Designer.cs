@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eTutor.Persistence;
 
 namespace eTutor.Persistence.Migrations
 {
     [DbContext(typeof(ETutorContext))]
-    partial class ETutorContextModelSnapshot : ModelSnapshot
+    [Migration("20191208032855_AddedTheBirthdateFieldToUser")]
+    partial class AddedTheBirthdateFieldToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -204,7 +206,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "d3cf4bbd-43c9-44ea-921c-f8b08024613f",
+                            ConcurrencyStamp = "9b69c184-0bad-49e3-bcd2-630f751c15e7",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "admin",
                             NormalizedName = "admin",
@@ -213,7 +215,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "48f0abaa-989e-4771-83b0-98ae47e29d03",
+                            ConcurrencyStamp = "71d90607-355f-4874-8d72-91dcbc49526f",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "tutor",
                             NormalizedName = "tutor",
@@ -222,7 +224,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "d1e09f0d-d8b2-4eb8-bcd8-1d3248fc9a9c",
+                            ConcurrencyStamp = "cb8a2326-6629-4a0b-8d81-4a552bbc4505",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "student",
                             NormalizedName = "student",
@@ -231,7 +233,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "a9de7b8a-9ca0-45ab-80c5-8271079f07d1",
+                            ConcurrencyStamp = "d478d36c-0d1f-4831-9496-fdaf0d9d5db9",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "parent",
                             NormalizedName = "parent",
@@ -379,8 +381,6 @@ namespace eTutor.Persistence.Migrations
                     b.Property<string>("PhoneNumber");
 
                     b.Property<bool>("PhoneNumberConfirmed");
-
-                    b.Property<string>("ProfileImageUrl");
 
                     b.Property<string>("SecurityStamp");
 

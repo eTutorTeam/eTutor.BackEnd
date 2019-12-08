@@ -7,47 +7,60 @@ using eTutor.Core.Contracts;
 using eTutor.Core.Managers;
 using eTutor.Core.Models;
 using eTutor.ServerApi.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eTutor.ServerApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/parent")]
     [ApiController]
-    public class ParentController : ControllerBase
+    public class ParentController : EtutorBaseController
     {
-        private readonly UsersManager _usersManager;
+        private readonly ParentsManager _parentsManager;
         private readonly IMapper _mapper;
-        public ParentController(UsersManager usersManager, IMapper mapper)
+        
+        public ParentController(ParentsManager parentsManager, IMapper mapper)
         {
-            _usersManager = usersManager;
+            _parentsManager = parentsManager;
             _mapper = mapper;
         }
+        
         [HttpGet("my-students")]
-        [ProducesResponseType(typeof(IEnumerable<UserAdminResponse>), 200)]
+        [ProducesResponseType(typeof(IEnumerable<StudentUserViewModel>), 200)]
         [ProducesResponseType(typeof(Error), 400)]
-        public async Task<IActionResult> GetSimpleUserResponse(int userId)
+        [Authorize(Roles = "parent")]
+        public async Task<IActionResult> GetStudentsForParent()
         {
-            IOperationResult<IEnumerable<User>> operationResult = await _usersManager.GetStudentsByParentId(userId);
+            int parentId = GetUserId();
+            
+            IOperationResult<IEnumerable<User>> operationResult = await _parentsManager.GetStudentsByParentId(parentId);
 
             if (!operationResult.Success)
             {
                 return NotFound(operationResult.Message);
             }
 
-            IEnumerable<UserAdminResponse> model = _mapper.Map<IEnumerable<UserAdminResponse>>(operationResult.Entity);
+            IEnumerable<StudentUserViewModel> model = _mapper.Map<IEnumerable<StudentUserViewModel>>(operationResult.Entity);
 
             return Ok(model);
         }
-        [HttpPost("toggle-student-state")]
-        public async Task<IActionResult> ToggleStudentAccountState([FromBody]int userId)
+        
+        [HttpPost("toggle-student-state/{studentId}/student")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(Error), 404)]
+        [Authorize(Roles = "parent")]
+        public async Task<IActionResult> ToggleStudentAccountState([FromRoute] int studentId)
         {
-            IOperationResult<bool> operationResult = await _usersManager.ToggleUserAccountState(userId);
-
+            int parentId = GetUserId();
+            
+            IOperationResult<bool> operationResult = await _parentsManager.ToggerStudentAccountActivation(studentId, parentId);
+    
             if (!operationResult.Success)
             {
                 return NotFound(operationResult.Message);
             }
+            
             return Ok();
         }
     }

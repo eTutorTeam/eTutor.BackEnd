@@ -306,39 +306,23 @@ namespace eTutor.Core.Managers
 
             return BasicOperationResult<User>.Ok(user);
         }
-        public async Task<IOperationResult<IEnumerable<User>>> GetStudentsByParentId(int userId)
-        {
-            var parentStudents = await _parentStudentRepository
-                .FindAll(x => x.ParentId == userId, 
-                    x => x.Student);
-
-            if (parentStudents == null || !parentStudents.Any())
-            {
-                return BasicOperationResult<IEnumerable<User>>.Fail("Los datos del usuario no fueron encontrados");
-            }
-            
-            var studentsUsers = parentStudents.Select(ps => ps.Student);
-            
-            return BasicOperationResult<IEnumerable<User>>.Ok(studentsUsers);
-        }
+        
         public async Task<IOperationResult<bool>> ToggleUserAccountState(int userId)
         {
-            try
+            var oldUser = await _userRepository.Find(u => u.Id == userId);
+
+            if (oldUser == null)
             {
-                var oldUser = await _userRepository.Find(u => u.Id == userId);
-
-                oldUser.IsActive = !oldUser.IsActive;
-
-                _userRepository.Update(oldUser);
-
-                await _userRepository.Save();
-
-                return BasicOperationResult<bool>.Ok(true);
+                return BasicOperationResult<bool>.Fail("El usuario no fue encontrado");
             }
-            catch (Exception e)
-            {
-                return BasicOperationResult<bool>.Fail(e.Message);
-            }
+
+            oldUser.IsActive = !oldUser.IsActive;
+
+            _userRepository.Update(oldUser);
+
+            await _userRepository.Save();
+
+            return BasicOperationResult<bool>.Ok(true);
         }
     }
 }
