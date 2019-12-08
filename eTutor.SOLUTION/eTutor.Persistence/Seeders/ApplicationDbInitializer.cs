@@ -106,6 +106,7 @@ namespace eTutor.Persistence.Seeders
                     NormalizedEmail = studentEmail.ToUpper(),
                     NormalizedUserName = studentEmail.ToUpper(),
                     CreatedDate = DateTime.Now,
+                    BirthDate = new DateTime(2002, 2, 23),
                     IsActive = true,
                     UpdatedDate = DateTime.Now,
                     PersonalId = "000-0000000-0",
