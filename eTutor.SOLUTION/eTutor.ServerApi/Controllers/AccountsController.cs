@@ -29,16 +29,18 @@ namespace eTutor.ServerApi.Controllers
     public class AccountsController : EtutorBaseController
     {
         private readonly UsersManager _usersManager;
+        private readonly AccountsManager _accountsManager;
         private readonly IConfiguration _configuration;
         private readonly IMailService _mailService;
         private readonly IMapper _mapper;
 
-        public AccountsController(UsersManager usersManager, IMapper mapper, IConfiguration configuration, IMailService mailService)
+        public AccountsController(UsersManager usersManager, IMapper mapper, IConfiguration configuration, IMailService mailService, AccountsManager accountsManager)
         {
             _usersManager = usersManager;
             _mapper = mapper;
             _configuration = configuration;
             _mailService = mailService;
+            _accountsManager = accountsManager;
         }
 
         /// <summary>
@@ -138,43 +140,20 @@ namespace eTutor.ServerApi.Controllers
         /// <returns></returns>
         [HttpPost("forgot-password")]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(IOperationResult<string>), 200)]
+        [ProducesResponseType(typeof(ChangePasswordResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
         {
+            var result = await _accountsManager.GenerateForgetPasswordRequest(request.Email);
 
-            IOperationResult<string> operationResult = await _usersManager.UserForgotPassword(request.Email);
-
-            if (!operationResult.Success)
+            if (!result.Success)
             {
-                return BadRequest(operationResult.Message);
+                return BadRequest(result.Message);
             }
 
-            return Ok(BasicOperationResult<string>.Ok("Email sent with further instructions"));
-        }
+            var response = _mapper.Map<ChangePasswordResponse>(result.Entity);
 
-        /// <summary>
-        /// Allows Guests
-        /// </summary>
-        /// <returns></returns>
-        [HttpPut("forgot-password")]
-        [ProducesResponseType(typeof(UserResponse), 200)]
-        [ProducesResponseType(typeof(Error), 400)]
-        [AllowAnonymous]
-        public async Task<IActionResult> ForgetChangePassword([FromBody] ForgotChangePasswordRequest changeRequest)
-        {
-            IOperationResult<User> operationResult =
-                await _usersManager.ChangePasswordUserForgot(changeRequest.UserId, changeRequest.NewPassword, changeRequest.ChangePasswordToken);
-
-            if (!operationResult.Success)
-            {
-                return BadRequest(operationResult.Message);
-            }
-
-            var user = operationResult.Entity;
-            var response = _mapper.Map<UserResponse>(user);
-
-            return Ok(user);
+            return Ok(response);
         }
 
         [HttpPut("change-password")]

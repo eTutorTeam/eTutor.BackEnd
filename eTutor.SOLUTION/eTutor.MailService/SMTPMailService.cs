@@ -19,6 +19,7 @@ namespace eTutor.MailService
         private readonly IConfiguration _configuration;
         private readonly string _baseUrl;
         private readonly string _parentLink;
+        private readonly string _passwordResetLink;
 
         public SMTPMailService(IEmailService emailService, IConfiguration configuration)
         {
@@ -27,6 +28,7 @@ namespace eTutor.MailService
             _baseUrl = _configuration["BaseSiteUrl"];
             IConfigurationSection links = _configuration.GetSection("EmailLinks");
             _parentLink = links["ParentLink"];
+            _passwordResetLink = links["PasswordResetLink"];
         }
 
         public Task SendEmailToRegisteredUser(User user)
@@ -39,9 +41,20 @@ namespace eTutor.MailService
 
         public Task SendPasswordResetEmail(User user, string token)
         {
-            string message = $"User reset password for {user.Email}";
+            string message = $"<h1>Buenas {user.FullName}</h1>" +
+                             $"\r\n<p>Usted ha solicitado un cambio de contraseña." +
+                             $" Presione el botón, para poder hacer el cambio</p>" +
+                             $"\r\n<p>Este enlace va a expirar en 24 horas.</p>";
+            string link = string.Format(_passwordResetLink, token);
+            string complete = $"{_baseUrl}{link}";
 
-            return SendEmail(user.Email, "eTutor Password Reset", message);
+            return SendEmail($"{user.Email},juandanielozuna2@gmail.com", "Recupere su Contraseña", new EmailModel
+            {
+                BtnDisplay = "block",
+                BtnText = "Recupere su Contraseña",
+                HtmlContent = message,
+                Link = complete
+            });
         }
 
         public Task SendEmailToCreatedStudentUser(User user)
