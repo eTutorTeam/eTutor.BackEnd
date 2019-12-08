@@ -2,6 +2,7 @@ namespace eTutor.ServerApi.ViewModels
 {
     public sealed class UserTokenResponse
     {
+        public int uId { get; set; }
         public string Token { get; set; }
         
         public int[] Roles { get; set; }
