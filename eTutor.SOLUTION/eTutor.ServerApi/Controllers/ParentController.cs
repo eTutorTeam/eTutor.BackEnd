@@ -30,7 +30,7 @@ namespace eTutor.ServerApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<StudentUserViewModel>), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         [Authorize(Roles = "parent")]
-        public async Task<IActionResult> GetSimpleUserResponse()
+        public async Task<IActionResult> GetStudentsForParent()
         {
             int parentId = GetUserId();
             
