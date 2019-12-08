@@ -47,7 +47,7 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<bool>.Fail("El estudiante no fue encontrado");
             }
 
-            if (!oldUser.Parents.Any(p => p.Id == parentId))
+            if (oldUser.Parents.All(p => p.ParentId != parentId))
             {
                 return BasicOperationResult<bool>.Fail("El estudiante no esta relacionado con el Padre indicado");
             }
