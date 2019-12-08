@@ -17,7 +17,7 @@ namespace eTutor.ServerApi.Controllers
             try
             {
                 var claims = HttpContext.User.Claims;
-                Claim idClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+                Claim idClaim = claims.Where(c => c.Type == ClaimTypes.NameIdentifier).Skip(1).FirstOrDefault();
                 int value = 0;
                 value = Parse(idClaim.Value);
                 return value;

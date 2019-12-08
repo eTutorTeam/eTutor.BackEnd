@@ -48,7 +48,7 @@ namespace eTutor.ServerApi
 
             services.AddDbContext<ETutorContext>(opts =>
                 {
-                    opts.UseMySql(Configuration.GetConnectionString("AzureConnection"));
+                    opts.UseMySql(Configuration.GetConnectionString("MainConnection"));
                 });
 
 
@@ -74,7 +74,7 @@ namespace eTutor.ServerApi
 
             services.AddSwaggerGen(config =>
             {
-                config.SwaggerDoc("v1", new OpenApiInfo()
+                config.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "eTutor Web Api",
                     Description = "Our web API"
@@ -143,6 +143,7 @@ namespace eTutor.ServerApi
             services.AddScoped<ISubjectRepository, SubjectRepository>();
             services.AddScoped<ITutorSubjectRepository, TutorSubjectRepository>();
             services.AddScoped<IParentStudentRepository, ParentStudentRepository>();
+            services.AddScoped<IChangePasswordRepository, ChangePasswordRepository>();
         }
 
         private void ConfigureManagers(IServiceCollection services)
@@ -150,6 +151,8 @@ namespace eTutor.ServerApi
             services.AddScoped<UsersManager, UsersManager>();
             services.AddScoped<SubjectsManager, SubjectsManager>();
             services.AddScoped<TutorsManager, TutorsManager>();
+            services.AddScoped<ParentsManager, ParentsManager>();
+            services.AddScoped<AccountsManager, AccountsManager>();
         }
 
         private void AuthenticationServiceConfiguration(IServiceCollection services)

@@ -17,6 +17,12 @@ namespace eTutor.ServerApi.MapperProfiles
             CreateMap<User, SimpleUserResponse>();
 
             CreateMap<User, UserAdminResponse>();
+
+            CreateMap<User, StudentUserViewModel>()
+                .ForMember(dest => dest.ProfileImageUrl, opt => 
+                    opt.MapFrom(src => src.ProfileImageUrl
+                                       ?? "https://immedilet-invest.com/wp-content/uploads/2016/01/user-placeholder.jpg"))
+                .ForMember(dest => dest.Age, opt => opt.MapFrom(src => DateTime.Now.Year - src.BirthDate.Year));
         }
     }
 }

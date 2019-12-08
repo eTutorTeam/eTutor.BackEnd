@@ -46,20 +46,22 @@ namespace eTutor.ServerApi.Controllers
         }
 
         [HttpGet("profile")]
-        [ProducesResponseType(typeof(User), 200)]
+        [ProducesResponseType(typeof(UserResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         public async Task<IActionResult> GetUserProfile()
         {
             var userId = GetUserId();
 
-            IOperationResult<User> profile = await _usersManager.GetUserProfile(userId);
+            IOperationResult<User> operationResult = await _usersManager.GetUserProfile(userId);
 
-            if (!profile.Success)
+            if (!operationResult.Success)
             {
-                return BadRequest(profile.Message);
+                return BadRequest(operationResult.Message);
             }
 
-            return Ok(profile.Entity);
+            UserResponse user = _mapper.Map<UserResponse>(operationResult.Entity);
+            
+            return Ok(user);
 
         }
 

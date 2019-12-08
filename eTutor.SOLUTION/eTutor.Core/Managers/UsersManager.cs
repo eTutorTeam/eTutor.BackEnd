@@ -306,5 +306,23 @@ namespace eTutor.Core.Managers
 
             return BasicOperationResult<User>.Ok(user);
         }
+        
+        public async Task<IOperationResult<bool>> ToggleUserAccountState(int userId)
+        {
+            var oldUser = await _userRepository.Find(u => u.Id == userId);
+
+            if (oldUser == null)
+            {
+                return BasicOperationResult<bool>.Fail("El usuario no fue encontrado");
+            }
+
+            oldUser.IsActive = !oldUser.IsActive;
+
+            _userRepository.Update(oldUser);
+
+            await _userRepository.Save();
+
+            return BasicOperationResult<bool>.Ok(true);
+        }
     }
 }

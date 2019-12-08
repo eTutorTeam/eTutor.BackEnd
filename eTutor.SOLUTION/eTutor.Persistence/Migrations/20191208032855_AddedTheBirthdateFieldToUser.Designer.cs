@@ -2,42 +2,22 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eTutor.Persistence;
 
 namespace eTutor.Persistence.Migrations
 {
     [DbContext(typeof(ETutorContext))]
-    partial class ETutorContextModelSnapshot : ModelSnapshot
+    [Migration("20191208032855_AddedTheBirthdateFieldToUser")]
+    partial class AddedTheBirthdateFieldToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
-
-            modelBuilder.Entity("eTutor.Core.Models.ChangePassword", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<Guid>("ChangeRequestId");
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<DateTime>("ExpirationDate");
-
-                    b.Property<DateTime>("UpdatedDate");
-
-                    b.Property<int>("UserId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ChangePasswordRequests");
-                });
 
             modelBuilder.Entity("eTutor.Core.Models.Invoice", b =>
                 {
@@ -226,7 +206,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "3cbb88f5-832c-4250-a53d-a3d529f37c35",
+                            ConcurrencyStamp = "9b69c184-0bad-49e3-bcd2-630f751c15e7",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "admin",
                             NormalizedName = "admin",
@@ -235,7 +215,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "e15b5b1e-8a0a-4f23-893b-fa94528bcf9a",
+                            ConcurrencyStamp = "71d90607-355f-4874-8d72-91dcbc49526f",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "tutor",
                             NormalizedName = "tutor",
@@ -244,7 +224,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "c0bd6cd2-b839-4c4f-9c7b-bfd9f41eb60d",
+                            ConcurrencyStamp = "cb8a2326-6629-4a0b-8d81-4a552bbc4505",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "student",
                             NormalizedName = "student",
@@ -253,7 +233,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "9e52411b-9da1-433a-a3d2-4962bdadb870",
+                            ConcurrencyStamp = "d478d36c-0d1f-4831-9496-fdaf0d9d5db9",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "parent",
                             NormalizedName = "parent",
@@ -402,8 +382,6 @@ namespace eTutor.Persistence.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed");
 
-                    b.Property<string>("ProfileImageUrl");
-
                     b.Property<string>("SecurityStamp");
 
                     b.Property<bool>("TwoFactorEnabled");
@@ -535,14 +513,6 @@ namespace eTutor.Persistence.Migrations
                     b.HasIndex("UserId1");
 
                     b.ToTable("UserTokens");
-                });
-
-            modelBuilder.Entity("eTutor.Core.Models.ChangePassword", b =>
-                {
-                    b.HasOne("eTutor.Core.Models.User", "User")
-                        .WithMany("ChangeRequests")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("eTutor.Core.Models.Invoice", b =>
