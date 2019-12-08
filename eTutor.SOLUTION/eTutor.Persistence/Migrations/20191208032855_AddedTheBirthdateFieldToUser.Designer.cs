@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eTutor.Persistence;
 
 namespace eTutor.Persistence.Migrations
 {
     [DbContext(typeof(ETutorContext))]
-    partial class ETutorContextModelSnapshot : ModelSnapshot
+    [Migration("20191208032855_AddedTheBirthdateFieldToUser")]
+    partial class AddedTheBirthdateFieldToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

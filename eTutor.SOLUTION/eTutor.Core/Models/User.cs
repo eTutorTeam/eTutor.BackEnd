@@ -63,6 +63,8 @@ namespace eTutor.Core.Models
         /// Represents the user's home Latitude Coordinates
         /// </summary>
         public float? Latitude { get; set; }
+        
+        public DateTime BirthDate { get; set; }
 
         public string FullName => Name + " " + LastName;
 

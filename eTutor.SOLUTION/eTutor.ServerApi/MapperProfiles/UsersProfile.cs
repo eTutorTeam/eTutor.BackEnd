@@ -17,6 +17,8 @@ namespace eTutor.ServerApi.MapperProfiles
             CreateMap<User, SimpleUserResponse>();
 
             CreateMap<User, UserAdminResponse>();
+
+            CreateMap<User, StudentUserViewModel>();
         }
     }
 }
