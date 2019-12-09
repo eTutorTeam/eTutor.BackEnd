@@ -31,6 +31,7 @@ namespace eTutor.ServerApi.Controllers
         [HttpGet("change-password-request/{changePasswordId}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(Error), 400)]
+        [AllowAnonymous]
         public async Task<IActionResult> ValidateChangePasswordRequest([FromRoute]Guid changePasswordId)
         {
             var result = await _accountsManager.CheckIfChangePasswordRequestIsValid(changePasswordId);
