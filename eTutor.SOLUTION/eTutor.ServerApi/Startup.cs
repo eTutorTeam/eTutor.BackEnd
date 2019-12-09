@@ -143,6 +143,7 @@ namespace eTutor.ServerApi
             services.AddScoped<ISubjectRepository, SubjectRepository>();
             services.AddScoped<ITutorSubjectRepository, TutorSubjectRepository>();
             services.AddScoped<IParentStudentRepository, ParentStudentRepository>();
+            services.AddScoped<IChangePasswordRepository, ChangePasswordRepository>();
         }
 
         private void ConfigureManagers(IServiceCollection services)
@@ -151,6 +152,7 @@ namespace eTutor.ServerApi
             services.AddScoped<SubjectsManager, SubjectsManager>();
             services.AddScoped<TutorsManager, TutorsManager>();
             services.AddScoped<ParentsManager, ParentsManager>();
+            services.AddScoped<AccountsManager, AccountsManager>();
         }
 
         private void AuthenticationServiceConfiguration(IServiceCollection services)
