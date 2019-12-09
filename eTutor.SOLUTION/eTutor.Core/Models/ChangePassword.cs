@@ -12,6 +12,8 @@ namespace eTutor.Core.Models
          
          public bool IsUsed { get; set; }
          
+         public string ChangeToken { get; set; }
+         
         public User User { get; set; }
         
         public DateTime ExpirationDate { get; set; } = DateTime.Now.AddDays(1);
