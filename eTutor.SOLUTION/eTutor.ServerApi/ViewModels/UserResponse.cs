@@ -42,6 +42,11 @@ namespace eTutor.ServerApi.ViewModels
         /// Represents the user's gender
         /// </summary>
         public Gender Gender { get; set; }
+        
+        /// <summary>
+        /// Represents the user's email
+        /// </summary>
+        public string Email { get; set; }
 
         /// <summary>
         /// Represents the written address of the user

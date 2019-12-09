@@ -6,6 +6,7 @@ using eTutor.Core.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace eTutor.ServerApi.Helpers
 {
@@ -54,7 +55,10 @@ namespace eTutor.ServerApi.Helpers
 
             using (var writer = new StreamWriter(context.Response.Body))
             {
-                writer.Write(JsonConvert.SerializeObject(BuildInternalServerError(ex)));
+                writer.Write(JsonConvert.SerializeObject(BuildInternalServerError(ex), new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                }));
                 await writer.FlushAsync().ConfigureAwait(false);
             }
         }
@@ -71,7 +75,10 @@ namespace eTutor.ServerApi.Helpers
 
                 using (var writer = new StreamWriter(context.Response.Body))
                 {
-                    writer.Write(JsonConvert.SerializeObject(BuildUnathorizedBody()));
+                    writer.Write(JsonConvert.SerializeObject(BuildUnathorizedBody(), new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    }));
                     await writer.FlushAsync().ConfigureAwait(false);
                 }
             }
