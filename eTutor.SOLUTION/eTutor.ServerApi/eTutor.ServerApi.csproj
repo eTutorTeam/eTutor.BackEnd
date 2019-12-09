@@ -28,9 +28,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\eTutor.Core\eTutor.Core.csproj" />
-    <ProjectReference Include="..\eTutor.MailService\eTutor.MailService.csproj" />
-    <ProjectReference Include="..\eTutor.Persistence\eTutor.Persistence.csproj" />
+    <ProjectReference Include="..\eTutor.Core\eTutor.Core.csproj">
+      <GlobalPropertiesToRemove>;WebPublishProfileFile</GlobalPropertiesToRemove>
+    </ProjectReference>
+    <ProjectReference Include="..\eTutor.MailService\eTutor.MailService.csproj">
+      <GlobalPropertiesToRemove>;WebPublishProfileFile</GlobalPropertiesToRemove>
+    </ProjectReference>
+    <ProjectReference Include="..\eTutor.Persistence\eTutor.Persistence.csproj">
+      <GlobalPropertiesToRemove>;WebPublishProfileFile</GlobalPropertiesToRemove>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
