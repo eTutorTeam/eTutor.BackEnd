@@ -138,47 +138,6 @@ namespace eTutor.ServerApi.Controllers
         /// Allows Guests
         /// </summary>
         /// <returns></returns>
-        [HttpPost("forgot-password")]
-        [AllowAnonymous]
-        [ProducesResponseType(typeof(ChangePasswordResponse), 200)]
-        [ProducesResponseType(typeof(Error), 400)]
-        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
-        {
-            var result = await _accountsManager.GenerateForgetPasswordRequest(request.Email);
-
-            if (!result.Success)
-            {
-                return BadRequest(result.Message);
-            }
-
-            var response = _mapper.Map<ChangePasswordResponse>(result.Entity);
-
-            return Ok(response);
-        }
-
-        [HttpPut("change-password")]
-        [ProducesResponseType(typeof(UserResponse), 200)]
-        [ProducesResponseType(typeof(Error), 400)]
-        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest changeRequest)
-        {
-            IOperationResult<User> operationResult = await _usersManager.ChangePassword(changeRequest.UserId,
-                changeRequest.NewPassword, changeRequest.CurrentPassword);
-
-            if (!operationResult.Success)
-            {
-                return BadRequest(operationResult.Message);
-            }
-
-            var user = operationResult.Entity;
-            var response = _mapper.Map<UserResponse>(user);
-
-            return Ok(user);
-        }
-
-        /// <summary>
-        /// Allows Guests
-        /// </summary>
-        /// <returns></returns>
         [HttpGet("roles")]
         [ProducesResponseType(typeof(IEnumerable<Role>), 200)]
         [AllowAnonymous]
