@@ -62,18 +62,15 @@ namespace eTutor.Core.Managers
         {
             Subject currentSubject = await _subjectRepository.Set.FindAsync(subject.Id);
 
-            if (currentSubject == null) return BasicOperationResult<Subject>.Fail("Subject not found");
+            if (currentSubject == null) return BasicOperationResult<Subject>.Fail("La materia dada no fue encontrada");
 
-            if (!string.IsNullOrEmpty(subject.Name)) currentSubject.Name = subject.Name;
-            if (!string.IsNullOrEmpty(subject.Description)) currentSubject.Description = subject.Description;
-
-            var validationResult = await ValidateSubject(currentSubject);
+            var validationResult = await ValidateSubject(subject);
             if (!validationResult.Success) return validationResult;
 
-            _subjectRepository.Update(currentSubject);
+            _subjectRepository.Update(subject);
             await _subjectRepository.Save();
 
-            return BasicOperationResult<Subject>.Ok(currentSubject);
+            return BasicOperationResult<Subject>.Ok(subject);
         }
 
 

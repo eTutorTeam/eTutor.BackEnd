@@ -39,7 +39,7 @@ namespace eTutor.Core.Managers
             }
         }
 
-        public async Task<IOperationResult<User>> ActivateUserForTutor(int tutorId)
+        public async Task<IOperationResult<User>> ActivateUserForTutor(int tutorId, bool activate = true)
         {
             var tutor = await _userRepository.Set
                 .Include(u => u.UserRoles)
@@ -50,7 +50,7 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<User>.Fail("El usuario no fue encontrado");
             }
 
-            tutor.IsActive = true;
+            tutor.IsActive = activate;
 
             _userRepository.Update(tutor);
 

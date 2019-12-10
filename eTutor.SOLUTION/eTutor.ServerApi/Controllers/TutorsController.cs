@@ -80,5 +80,23 @@ namespace eTutor.ServerApi.Controllers
 
             return Ok(mapped);
         }
+        
+        [HttpPost("inactivate/{tutorId}")]
+        [Authorize(Roles = "admin")]
+        [ProducesResponseType(typeof(UserAdminResponse), 200)]
+        [ProducesResponseType(typeof(Error), 404)]
+        public async Task<IActionResult> InactivateTutor([FromRoute] int tutorId)
+        {
+            var result = await _tutorsManager.ActivateUserForTutor(tutorId, false);
+
+            if (!result.Success)
+            {
+                return NotFound(result.Message);
+            }
+
+            var mapped = _mapper.Map<UserAdminResponse>(result.Entity);
+
+            return Ok(mapped);
+        }
     }
 }
