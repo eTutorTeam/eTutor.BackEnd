@@ -39,7 +39,14 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<ChangePassword>.Fail("Este usuario está inactivo, debe de solicitar la activación de su cuenta para continuar.");
             }
 
-            ChangePassword changePassword = new ChangePassword() {ChangeRequestId = Guid.NewGuid(), UserId = userId};
+            string token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            ChangePassword changePassword = new ChangePassword
+            {
+                ChangeRequestId = Guid.NewGuid(), 
+                UserId = userId,
+                ChangeToken = token
+            };
 
             _changePasswordRepository.Create(changePassword);
 
@@ -48,8 +55,7 @@ namespace eTutor.Core.Managers
 
             return BasicOperationResult<ChangePassword>.Ok(changePassword);
         }
-
-
+        
         public async Task<IOperationResult<ChangePassword>> CheckIfChangePasswordRequestIsValid(Guid changePasswordId)
         {
             var changeRequest = await _changePasswordRepository.Find(c => c.ChangeRequestId == changePasswordId);
@@ -84,7 +90,7 @@ namespace eTutor.Core.Managers
             return await GenerateChangePasswordRequest(user.Id);
         }
 
-        public async Task<IOperationResult<bool>> ChangePasswordWithId(Guid changePasswordId, string password, string confirmPassword)
+        public async Task<IOperationResult<bool>> ChangePasswordWithChangeRequestId(Guid changePasswordId, string password, string confirmPassword)
         {
             var result = await CheckIfChangePasswordRequestIsValid(changePasswordId);
 
@@ -102,9 +108,7 @@ namespace eTutor.Core.Managers
 
             var user = await _userRepository.Find(u => u.Id == changeRequest.UserId);
 
-            string identityToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-
-            var identityResult = await _userManager.ResetPasswordAsync(user, identityToken, password);
+            var identityResult = await _userManager.ResetPasswordAsync(user, changeRequest.ChangeToken, password);
 
             if (!identityResult.Succeeded)
             {
@@ -117,6 +121,26 @@ namespace eTutor.Core.Managers
             await _changePasswordRepository.Save();
             
             return BasicOperationResult<bool>.Ok(true);
+        }
+
+        public async Task<IOperationResult<bool>> ChangePasswordForUser(int userId, string currentPassword,
+            string newPassword)
+        {
+            var user = await _userRepository.Find(u => u.Id == userId);
+
+            if (user == null)
+            {
+                return BasicOperationResult<bool>.Fail("El usuario indicado no existe");
+            }
+
+            var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+
+            if (!result.Succeeded)
+            {
+                return BasicOperationResult<bool>.Fail("Ingresó una contraseña incorrecta");
+            }
+            
+            return BasicOperationResult<bool>.Ok();
         }
     }
 }

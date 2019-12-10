@@ -13,6 +13,7 @@ namespace eTutor.ServerApi.Controllers
     [Route("api/accounts")]
     [ApiController]
     [Produces("application/json")]
+    [Authorize]
     public sealed class ChangePasswordController : EtutorBaseController
     {
         private readonly AccountsManager _accountsManager;
@@ -30,6 +31,7 @@ namespace eTutor.ServerApi.Controllers
         [HttpGet("change-password-request/{changePasswordId}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(Error), 400)]
+        [AllowAnonymous]
         public async Task<IActionResult> ValidateChangePasswordRequest([FromRoute]Guid changePasswordId)
         {
             var result = await _accountsManager.CheckIfChangePasswordRequestIsValid(changePasswordId);
@@ -68,7 +70,7 @@ namespace eTutor.ServerApi.Controllers
         public async Task<IActionResult> ChangePasswordUsingChangeRequestId([FromRoute] Guid changePasswordId, [FromBody] ForgetPasswordChangeRequest request)
         {
             IOperationResult<bool> result =
-                await _accountsManager.ChangePasswordWithId(changePasswordId, request.Password,
+                await _accountsManager.ChangePasswordWithChangeRequestId(changePasswordId, request.Password,
                     request.ConfirmPassword);
 
             if (!result.Success)
@@ -81,22 +83,22 @@ namespace eTutor.ServerApi.Controllers
         }
         
         [HttpPut("change-password")]
-        [ProducesResponseType(typeof(UserResponse), 200)]
+        [ProducesResponseType( 200)]
         [ProducesResponseType(typeof(Error), 400)]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest changeRequest)
         {
-            IOperationResult<User> operationResult = await _usersManager.ChangePassword(changeRequest.UserId,
-                changeRequest.NewPassword, changeRequest.CurrentPassword);
+            int userId = GetUserId();
 
-            if (!operationResult.Success)
+            IOperationResult<bool> result =
+                await _accountsManager.ChangePasswordForUser(userId, changeRequest.CurrentPassword,
+                    changeRequest.NewPassword);
+                
+            if (!result.Success)
             {
-                return BadRequest(operationResult.Message);
+                return BadRequest(result.Message);
             }
 
-            var user = operationResult.Entity;
-            var response = _mapper.Map<UserResponse>(user);
-
-            return Ok(user);
+            return Ok();
         }
     }
 }
