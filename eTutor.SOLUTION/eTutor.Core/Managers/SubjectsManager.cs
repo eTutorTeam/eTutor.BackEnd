@@ -39,7 +39,7 @@ namespace eTutor.Core.Managers
 
         public async Task<IOperationResult<Subject>> GetSubject(int subjectId)
         {
-            var subject = await _subjectRepository.Find(s => s.Id == subjectId, s => s.Tutors);
+            var subject = await _subjectRepository.Find(s => s.Id == subjectId);
 
             if (subject == null)
             {

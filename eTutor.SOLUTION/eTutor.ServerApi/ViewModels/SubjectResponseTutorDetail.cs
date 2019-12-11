@@ -13,8 +13,6 @@ namespace eTutor.ServerApi.ViewModels
 
         public string Description { get; set; }
 
-        public IEnumerable<TutorSimpleResponse> Tutors { get; set; }
-
         public DateTime CreatedDate { get; set; }
     }
 }
