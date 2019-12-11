@@ -1,6 +1,6 @@
 # eTutor - API BACKEND
 
-Este es un proyecto creado para la materia de Proyecto Final de la carrera  de Ingeniera de Software del INTEC. Consiste en una aplicación para que los estudiantes puedan hacer solicitud de tutorás de manera fácil y eficiente utilizando sus telefonos celulares.
+Este es un proyecto creado para la materia de Proyecto Final de la carrera  de Ingeniera de Software del INTEC. Consiste en una aplicación para que los estudiantes puedan hacer solicitud de tutorás de manera fácil y eficiente utilizando sus telefonos celulares. Lo que busca 
 
 ## Instalación 
 Para poder ejecutar el proyecto de backend de esta aplicación primero debe de cumplir con las siguientes dependencia en su maquina para poder ejecutar el mismo
@@ -29,4 +29,20 @@ Para poder ejecutar el proyecto de backend de esta aplicación primero debe de c
 
 
 ## Colaboración
-Para colaborar en este proyecto se debe de trabajar de la siguiente manera
+Para colaborar en este proyecto se debe de trabajar de la siguiente manera:
+* Si va a elaborar una nueva característica, debe de crear un branch que contenga la siguente estructura al ser nombrado **feature/(DESCRIPCION_CARACTERISTICA)**
+* Si va a hacer la corrección de algún error, debe de crear un branch con la siguiente estructura **bugfix/(CORRECCION)**
+
+Al finalizar el desarrollo, debe de iniciar un **Pull Requst** para someter el código a revisión de mínimo otro miembro del equipo, para que los cambios puedan ser integrados con la rama principal del proyecto.
+
+## Autores
+  * Trabajo Inicial
+    * Juan Daniel Ozuna
+    * Miguel Gonzalez
+    * Angel Ruiz
+    * Laura Gomez
+    * Jose Arias
+    * Joswald Martinez
+
+## License
+### **MIT**
