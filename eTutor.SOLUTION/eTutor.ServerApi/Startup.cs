@@ -48,7 +48,7 @@ namespace eTutor.ServerApi
 
             services.AddDbContext<ETutorContext>(opts =>
                 {
-                    opts.UseMySql(Configuration.GetConnectionString("AzureConnection"));
+                    opts.UseMySql(Configuration.GetConnectionString("MainConnection"));
                 });
 
 

@@ -27,7 +27,8 @@ namespace eTutor.ServerApi.MapperProfiles
                     opt => opt.MapFrom(src => (src.UserName ?? src.Email).ToUpper()))
                 .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName));
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
+                .ForMember(dest => dest.BirthDate, opt => opt.MapFrom(src => src.BirthDate));
 
             CreateMap<ParentUserRegistrationRequest, User>();
 

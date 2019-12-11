@@ -99,6 +99,44 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<User>.Ok(user);
         }
 
+
+        private async Task AsociateExistingParentWithNewStudent(User parentUser, User studentUser)
+        {
+            var roles = parentUser.UserRoles.Select(ur => ur.RoleId);
+
+            if (roles.All(r => r != (int) RoleTypes.Parent))
+            {
+                var userRole = new UserRole
+                {
+                    RoleId = (int)RoleTypes.Parent,
+                    UserId = parentUser.Id
+                };
+                _userRoleRepository.Create(userRole);
+            }
+
+            var parentStudentsResult = await _parentStudentRepository.FindAll(ps => ps.ParentId == parentUser.Id);
+            var students = parentStudentsResult.Select(ps => ps.StudentId);
+
+            if (students.Any(s => s == studentUser.Id))
+            {
+                return;
+            }
+
+            var parentStudent = new ParentStudent
+            {
+                ParentId = parentUser.Id,
+                StudentId = studentUser.Id,
+                Relationship = ParentRelationship.Father
+            };
+
+            _parentStudentRepository.Create(parentStudent);
+
+             await _parentStudentRepository.Save();
+
+             await _mailService.SendEmailToExistingParentToValidateStudent(studentUser, parentUser);
+
+        }
+
         public async Task<IOperationResult<User>> RegisterStudentUser(User newUser, string password, string parentEmail)
         {
             if (string.IsNullOrEmpty(parentEmail))
@@ -125,7 +163,17 @@ namespace eTutor.Core.Managers
                 .FirstOrDefaultAsync(u => u.Email == createdUser.Email);
 
             await _mailService.SendEmailToCreatedStudentUser(createdUser);
-            await _mailService.SendEmailToParentToCreateAccountAndValidateStudent(createdUser, parentEmail);
+
+            var parentUser = await _userRepository.Find(u => u.Email == parentEmail, u => u.UserRoles);
+
+            if (parentUser != null)
+            {
+                await AsociateExistingParentWithNewStudent(parentUser, user);
+            }
+            else
+            {
+                await _mailService.SendEmailToParentToCreateAccountAndValidateStudent(createdUser, parentEmail);
+            }
 
             return BasicOperationResult<User>.Ok(user);
         }
@@ -137,7 +185,7 @@ namespace eTutor.Core.Managers
 
             if (studentUser.UserRoles.All(ur => ur.RoleId != (int) RoleTypes.Student))
             {
-                return BasicOperationResult<User>.Fail("El usuario al que intenta asociar este padre, no es un estudiantess");
+                return BasicOperationResult<User>.Fail("El usuario al que intenta asociar este padre, no es un estudiantes");
             }
 
             newUser.IsActive = true;
@@ -177,36 +225,6 @@ namespace eTutor.Core.Managers
                 .Include(ur => ur.UserRoles)
                 .Where(r => r.UserRoles.Any(ur => ur.UserId == userId))
                 .ToListAsync();
-
-        public async Task<IOperationResult<string>> UserForgotPassword(string email)
-        {
-            User user = await _userManager.FindByEmailAsync(email);
-
-            if (user == null)
-            {
-                return BasicOperationResult<string>.Fail($"There's no user registered with the email {email}");
-            }
-
-            string passwordResetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-
-            await _mailService.SendPasswordResetEmail(user, passwordResetToken);
-
-            return BasicOperationResult<string>.Ok("Email Sent");
-        }
-
-        public async Task<IOperationResult<User>> ChangePasswordUserForgot(int userId, string newPassword, string token)
-        {
-            User user = await _userManager.FindByIdAsync(userId.ToString());
-
-            var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
-
-            if (!result.Succeeded)
-            {
-                return BasicOperationResult<User>.Fail(GetErrorsFromIdentityResult(result.Errors));
-            }
-
-            return BasicOperationResult<User>.Ok(user);
-        }
 
         public async Task<IOperationResult<IEnumerable<Role>>> GetAllRoles()
         {
@@ -291,22 +309,6 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<User>.Ok(user);
         }
         
-        public async Task<IOperationResult<bool>> ToggleUserAccountState(int userId)
-        {
-            var oldUser = await _userRepository.Find(u => u.Id == userId);
-
-            if (oldUser == null)
-            {
-                return BasicOperationResult<bool>.Fail("El usuario no fue encontrado");
-            }
-
-            oldUser.IsActive = !oldUser.IsActive;
-
-            _userRepository.Update(oldUser);
-
-            await _userRepository.Save();
-
-            return BasicOperationResult<bool>.Ok(true);
-        }
+       
     }
 }
