@@ -69,6 +69,22 @@ namespace eTutor.ServerApi.Controllers
 
             return Ok(response);
         }
+
+        [HttpPost("assign-subjects/{tutorId}/tutor")]
+        [Authorize(Roles = "admin")]
+        [ProducesResponseType(202)]
+        [ProducesResponseType(typeof(Error), 400)]
+        public async Task<IActionResult> AssignSubjectsToTutor([FromRoute] int tutorId, [FromBody] TutorSubjectAssignmentModel request)
+        {
+            var result = await _tutorSubjectsManager.AssignSubjectToTutors(tutorId, request.SubjectIds);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            return Accepted();
+        }
         
     }
 }

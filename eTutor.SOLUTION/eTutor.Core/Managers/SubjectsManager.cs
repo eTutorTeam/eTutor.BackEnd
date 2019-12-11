@@ -134,10 +134,11 @@ namespace eTutor.Core.Managers
 
         private async Task<IEnumerable<Subject>> GetAllSubjectsAGivenTutorDoesntHave(int tutorId)
         {
-            return await _subjectRepository
-                .Set.Include(s => s.Tutors)
-                .Where(s => s.Tutors.Any(t => t.TutorId != tutorId))
-                .ToListAsync();
+            var subjects = _subjectRepository.Set.Include(s => s.Tutors);
+
+            var res = await subjects.Where(s => !s.Tutors.Select(t => t.TutorId).Contains(tutorId)).ToListAsync();
+
+            return res;
         }
     }
 }
