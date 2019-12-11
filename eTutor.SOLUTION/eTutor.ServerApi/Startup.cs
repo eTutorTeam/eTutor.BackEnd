@@ -153,6 +153,7 @@ namespace eTutor.ServerApi
             services.AddScoped<TutorsManager, TutorsManager>();
             services.AddScoped<ParentsManager, ParentsManager>();
             services.AddScoped<AccountsManager, AccountsManager>();
+            services.AddScoped<TutorSubjectsManager, TutorSubjectsManager>();
         }
 
         private void AuthenticationServiceConfiguration(IServiceCollection services)

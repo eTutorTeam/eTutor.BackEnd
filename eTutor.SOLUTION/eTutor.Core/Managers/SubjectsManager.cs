@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using eTutor.Core.Contracts;
+using eTutor.Core.Enums;
 using eTutor.Core.Helpers;
 using eTutor.Core.Models;
 using eTutor.Core.Repositories;
@@ -17,11 +19,15 @@ namespace eTutor.Core.Managers
 
         private readonly ISubjectRepository _subjectRepository;
         private readonly ITutorSubjectRepository _tutorSubjectRepository;
+        private readonly IUserRepository _userRepository;
 
-        public SubjectsManager(ISubjectRepository subjectRepository, ITutorSubjectRepository tutorSubjectRepository)
+        public SubjectsManager(ISubjectRepository subjectRepository,
+            ITutorSubjectRepository tutorSubjectRepository,
+            IUserRepository userRepository)
         {
             _subjectRepository = subjectRepository;
             _tutorSubjectRepository = tutorSubjectRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<IOperationResult<IEnumerable<Subject>>> GetAllSubjects()
@@ -102,6 +108,37 @@ namespace eTutor.Core.Managers
             }
 
             return BasicOperationResult<Subject>.Ok();
+        }
+
+        public async Task<IOperationResult<IEnumerable<Subject>>> GetSubjectsForTutor(int tutorId, bool inverse = false)
+        {
+            var user = await _userRepository.Find(t => t.Id == tutorId
+                                                 && t.UserRoles.Any(r => r.RoleId == (int) RoleTypes.Tutor),
+                t => t.UserRoles);
+
+            if (user == null)
+            {
+                return BasicOperationResult<IEnumerable<Subject>>.Fail("El tutor no fue encontrado");
+            }
+
+            if (inverse)
+            {
+                var inverseSubjects = await GetAllSubjectsAGivenTutorDoesntHave(tutorId);
+                    return BasicOperationResult<IEnumerable<Subject>>.Ok(inverseSubjects);
+            }
+            
+            var tutorSubjects = await _tutorSubjectRepository.FindAll(ts => ts.TutorId == tutorId, ts => ts.Subject);
+            var subjects = tutorSubjects.Select(t => t.Subject);
+            return BasicOperationResult<IEnumerable<Subject>>.Ok(subjects);
+        }
+
+        private async Task<IEnumerable<Subject>> GetAllSubjectsAGivenTutorDoesntHave(int tutorId)
+        {
+            var subjects = _subjectRepository.Set.Include(s => s.Tutors);
+
+            var res = await subjects.Where(s => !s.Tutors.Select(t => t.TutorId).Contains(tutorId)).ToListAsync();
+
+            return res;
         }
     }
 }
