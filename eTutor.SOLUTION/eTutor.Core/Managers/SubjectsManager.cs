@@ -70,10 +70,13 @@ namespace eTutor.Core.Managers
 
             if (currentSubject == null) return BasicOperationResult<Subject>.Fail("La materia dada no fue encontrada");
 
+            currentSubject.Description = subject.Description;
+            currentSubject.Name = subject.Name;
+            
             var validationResult = await ValidateSubject(subject);
             if (!validationResult.Success) return validationResult;
 
-            _subjectRepository.Update(subject);
+            _subjectRepository.Update(currentSubject);
             await _subjectRepository.Save();
 
             return BasicOperationResult<Subject>.Ok(subject);
