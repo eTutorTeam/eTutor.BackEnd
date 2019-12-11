@@ -67,15 +67,15 @@ namespace eTutor.MailService
                 new EmailModel {HtmlContent = message});
         }
 
-        public Task SendEmailToParentToCreateAccountAndValidateStudent(User user, string parentEmail)
+        public Task SendEmailToParentToCreateAccountAndValidateStudent(User studentUser, string parentEmail)
         {
-            string message = $"<h1>Buenas Sr/Sra</h1>\r\n<p>Le queremos comunicar que su hijo/a {user.FullName}\r\n   " +
-                             $" a creado una cuenta en nuestro sistema con el correo\r\n    electronico {user.Email}\r\n</p>\r\n\r\n" +
+            string message = $"<h1>Buenas Sr/Sra</h1>\r\n<p>Le queremos comunicar que su hijo/a {studentUser.FullName}\r\n   " +
+                             $" a creado una cuenta en nuestro sistema con el correo\r\n    electronico {studentUser.Email}\r\n</p>\r\n\r\n" +
                              "<p>Para que su hijo pueda proceder con el registro,\r\n   " +
                              " debe de proceder a registrarse como usuario y validar a su \r\n    hijo presionando el boton de abajo\r\n</p>";
 
 
-            string link = string.Format(_parentLink, user.Id, parentEmail);
+            string link = string.Format(_parentLink, studentUser.Id, parentEmail);
 
             var emailModel = new EmailModel
             {
@@ -87,6 +87,25 @@ namespace eTutor.MailService
 
             return SendEmail($"{parentEmail}, juandanielozuna2@gmail.com", "Proceso de Registro Aplicacion eTutor",
                 emailModel);
+        }
+
+        public Task SendEmailToExistingParentToValidateStudent(User studentUser, User parentUser)
+        {
+            string message = $"<h1>Buenas {parentUser.FullName}</h1>\r\n<p>Le queremos comunicar que su hijo/a {studentUser.FullName}\r\n   " +
+                             $" a creado una cuenta en nuestro sistema con el correo\r\n    electronico {studentUser.Email}\r\n</p>\r\n\r\n" +
+                             "<p>Para que su hijo pueda iniciar sesión en la aplicación,\r\n   " +
+                             " debe de iniciar sesión en el siguiente enlace para proceder a activar la cuenta de su hijo\n</p>";
+
+            var emailModel = new EmailModel
+            {
+                BtnDisplay = "block",
+                BtnText = "Iniciar Sesión",
+                HtmlContent = message,
+                Link = _baseUrl
+            };
+            return SendEmail($"{parentUser.Email}, juandanielozuna2@gmail.com",
+                "Nuevo estudiante se registro con su cuenta", emailModel);
+
         }
 
         public Task SendEmailForSuccesfullAcountCreation(User user)
