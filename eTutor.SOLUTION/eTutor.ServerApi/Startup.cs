@@ -112,7 +112,7 @@ namespace eTutor.ServerApi
         {
             var smpt = Configuration.GetSection("SMTP").Get<SMTPConfiguration>();
             services.AddScoped(typeof(SMTPConfiguration), s => smpt);
-
+            //MailKit Configuration
             services.AddMailKit(optsBuilder =>
             {
                 optsBuilder.UseMailKit(new MailKitOptions
@@ -126,6 +126,10 @@ namespace eTutor.ServerApi
                     Security = true
                 });
             });
+
+            var firebaseConfiguration = Configuration.GetSection("Firebase").Get<FirebaseConfiguration>();
+            services.AddScoped(typeof(FirebaseConfiguration), fc => firebaseConfiguration);
+
         }
 
         private void ConfigureContractServices(IServiceCollection services)
