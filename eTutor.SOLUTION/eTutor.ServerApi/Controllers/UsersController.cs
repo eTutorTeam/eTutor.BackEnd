@@ -104,8 +104,12 @@ namespace eTutor.ServerApi.Controllers
             
             string fileName = file.FileName;
             Stream stream = file.OpenReadStream();
-
             var result = await _usersManager.UploadProfileImageForUser(userId, stream, fileName);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
 
             return Ok(result);
         }

@@ -5,10 +5,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using eTutor.Core.Contracts;
 using eTutor.Core.Enums;
+using eTutor.Core.Helpers;
 using eTutor.Core.Models;
 using eTutor.Core.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using static System.Int32;
 
 namespace eTutor.Core.Managers
 {
@@ -22,10 +25,11 @@ namespace eTutor.Core.Managers
         private readonly IParentStudentRepository _parentStudentRepository;
         private readonly IMailService _mailService;
         private readonly IFileService _fileService;
+        private readonly int _maxFileSize;
 
         public UsersManager(SignInManager<User> signInManager, UserManager<User> userManager, IUserRepository userRepository, 
             IRoleRepository roleRepository, IUserRoleRepository userRoleRepository, IMailService mailService, 
-            IParentStudentRepository parentStudentRepository, IFileService fileService)
+            IParentStudentRepository parentStudentRepository, IFileService fileService, IConfiguration configuration)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -35,6 +39,7 @@ namespace eTutor.Core.Managers
             _mailService = mailService;
             _parentStudentRepository = parentStudentRepository;
             _fileService = fileService;
+            _maxFileSize = Parse(configuration.GetSection("Settings")["FileMaxSize"]);
         }
 
         public async Task<IOperationResult<User>> AuthenticateUser(string email, string password)
@@ -321,21 +326,34 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<string>.Fail("El usuario dado no fue encontrado");
             }
 
+            if (!FileValidations.CheckIfFileIsImage(fileName))
+            {
+                return BasicOperationResult<string>.Fail("Debe de subir un archivo valido de imagen");
+            }
+
+            int fileSizeInKb = (int)(fileStream.Length / 1000);
+            if (fileSizeInKb > _maxFileSize)
+            {
+                return BasicOperationResult<string>.Fail($"El archivo excede el limite de {_maxFileSize}kb en tamaño, intente con un archivo más pequeño");
+            }
+            
             var fileUrl = await _fileService.UploadStreamToBucketServer(fileStream, fileName);
             if (string.IsNullOrEmpty(fileUrl))
             {
                 return BasicOperationResult<string>.Fail("El archivo no pudo ser cargado al servidor");
             }
 
+            if (!string.IsNullOrEmpty(user.ProfileImageUrl))
+            {
+                await _fileService.DeleteFileFromBucketServer(user.ProfileImageUrl);
+            }
+
             user.ProfileImageUrl = fileUrl;
-
-            //_userRepository.Update(user);
-
-            //await _userRepository.Save();
+            _userRepository.Update(user);
+            await _userRepository.Save();
             
             return BasicOperationResult<string>.Ok(fileUrl);
         }
-        
-       
+
     }
 }
