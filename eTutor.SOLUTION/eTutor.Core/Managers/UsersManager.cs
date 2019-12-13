@@ -336,7 +336,8 @@ namespace eTutor.Core.Managers
             {
                 return BasicOperationResult<string>.Fail($"El archivo excede el limite de {_maxFileSize}kb en tamaño, intente con un archivo más pequeño");
             }
-            
+
+            fileName = $"{Guid.NewGuid().ToString()}{Path.GetExtension(fileName)}";
             var fileUrl = await _fileService.UploadStreamToBucketServer(fileStream, fileName);
             if (string.IsNullOrEmpty(fileUrl))
             {
@@ -345,10 +346,11 @@ namespace eTutor.Core.Managers
 
             if (!string.IsNullOrEmpty(user.ProfileImageUrl))
             {
-                await _fileService.DeleteFileFromBucketServer(user.ProfileImageUrl);
+                await _fileService.DeleteFileFromBucketServer(user.FileReference);
             }
 
             user.ProfileImageUrl = fileUrl;
+            user.FileReference = fileName;
             _userRepository.Update(user);
             await _userRepository.Save();
             

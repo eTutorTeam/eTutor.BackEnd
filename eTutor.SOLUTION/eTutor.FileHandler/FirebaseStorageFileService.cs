@@ -19,17 +19,16 @@ namespace eTutor.FileHandler
 
         public async Task<string> UploadStreamToBucketServer(Stream file, string fileName)
         {
-            string fileExtension = Path.GetExtension(fileName);
-            var task = BuildFirebaseStorageObject()
+            return await BuildFirebaseStorageObject()
                 .Child("files")
-                .Child($"{Guid.NewGuid().ToString()}.{fileExtension}")
+                .Child(fileName)
                 .PutAsync(file);
-            return await task;
         }
 
         public Task DeleteFileFromBucketServer(string fileName)
         {
             return BuildFirebaseStorageObject()
+                .Child("files")
                 .Child(fileName)
                 .DeleteAsync();
         }

@@ -73,6 +73,8 @@ namespace eTutor.Core.Models
         /// Represents the url to the user's profile image
         /// </summary>
         public string ProfileImageUrl { get; set; }
+        
+        public string FileReference { get; set; }
 
         public string FullName => Name + " " + LastName;
 
