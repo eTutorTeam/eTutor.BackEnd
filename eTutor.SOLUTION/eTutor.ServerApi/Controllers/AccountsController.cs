@@ -184,6 +184,8 @@ namespace eTutor.ServerApi.Controllers
                 uId = user.Id,
                 UserName = user.UserName,
                 Email = user.Email,
+                FullName = user.FullName,
+                ProfileImageUrl = user.ProfileImageUrl ?? "https://immedilet-invest.com/wp-content/uploads/2016/01/user-placeholder.jpg",
                 Token = writtenToken,
                 Roles = roles.Select(r => r.Id).ToArray()
             };
