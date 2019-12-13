@@ -95,7 +95,7 @@ namespace eTutor.ServerApi.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> AddProfileImageToProfile(IFormFile file)
         {
-            int userId = 2;
+            int userId = 4;
             
             if (file == null)
             {
