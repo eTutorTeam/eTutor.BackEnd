@@ -33,6 +33,14 @@
   "frameworks": {
     "netcoreapp2.2": {
       "dependencies": {
+        "FirebaseAuthentication.net": {
+          "target": "Package",
+          "version": "[3.4.0, )"
+        },
+        "FirebaseStorage.net": {
+          "target": "Package",
+          "version": "[1.0.3, )"
+        },
         "Microsoft.NETCore.App": {
           "suppressParent": "All",
           "target": "Package",

@@ -12,6 +12,7 @@ using eTutor.Core.Managers;
 using eTutor.Core.Models;
 using eTutor.Core.Models.Configuration;
 using eTutor.Core.Repositories;
+using eTutor.FileHandler;
 using eTutor.MailService;
 using eTutor.Persistence;
 using eTutor.Persistence.Repositories;
@@ -137,6 +138,7 @@ namespace eTutor.ServerApi
             
             //services.AddScoped<IMailService, SendGridMailService>();
             services.AddScoped<IMailService, SMTPMailService>();
+            services.AddScoped<IFileService, FirebaseStorageFileService>();
         }
 
         private void ConfigureRepositories(IServiceCollection services)

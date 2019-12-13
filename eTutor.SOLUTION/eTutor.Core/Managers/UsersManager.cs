@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using eTutor.Core.Contracts;
@@ -20,9 +21,11 @@ namespace eTutor.Core.Managers
         private readonly IUserRoleRepository _userRoleRepository;
         private readonly IParentStudentRepository _parentStudentRepository;
         private readonly IMailService _mailService;
+        private readonly IFileService _fileService;
 
         public UsersManager(SignInManager<User> signInManager, UserManager<User> userManager, IUserRepository userRepository, 
-            IRoleRepository roleRepository, IUserRoleRepository userRoleRepository, IMailService mailService, IParentStudentRepository parentStudentRepository)
+            IRoleRepository roleRepository, IUserRoleRepository userRoleRepository, IMailService mailService, 
+            IParentStudentRepository parentStudentRepository, IFileService fileService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -31,6 +34,7 @@ namespace eTutor.Core.Managers
             _userRoleRepository = userRoleRepository;
             _mailService = mailService;
             _parentStudentRepository = parentStudentRepository;
+            _fileService = fileService;
         }
 
         public async Task<IOperationResult<User>> AuthenticateUser(string email, string password)
@@ -307,6 +311,29 @@ namespace eTutor.Core.Managers
             }
 
             return BasicOperationResult<User>.Ok(user);
+        }
+        
+        public async Task<IOperationResult<string>> UploadProfileImageForUser(int userId, Stream fileStream, string fileName)
+        {
+            var user = await _userRepository.Find(u => u.Id == userId);
+            if (user == null)
+            {
+                return BasicOperationResult<string>.Fail("El usuario dado no fue encontrado");
+            }
+
+            var fileUrl = await _fileService.UploadStreamToBucketServer(fileStream, fileName);
+            if (string.IsNullOrEmpty(fileUrl))
+            {
+                return BasicOperationResult<string>.Fail("El archivo no pudo ser cargado al servidor");
+            }
+
+            user.ProfileImageUrl = fileUrl;
+
+            //_userRepository.Update(user);
+
+            //await _userRepository.Save();
+            
+            return BasicOperationResult<string>.Ok(fileUrl);
         }
         
        

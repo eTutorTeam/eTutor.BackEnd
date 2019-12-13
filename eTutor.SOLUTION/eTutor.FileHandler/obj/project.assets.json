@@ -2,6 +2,32 @@
   "version": 3,
   "targets": {
     ".NETCoreApp,Version=v2.2": {
+      "FirebaseAuthentication.net/3.4.0": {
+        "type": "package",
+        "dependencies": {
+          "NETStandard.Library": "1.6.1",
+          "Newtonsoft.Json": "11.0.2"
+        },
+        "compile": {
+          "lib/netstandard1.1/Firebase.Auth.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.1/Firebase.Auth.dll": {}
+        }
+      },
+      "FirebaseStorage.net/1.0.3": {
+        "type": "package",
+        "dependencies": {
+          "NETStandard.Library": "1.6.1",
+          "Newtonsoft.Json": "9.0.1"
+        },
+        "compile": {
+          "lib/netstandard1.1/Firebase.Storage.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.1/Firebase.Storage.dll": {}
+        }
+      },
       "FluentValidation/8.5.1": {
         "type": "package",
         "dependencies": {
@@ -2741,6 +2767,30 @@
     }
   },
   "libraries": {
+    "FirebaseAuthentication.net/3.4.0": {
+      "sha512": "3XY1LgLWQGORKmcQzADQU2kLQkAF4R3yb5K7FjEKszQMpRnB7OZZVXh0SpMEfMGniICHIFr7TrWr5Q8bvfgSKA==",
+      "type": "package",
+      "path": "firebaseauthentication.net/3.4.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "firebaseauthentication.net.3.4.0.nupkg.sha512",
+        "firebaseauthentication.net.nuspec",
+        "lib/netstandard1.1/Firebase.Auth.dll"
+      ]
+    },
+    "FirebaseStorage.net/1.0.3": {
+      "sha512": "U3hJCi4jvUTshGdCO2t/mukQduSYk4kLw8JwChchDqexLcFb+CL8G/DKzr2n8a1ay8RNvR2oJCBmX81hwUy3LQ==",
+      "type": "package",
+      "path": "firebasestorage.net/1.0.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "firebasestorage.net.1.0.3.nupkg.sha512",
+        "firebasestorage.net.nuspec",
+        "lib/netstandard1.1/Firebase.Storage.dll"
+      ]
+    },
     "FluentValidation/8.5.1": {
       "sha512": "+N1R8SMcEjunUgk/85rl3yAn4ZTndVz6dCpLFbXT8LWqnnEa4YQfiVcnEV4K/rXrvRFjz0qcpEtk/EiYPidE8A==",
       "type": "package",
@@ -8193,6 +8243,8 @@
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v2.2": [
+      "FirebaseAuthentication.net >= 3.4.0",
+      "FirebaseStorage.net >= 1.0.3",
       "Microsoft.NETCore.App >= 2.2.0",
       "eTutor.Core >= 1.0.0"
     ]
@@ -8240,6 +8292,14 @@
     "frameworks": {
       "netcoreapp2.2": {
         "dependencies": {
+          "FirebaseAuthentication.net": {
+            "target": "Package",
+            "version": "[3.4.0, )"
+          },
+          "FirebaseStorage.net": {
+            "target": "Package",
+            "version": "[1.0.3, )"
+          },
           "Microsoft.NETCore.App": {
             "suppressParent": "All",
             "target": "Package",
