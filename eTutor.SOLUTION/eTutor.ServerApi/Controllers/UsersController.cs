@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -8,6 +9,7 @@ using eTutor.Core.Managers;
 using eTutor.Core.Models;
 using eTutor.ServerApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eTutor.ServerApi.Controllers
@@ -83,6 +85,33 @@ namespace eTutor.ServerApi.Controllers
 
             return Ok(result.Entity);
 
+        }
+
+
+        [HttpPost("profile/image")]
+        [ProducesResponseType(typeof(IOperationResult<string>), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        [ProducesResponseType(400)]
+        [AllowAnonymous]
+        public async Task<IActionResult> AddProfileImageToProfile(IFormFile file)
+        {
+            int userId = 4;
+            
+            if (file == null)
+            {
+                return BadRequest();
+            }
+            
+            string fileName = file.FileName;
+            Stream stream = file.OpenReadStream();
+            var result = await _usersManager.UploadProfileImageForUser(userId, stream, fileName);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            return Ok(result);
         }
     }
 }

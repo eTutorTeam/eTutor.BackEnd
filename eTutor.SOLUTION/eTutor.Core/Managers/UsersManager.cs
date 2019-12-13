@@ -1,13 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using eTutor.Core.Contracts;
 using eTutor.Core.Enums;
+using eTutor.Core.Helpers;
 using eTutor.Core.Models;
 using eTutor.Core.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using static System.Int32;
 
 namespace eTutor.Core.Managers
 {
@@ -20,9 +24,12 @@ namespace eTutor.Core.Managers
         private readonly IUserRoleRepository _userRoleRepository;
         private readonly IParentStudentRepository _parentStudentRepository;
         private readonly IMailService _mailService;
+        private readonly IFileService _fileService;
+        private readonly int _maxFileSize;
 
         public UsersManager(SignInManager<User> signInManager, UserManager<User> userManager, IUserRepository userRepository, 
-            IRoleRepository roleRepository, IUserRoleRepository userRoleRepository, IMailService mailService, IParentStudentRepository parentStudentRepository)
+            IRoleRepository roleRepository, IUserRoleRepository userRoleRepository, IMailService mailService, 
+            IParentStudentRepository parentStudentRepository, IFileService fileService, IConfiguration configuration)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -31,6 +38,8 @@ namespace eTutor.Core.Managers
             _userRoleRepository = userRoleRepository;
             _mailService = mailService;
             _parentStudentRepository = parentStudentRepository;
+            _fileService = fileService;
+            _maxFileSize = Parse(configuration.GetSection("Settings")["FileMaxSize"]);
         }
 
         public async Task<IOperationResult<User>> AuthenticateUser(string email, string password)
@@ -309,6 +318,44 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<User>.Ok(user);
         }
         
-       
+        public async Task<IOperationResult<string>> UploadProfileImageForUser(int userId, Stream fileStream, string fileName)
+        {
+            var user = await _userRepository.Find(u => u.Id == userId);
+            if (user == null)
+            {
+                return BasicOperationResult<string>.Fail("El usuario dado no fue encontrado");
+            }
+
+            if (!FileValidations.CheckIfFileIsImage(fileName))
+            {
+                return BasicOperationResult<string>.Fail("Debe de subir un archivo valido de imagen");
+            }
+
+            int fileSizeInKb = (int)(fileStream.Length / 1000);
+            if (fileSizeInKb > _maxFileSize)
+            {
+                return BasicOperationResult<string>.Fail($"El archivo excede el limite de {_maxFileSize}kb en tamaño, intente con un archivo más pequeño");
+            }
+
+            fileName = $"{Guid.NewGuid().ToString()}{Path.GetExtension(fileName)}";
+            var fileUrl = await _fileService.UploadStreamToBucketServer(fileStream, fileName);
+            if (string.IsNullOrEmpty(fileUrl))
+            {
+                return BasicOperationResult<string>.Fail("El archivo no pudo ser cargado al servidor");
+            }
+
+            if (!string.IsNullOrEmpty(user.ProfileImageUrl))
+            {
+                await _fileService.DeleteFileFromBucketServer(user.FileReference);
+            }
+
+            user.ProfileImageUrl = fileUrl;
+            user.FileReference = fileName;
+            _userRepository.Update(user);
+            await _userRepository.Save();
+            
+            return BasicOperationResult<string>.Ok(fileUrl);
+        }
+
     }
 }

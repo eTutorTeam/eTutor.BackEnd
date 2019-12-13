@@ -31,6 +31,7 @@
     <ProjectReference Include="..\eTutor.Core\eTutor.Core.csproj">
       <GlobalPropertiesToRemove>;WebPublishProfileFile</GlobalPropertiesToRemove>
     </ProjectReference>
+    <ProjectReference Include="..\eTutor.FileHandler\eTutor.FileHandler.csproj" />
     <ProjectReference Include="..\eTutor.MailService\eTutor.MailService.csproj">
       <GlobalPropertiesToRemove>;WebPublishProfileFile</GlobalPropertiesToRemove>
     </ProjectReference>
