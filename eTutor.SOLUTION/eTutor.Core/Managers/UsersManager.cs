@@ -70,6 +70,11 @@ namespace eTutor.Core.Managers
                 .Include(u => u.UserRoles)
                 .FirstOrDefaultAsync(u => u.Email == email);
 
+            if (!user.IsEmailValidated)
+            {
+                return BasicOperationResult<User>.Fail("Debe de validar su correo electrónico para continuar con el proceso de validar su cuenta");
+            }
+
             if (!user.IsActive)
             {
                 return BasicOperationResult<User>.Fail("El usuario debe de ser activado para poder acceder a su cuenta");

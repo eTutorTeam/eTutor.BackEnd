@@ -131,6 +131,9 @@ namespace eTutor.ServerApi
             var firebaseConfiguration = Configuration.GetSection("Firebase").Get<FirebaseConfiguration>();
             services.AddScoped(typeof(FirebaseConfiguration), fc => firebaseConfiguration);
 
+            var emailLinksConfiguration = Configuration.GetSection("EmailLinks").Get<EmailLinksConfiguration>();
+            services.AddScoped(typeof(EmailLinksConfiguration), elc => emailLinksConfiguration);
+
         }
 
         private void ConfigureContractServices(IServiceCollection services)
