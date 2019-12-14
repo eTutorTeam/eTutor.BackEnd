@@ -25,11 +25,12 @@ namespace eTutor.Core.Managers
         private readonly IParentStudentRepository _parentStudentRepository;
         private readonly IMailService _mailService;
         private readonly IFileService _fileService;
+        private readonly IEmailValidationRepository _emailValidationRepository;
         private readonly int _maxFileSize;
 
         public UsersManager(SignInManager<User> signInManager, UserManager<User> userManager, IUserRepository userRepository, 
             IRoleRepository roleRepository, IUserRoleRepository userRoleRepository, IMailService mailService, 
-            IParentStudentRepository parentStudentRepository, IFileService fileService, IConfiguration configuration)
+            IParentStudentRepository parentStudentRepository, IFileService fileService, IConfiguration configuration, IEmailValidationRepository emailValidationRepository)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -39,6 +40,7 @@ namespace eTutor.Core.Managers
             _mailService = mailService;
             _parentStudentRepository = parentStudentRepository;
             _fileService = fileService;
+            _emailValidationRepository = emailValidationRepository;
             _maxFileSize = Parse(configuration.GetSection("Settings")["FileMaxSize"]);
         }
 
@@ -99,7 +101,8 @@ namespace eTutor.Core.Managers
             }
             
             User createdUser = await _userManager.FindByEmailAsync(newUser.Email);
-            await _mailService.SendEmailToRegisteredUser(newUser);
+            var emailValidation = await GetEmailToken(createdUser.Id);
+            await _mailService.SendEmailToRegisteredUser(newUser, emailValidation.ValidationToken.ToString());
 
             IEnumerable<UserRole> userRoles = roles.Select(r => new UserRole {RoleId = (int) r, UserId = createdUser.Id});
             _userRoleRepository.Set.AddRange(userRoles);
@@ -176,7 +179,8 @@ namespace eTutor.Core.Managers
                 .Include(u => u.UserRoles)
                 .FirstOrDefaultAsync(u => u.Email == createdUser.Email);
 
-            await _mailService.SendEmailToCreatedStudentUser(createdUser);
+            var emailToken = await GetEmailToken(createdUser.Id);
+            await _mailService.SendEmailToCreatedStudentUser(createdUser, emailToken.ValidationToken.ToString());
 
             var parentUser = await _userRepository.Find(u => u.Email == parentEmail, u => u.UserRoles);
 
@@ -360,6 +364,21 @@ namespace eTutor.Core.Managers
             await _userRepository.Save();
             
             return BasicOperationResult<string>.Ok(fileUrl);
+        }
+
+        private async Task<EmailValidation> GetEmailToken(int userId)
+        {
+
+            EmailValidation emailValidation = await _emailValidationRepository.Find(e => e.UserId == userId);
+
+            if (emailValidation == null)
+            {
+                emailValidation = new EmailValidation {ValidationToken = Guid.NewGuid(), UserId = userId};
+                _emailValidationRepository.Create(emailValidation);
+                await _emailValidationRepository.Save();
+            }
+
+            return emailValidation;
         }
 
     }

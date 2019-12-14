@@ -143,5 +143,10 @@ namespace eTutor.Core.Managers
             
             return BasicOperationResult<bool>.Ok();
         }
+
+        public async Task<IOperationResult<string>> ValidateEmailForUser(int userId)
+        {
+            return BasicOperationResult<string>.Ok("El correo electornico ha sido validado exitosamente");
+        }
     }
 }

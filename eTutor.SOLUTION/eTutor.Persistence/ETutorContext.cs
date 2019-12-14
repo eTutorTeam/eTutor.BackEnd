@@ -19,6 +19,7 @@ namespace eTutor.Persistence
         public DbSet<Invoice> Invoices { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Device> Devices { get; set; }
+        public DbSet<EmailValidation> EmailValidations { get; set; }
         public DbSet<ChangePassword> ChangePasswordRequests { get; set; }
         public ETutorContext(DbContextOptions options) : base(options)
         {

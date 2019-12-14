@@ -28,12 +28,16 @@ namespace eTutor.MailService
             _baseUrl = _configuration["BaseSiteUrl"];
         }
 
-        public Task SendEmailToRegisteredUser(User user)
+        public Task SendEmailToRegisteredUser(User user, string emailValidationToken)
         {
+            string link = string.Format(_emailLinks.ValidateEmailLink, emailValidationToken); 
+            string complete = $"{_baseUrl}{link}";
             string message = $"<h1>Hola {user.FullName}</h1>\r\n\r\n" +
-                             $"<p>Su cuenta ha sido creada exitosamente,\r\nEstaremos validando su ingreso como tutor en unos momentos</p>";
+                             $"<p>Su cuenta ha sido creada exitosamente,\r\nEstaremos validando su ingreso como tutor en unos momentos</p>" +
+                             $"<p>Puede proceder a validar su correo electrónico en el siguiente enlace</p>";
 
-            return SendEmail(user.Email, "Su solicitud para su Cuenta ha sido Tomada", message);
+            return SendEmail(user.Email, $"Tu cuenta ha sido creada: {user.FullName}",
+                new EmailModel {HtmlContent = message, Link = complete, BtnDisplay = "block", BtnText = "Valida tu Correo Electrónico"});
         }
 
         public Task SendPasswordResetEmail(User user, string token)
@@ -54,14 +58,18 @@ namespace eTutor.MailService
             });
         }
 
-        public Task SendEmailToCreatedStudentUser(User user)
+        public Task SendEmailToCreatedStudentUser(User user, string emailValidatonToken)
         {
+
+            string link = string.Format(_emailLinks.ValidateEmailLink, emailValidatonToken);
+            string complete = $"{_baseUrl}{link}";
+            
             string message = $"<h1>Hola {user.FullName}</h1>\r\n\r\n" +
                              $"<p>Su cuenta ha sido creada exitosamente,\r\nle hemos enviado un mensaje a al correo electronico del padre\r\nsuministrado," +
-                             $" para que el mismo pueda proceder a activar su cuenta </p>\r\n\r\n<p>Le dejaremos saber cuando su cuenta haya sido activada, por su Padre</p>";
+                             $" Debe de proceder a validar su correo electrónico en el siguiente en enlaze en lo que espera a que su cuenta sea activada por su padre</p>";
 
             return SendEmail(user.Email, $"Tu cuenta ha sido creada: {user.FullName}",
-                new EmailModel {HtmlContent = message});
+                new EmailModel {HtmlContent = message, Link = complete, BtnDisplay = "block", BtnText = "Valida tu Correo Electrónico"});
         }
 
         public Task SendEmailToParentToCreateAccountAndValidateStudent(User studentUser, string parentEmail)

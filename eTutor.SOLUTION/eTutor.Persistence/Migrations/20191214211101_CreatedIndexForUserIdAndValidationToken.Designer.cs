@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eTutor.Persistence;
 
 namespace eTutor.Persistence.Migrations
 {
     [DbContext(typeof(ETutorContext))]
-    partial class ETutorContextModelSnapshot : ModelSnapshot
+    [Migration("20191214211101_CreatedIndexForUserIdAndValidationToken")]
+    partial class CreatedIndexForUserIdAndValidationToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,30 +64,6 @@ namespace eTutor.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("EmailValidations");
-                });
-
-            modelBuilder.Entity("eTutor.Core.Models.Device", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("FcmToken");
-
-                    b.Property<string>("Platform");
-
-                    b.Property<DateTime>("UpdatedDate");
-
-                    b.Property<int>("UserId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FcmToken");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Devices");
                 });
 
             modelBuilder.Entity("eTutor.Core.Models.Invoice", b =>
@@ -276,7 +254,6 @@ namespace eTutor.Persistence.Migrations
                         {
                             Id = 1,
                             ConcurrencyStamp = "972f2f59-11dd-4618-aef2-61007ea62d04",
-                            ConcurrencyStamp = "0828480f-7227-4697-8c8f-644778c19b3f",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "admin",
                             NormalizedName = "admin",
@@ -286,7 +263,6 @@ namespace eTutor.Persistence.Migrations
                         {
                             Id = 2,
                             ConcurrencyStamp = "a18b65ba-318e-4f21-b25e-e3c4ef38ca2c",
-                            ConcurrencyStamp = "6156e3c6-64ce-4c44-8d78-3827d5588404",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "tutor",
                             NormalizedName = "tutor",
@@ -296,7 +272,6 @@ namespace eTutor.Persistence.Migrations
                         {
                             Id = 3,
                             ConcurrencyStamp = "9ca09e94-415c-4378-8761-47cf8a5d1a1f",
-                            ConcurrencyStamp = "5f23beeb-3f25-49bb-91d9-ed0ff319cca2",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "student",
                             NormalizedName = "student",
@@ -306,7 +281,6 @@ namespace eTutor.Persistence.Migrations
                         {
                             Id = 4,
                             ConcurrencyStamp = "2479beb0-0c36-41fd-9811-adf3b82abef6",
-                            ConcurrencyStamp = "fee346af-10dd-481c-b824-b3f322029672",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "parent",
                             NormalizedName = "parent",
@@ -605,14 +579,6 @@ namespace eTutor.Persistence.Migrations
                     b.HasOne("eTutor.Core.Models.User", "User")
                         .WithOne("EmailValidation")
                         .HasForeignKey("eTutor.Core.Models.EmailValidation", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("eTutor.Core.Models.Device", b =>
-                {
-                    b.HasOne("eTutor.Core.Models.User", "User")
-                        .WithMany("Devices")
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
