@@ -8,8 +8,7 @@ namespace eTutor.ServerApi.MapperProfiles
     {
         public DevicesProfile()
         {
-            CreateMap<DeviceTokenRequest, Device>()
-                .ForMember(dest => dest.Platform, opt => opt.MapFrom(src => string.Join(',', src.Platforms)));
+            CreateMap<DeviceTokenRequest, Device>().ReverseMap();
         }
     }
 }

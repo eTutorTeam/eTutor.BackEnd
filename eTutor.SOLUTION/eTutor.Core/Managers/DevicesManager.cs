@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using eTutor.Core.Contracts;
 using eTutor.Core.Helpers;
@@ -12,9 +13,10 @@ namespace eTutor.Core.Managers
         private readonly IDeviceRepository _deviceRepository;
         private readonly IUserRepository _userRepository;
 
-        public DevicesManager(IDeviceRepository deviceRepository)
+        public DevicesManager(IDeviceRepository deviceRepository, IUserRepository userRepository)
         {
             _deviceRepository = deviceRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<IOperationResult<string>> StoreDeviceInfoForUser(Device device)

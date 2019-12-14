@@ -6,7 +6,7 @@ namespace eTutor.ServerApi.ViewModels
     {
         public int UserId { get; set; }
         
-        public ISet<string> Platforms { get; set; }
+        public string Platform { get; set; }
         
         public string FcmToken { get; set; }
     }
