@@ -16,14 +16,17 @@ namespace eTutor.Core.Managers
         private readonly UserManager<User> _userManager;
         private readonly IUserRepository _userRepository;
         private readonly IMailService _mailService;
+        private readonly IEmailValidationRepository _emailValidationRepository;
+        
         public AccountsManager(IChangePasswordRepository changePasswordRepository,
             IUserRepository userRepository, IMailService mailService,
-            UserManager<User> userManager)
+            UserManager<User> userManager, IEmailValidationRepository emailValidationRepository)
         {
             _changePasswordRepository = changePasswordRepository;
             _userRepository = userRepository;
             _mailService = mailService;
             _userManager = userManager;
+            _emailValidationRepository = emailValidationRepository;
         }
 
         public async Task<IOperationResult<ChangePassword>> GenerateChangePasswordRequest(int userId)
@@ -144,8 +147,25 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<bool>.Ok();
         }
 
-        public async Task<IOperationResult<string>> ValidateEmailForUser(int userId)
+        public async Task<IOperationResult<string>> ValidateEmailForUser(Guid validationToken)
         {
+            var emailToken = await _emailValidationRepository.Find(e => e.ValidationToken == validationToken);
+
+            if (emailToken == null)
+            {
+                return BasicOperationResult<string>.Fail("Este token de validación de correo no existe");
+            }
+
+            var user = await _userRepository.Find(u => u.Id == emailToken.UserId);
+            if (user.IsEmailValidated)
+            {
+                return BasicOperationResult<string>.Fail("Este usuario ya ha sido validado");
+            }
+
+            user.IsEmailValidated = true;
+            _userRepository.Update(user);
+            await _userRepository.Save();
+            
             return BasicOperationResult<string>.Ok("El correo electornico ha sido validado exitosamente");
         }
     }
