@@ -62,6 +62,8 @@ namespace eTutor.Core.Managers
 
             await _userRepository.Save();
 
+            await _mailService.SendWhenAccountStateToggled(oldUser);
+
             return BasicOperationResult<bool>.Ok(true);
         }
     }
