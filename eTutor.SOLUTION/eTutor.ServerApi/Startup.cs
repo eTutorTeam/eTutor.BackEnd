@@ -100,11 +100,13 @@ namespace eTutor.ServerApi
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials()
-                        .Build());
+                    builder => 
+                        builder
+                            .AllowAnyOrigin()
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials()
+                            .Build());
             });
         }
 
@@ -150,6 +152,7 @@ namespace eTutor.ServerApi
             services.AddScoped<ITutorSubjectRepository, TutorSubjectRepository>();
             services.AddScoped<IParentStudentRepository, ParentStudentRepository>();
             services.AddScoped<IChangePasswordRepository, ChangePasswordRepository>();
+            services.AddScoped<IDeviceRepository, DeviceRepository>();
         }
 
         private void ConfigureManagers(IServiceCollection services)
@@ -160,6 +163,7 @@ namespace eTutor.ServerApi
             services.AddScoped<ParentsManager, ParentsManager>();
             services.AddScoped<AccountsManager, AccountsManager>();
             services.AddScoped<TutorSubjectsManager, TutorSubjectsManager>();
+            services.AddScoped<DevicesManager, DevicesManager>();
         }
 
         private void AuthenticationServiceConfiguration(IServiceCollection services)
