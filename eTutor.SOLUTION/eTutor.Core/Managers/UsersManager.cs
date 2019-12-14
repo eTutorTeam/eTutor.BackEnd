@@ -203,8 +203,8 @@ namespace eTutor.Core.Managers
             }
 
             newUser.IsActive = true;
+            newUser.IsEmailValidated = true;
             var userCreateResult = await _userManager.CreateAsync(newUser, password);
-
             if (!userCreateResult.Succeeded)
             {
                 return BasicOperationResult<User>.Fail(GetErrorsFromIdentityResult(userCreateResult.Errors));

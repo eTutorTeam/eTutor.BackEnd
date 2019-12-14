@@ -60,6 +60,11 @@ namespace eTutor.SendGridMail
             throw new NotImplementedException();
         }
 
+        public Task SendWhenAccountStateToggled(User user)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task SendEmailToExistingParentToValidateStudent(User studentUser, User parentUser)
         {
             throw new NotImplementedException();

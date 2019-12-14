@@ -10,11 +10,9 @@ namespace eTutor.Core.Contracts
         Task SendPasswordResetEmail(User user, string token);
         Task SendEmailToCreatedStudentUser(User user);
         Task SendEmailToParentToCreateAccountAndValidateStudent(User studentUser, string parentEmail);
-
         Task SendToValidateEmail(User user);
-        
+        Task SendWhenAccountStateToggled(User user);
         Task SendEmailToExistingParentToValidateStudent(User studentUser, User parentUser);
-        
         Task SendEmailForSuccesfullAcountCreation(User user);
         Task SendEmailStudentActivated(User user);
     } 

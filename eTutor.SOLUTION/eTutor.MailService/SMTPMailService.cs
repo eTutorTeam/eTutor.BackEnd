@@ -91,6 +91,15 @@ namespace eTutor.MailService
             throw new NotImplementedException();
         }
 
+        public Task SendWhenAccountStateToggled(User user)
+        {
+            string state = user.IsActive ? "Activa" : "Inactiva";
+            string message = $"<h1>Buenas {user.FullName}</h1>" +
+                             "<p>Nos comunicamos con usted para indicarle que el estado de su cuenta ha cambiado" +
+                             $"y que ahora esta: <strong>{state}</strong></p>";
+            return SendEmail(user.Email, "El estado de su cuenta ha cambiado", message);
+        }
+
         public Task SendEmailToExistingParentToValidateStudent(User studentUser, User parentUser)
         {
             string message = $"<h1>Buenas {parentUser.FullName}</h1>\r\n<p>Le queremos comunicar que su hijo/a {studentUser.FullName}\r\n   " +

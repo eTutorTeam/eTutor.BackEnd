@@ -14,11 +14,14 @@ namespace eTutor.Core.Managers
     
         private readonly IUserRepository _userRepository;
         private readonly IParentStudentRepository _parentStudentRepository;
+        private readonly IMailService _mailService;
 
-        public ParentsManager(IUserRepository userRepository, IParentStudentRepository parentStudentRepository)
+        public ParentsManager(IUserRepository userRepository, 
+            IParentStudentRepository parentStudentRepository, IMailService mailService)
         {
             _userRepository = userRepository;
             _parentStudentRepository = parentStudentRepository;
+            _mailService = mailService;
         }
         
         public async Task<IOperationResult<IEnumerable<User>>> GetStudentsByParentId(int parentId)
@@ -37,7 +40,7 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<IEnumerable<User>>.Ok(studentsUsers);
         }
         
-        public async Task<IOperationResult<bool>> ToggerStudentAccountActivation(int studentId, int parentId)
+        public async Task<IOperationResult<bool>> ToggleStudentAccountActivation(int studentId, int parentId)
         {
             var oldUser = await _userRepository.Find(
                 u => u.Id == studentId && u.UserRoles.Any(ur => ur.RoleId == (int) RoleTypes.Student),

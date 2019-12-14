@@ -54,7 +54,7 @@ namespace eTutor.ServerApi.Controllers
         {
             int parentId = GetUserId();
             
-            IOperationResult<bool> operationResult = await _parentsManager.ToggerStudentAccountActivation(studentId, parentId);
+            IOperationResult<bool> operationResult = await _parentsManager.ToggleStudentAccountActivation(studentId, parentId);
     
             if (!operationResult.Success)
             {
