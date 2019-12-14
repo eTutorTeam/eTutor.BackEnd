@@ -33,6 +33,13 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<string>.Fail(validationResult.JSONFormatErrors());
             }
 
+            if (await _deviceRepository.Exists(d => d.FcmToken == device.FcmToken
+                                                    && d.Platform == device.Platform
+                                                    && d.UserId == userId))
+            {
+                return BasicOperationResult<string>.Ok("El Dispositivo ya ha sido guardado para este usuario");
+            }
+
             _deviceRepository.Create(device);
 
             await _deviceRepository.Save();

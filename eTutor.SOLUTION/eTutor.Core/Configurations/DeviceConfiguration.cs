@@ -12,6 +12,8 @@ namespace eTutor.Core.Configurations
                 .WithMany(u => u.Devices)
                 .HasForeignKey(d => d.UserId)
                 .HasPrincipalKey(u => u.Id);
+
+            builder.HasIndex(d => d.FcmToken);
         }
     }
 }
