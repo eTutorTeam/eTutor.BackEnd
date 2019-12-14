@@ -16,7 +16,6 @@ using eTutor.FileHandler;
 using eTutor.MailService;
 using eTutor.Persistence;
 using eTutor.Persistence.Repositories;
-using eTutor.SendGridMail;
 using eTutor.ServerApi.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -133,12 +132,13 @@ namespace eTutor.ServerApi
             var firebaseConfiguration = Configuration.GetSection("Firebase").Get<FirebaseConfiguration>();
             services.AddScoped(typeof(FirebaseConfiguration), fc => firebaseConfiguration);
 
+            var emailLinksConfiguration = Configuration.GetSection("EmailLinks").Get<EmailLinksConfiguration>();
+            services.AddScoped(typeof(EmailLinksConfiguration), elc => emailLinksConfiguration);
+
         }
 
         private void ConfigureContractServices(IServiceCollection services)
         {
-            
-            //services.AddScoped<IMailService, SendGridMailService>();
             services.AddScoped<IMailService, SMTPMailService>();
             services.AddScoped<IFileService, FirebaseStorageFileService>();
         }
@@ -153,6 +153,7 @@ namespace eTutor.ServerApi
             services.AddScoped<IParentStudentRepository, ParentStudentRepository>();
             services.AddScoped<IChangePasswordRepository, ChangePasswordRepository>();
             services.AddScoped<IDeviceRepository, DeviceRepository>();
+            services.AddScoped<IEmailValidationRepository, EmailValidationRepository>();
         }
 
         private void ConfigureManagers(IServiceCollection services)

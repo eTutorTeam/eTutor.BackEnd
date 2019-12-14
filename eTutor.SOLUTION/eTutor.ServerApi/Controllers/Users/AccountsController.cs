@@ -133,6 +133,26 @@ namespace eTutor.ServerApi.Controllers
 
             return Ok();
         }
+        
+        /// <summary>
+        /// Allow Guests
+        /// </summary>
+        /// <param name="emailToken">Validation token to represent user entity</param>
+        [HttpPost("validate-email/{emailToken}")]
+        [ProducesResponseType(typeof(IOperationResult<string>), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        [AllowAnonymous]
+        public async Task<IActionResult> ValidateEmailForUser([FromRoute] Guid emailToken)
+        {
+            var result = await _accountsManager.ValidateEmailForUser(emailToken);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            return Ok(result);
+        }
 
         /// <summary>
         /// Allows Guests

@@ -100,6 +100,9 @@ namespace eTutor.Core.Models
 
         public ISet<Device> Devices { get; set; }
         public ISet<ChangePassword> ChangeRequests { get; set; }
+        
+        public EmailValidation EmailValidation { get; set; }
+        
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         
         public DateTime UpdatedDate { get; set; } = DateTime.Now;
