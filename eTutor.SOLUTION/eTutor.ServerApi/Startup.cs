@@ -12,10 +12,10 @@ using eTutor.Core.Managers;
 using eTutor.Core.Models;
 using eTutor.Core.Models.Configuration;
 using eTutor.Core.Repositories;
+using eTutor.FileHandler;
 using eTutor.MailService;
 using eTutor.Persistence;
 using eTutor.Persistence.Repositories;
-using eTutor.SendGridMail;
 using eTutor.ServerApi.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -99,11 +99,13 @@ namespace eTutor.ServerApi
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials()
-                        .Build());
+                    builder => 
+                        builder
+                            .AllowAnyOrigin()
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials()
+                            .Build());
             });
         }
 
@@ -112,7 +114,7 @@ namespace eTutor.ServerApi
         {
             var smpt = Configuration.GetSection("SMTP").Get<SMTPConfiguration>();
             services.AddScoped(typeof(SMTPConfiguration), s => smpt);
-
+            //MailKit Configuration
             services.AddMailKit(optsBuilder =>
             {
                 optsBuilder.UseMailKit(new MailKitOptions
@@ -126,13 +128,19 @@ namespace eTutor.ServerApi
                     Security = true
                 });
             });
+
+            var firebaseConfiguration = Configuration.GetSection("Firebase").Get<FirebaseConfiguration>();
+            services.AddScoped(typeof(FirebaseConfiguration), fc => firebaseConfiguration);
+
+            var emailLinksConfiguration = Configuration.GetSection("EmailLinks").Get<EmailLinksConfiguration>();
+            services.AddScoped(typeof(EmailLinksConfiguration), elc => emailLinksConfiguration);
+
         }
 
         private void ConfigureContractServices(IServiceCollection services)
         {
-            
-            //services.AddScoped<IMailService, SendGridMailService>();
             services.AddScoped<IMailService, SMTPMailService>();
+            services.AddScoped<IFileService, FirebaseStorageFileService>();
         }
 
         private void ConfigureRepositories(IServiceCollection services)
@@ -144,6 +152,8 @@ namespace eTutor.ServerApi
             services.AddScoped<ITutorSubjectRepository, TutorSubjectRepository>();
             services.AddScoped<IParentStudentRepository, ParentStudentRepository>();
             services.AddScoped<IChangePasswordRepository, ChangePasswordRepository>();
+            services.AddScoped<IDeviceRepository, DeviceRepository>();
+            services.AddScoped<IEmailValidationRepository, EmailValidationRepository>();
         }
 
         private void ConfigureManagers(IServiceCollection services)
@@ -154,6 +164,7 @@ namespace eTutor.ServerApi
             services.AddScoped<ParentsManager, ParentsManager>();
             services.AddScoped<AccountsManager, AccountsManager>();
             services.AddScoped<TutorSubjectsManager, TutorSubjectsManager>();
+            services.AddScoped<DevicesManager, DevicesManager>();
         }
 
         private void AuthenticationServiceConfiguration(IServiceCollection services)

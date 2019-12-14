@@ -17,26 +17,27 @@ namespace eTutor.MailService
     {
         private readonly IEmailService _emailService;
         private readonly IConfiguration _configuration;
+        private readonly EmailLinksConfiguration _emailLinks;
         private readonly string _baseUrl;
-        private readonly string _parentLink;
-        private readonly string _passwordResetLink;
 
-        public SMTPMailService(IEmailService emailService, IConfiguration configuration)
+        public SMTPMailService(IEmailService emailService, IConfiguration configuration, EmailLinksConfiguration emailLinks)
         {
             _emailService = emailService;
             _configuration = configuration;
+            _emailLinks = emailLinks;
             _baseUrl = _configuration["BaseSiteUrl"];
-            IConfigurationSection links = _configuration.GetSection("EmailLinks");
-            _parentLink = links["ParentLink"];
-            _passwordResetLink = links["PasswordResetLink"];
         }
 
-        public Task SendEmailToRegisteredUser(User user)
+        public Task SendEmailToRegisteredUser(User user, string emailValidationToken)
         {
+            string link = string.Format(_emailLinks.ValidateEmailLink, emailValidationToken); 
+            string complete = $"{_baseUrl}{link}";
             string message = $"<h1>Hola {user.FullName}</h1>\r\n\r\n" +
-                             $"<p>Su cuenta ha sido creada exitosamente,\r\nEstaremos validando su ingreso como tutor en unos momentos</p>";
+                             $"<p>Su cuenta ha sido creada exitosamente,\r\nEstaremos validando su ingreso como tutor en unos momentos</p>" +
+                             $"<p>Puede proceder a validar su correo electrónico en el siguiente enlace</p>";
 
-            return SendEmail($"{user.Email}, juandanielozuna2@gmail.com", "Su solicitud para su Cuenta ha sido Tomada", message);
+            return SendEmail(user.Email, $"Tu cuenta ha sido creada: {user.FullName}",
+                new EmailModel {HtmlContent = message, Link = complete, BtnDisplay = "block", BtnText = "Valida tu Correo Electrónico"});
         }
 
         public Task SendPasswordResetEmail(User user, string token)
@@ -45,10 +46,10 @@ namespace eTutor.MailService
                              $"\r\n<p>Usted ha solicitado un cambio de contraseña." +
                              $" Presione el botón, para poder hacer el cambio</p>" +
                              $"\r\n<p>Este enlace va a expirar en 24 horas.</p>";
-            string link = string.Format(_passwordResetLink, token);
+            string link = string.Format(_emailLinks.PasswordResetLink, token);
             string complete = $"{_baseUrl}{link}";
 
-            return SendEmail($"{user.Email},juandanielozuna2@gmail.com", "Recupere su Contraseña", new EmailModel
+            return SendEmail(user.Email, "Recupere su Contraseña", new EmailModel
             {
                 BtnDisplay = "block",
                 BtnText = "Recupere su Contraseña",
@@ -57,14 +58,18 @@ namespace eTutor.MailService
             });
         }
 
-        public Task SendEmailToCreatedStudentUser(User user)
+        public Task SendEmailToCreatedStudentUser(User user, string emailValidatonToken)
         {
+
+            string link = string.Format(_emailLinks.ValidateEmailLink, emailValidatonToken);
+            string complete = $"{_baseUrl}{link}";
+            
             string message = $"<h1>Hola {user.FullName}</h1>\r\n\r\n" +
                              $"<p>Su cuenta ha sido creada exitosamente,\r\nle hemos enviado un mensaje a al correo electronico del padre\r\nsuministrado," +
-                             $" para que el mismo pueda proceder a activar su cuenta </p>\r\n\r\n<p>Le dejaremos saber cuando su cuenta haya sido activada, por su Padre</p>";
+                             $" Debe de proceder a validar su correo electrónico en el siguiente en enlaze en lo que espera a que su cuenta sea activada por su padre</p>";
 
-            return SendEmail($"{user.Email}, juandanielozuna2@gmail.com", $"Tu cuenta ha sido creada: {user.FullName}",
-                new EmailModel {HtmlContent = message});
+            return SendEmail(user.Email, $"Tu cuenta ha sido creada: {user.FullName}",
+                new EmailModel {HtmlContent = message, Link = complete, BtnDisplay = "block", BtnText = "Valida tu Correo Electrónico"});
         }
 
         public Task SendEmailToParentToCreateAccountAndValidateStudent(User studentUser, string parentEmail)
@@ -75,7 +80,7 @@ namespace eTutor.MailService
                              " debe de proceder a registrarse como usuario y validar a su \r\n    hijo presionando el boton de abajo\r\n</p>";
 
 
-            string link = string.Format(_parentLink, studentUser.Id, parentEmail);
+            string link = string.Format(_emailLinks.ParentLink, studentUser.Id, parentEmail);
 
             var emailModel = new EmailModel
             {
@@ -85,8 +90,22 @@ namespace eTutor.MailService
                 Link = $"{_baseUrl}{link}"
             };
 
-            return SendEmail($"{parentEmail}, juandanielozuna2@gmail.com", "Proceso de Registro Aplicacion eTutor",
+            return SendEmail(parentEmail, "Proceso de Registro Aplicacion eTutor",
                 emailModel);
+        }
+
+        public Task SendToValidateEmail(User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SendWhenAccountStateToggled(User user)
+        {
+            string state = user.IsActive ? "Activa" : "Inactiva";
+            string message = $"<h1>Buenas {user.FullName}</h1>" +
+                             "<p>Nos comunicamos con usted para indicarle que el estado de su cuenta ha cambiado" +
+                             $"y que ahora esta: <strong>{state}</strong></p>";
+            return SendEmail(user.Email, "El estado de su cuenta ha cambiado", message);
         }
 
         public Task SendEmailToExistingParentToValidateStudent(User studentUser, User parentUser)
@@ -103,7 +122,7 @@ namespace eTutor.MailService
                 HtmlContent = message,
                 Link = _baseUrl
             };
-            return SendEmail($"{parentUser.Email}, juandanielozuna2@gmail.com",
+            return SendEmail(parentUser.Email,
                 "Nuevo estudiante se registro con su cuenta", emailModel);
 
         }
@@ -112,7 +131,7 @@ namespace eTutor.MailService
         {
             string message = $"<h1>Buenas {user.FullName}</h1>\r\n<h2>Su cuenta ha sido creada exitosamente</h2>";
 
-            return SendEmail($"{user.Email}, juandanielozuna2@gmail.com", "Su cuenta ha sido activada", message);
+            return SendEmail(user.Email, "Su cuenta ha sido activada", message);
         }
 
         public Task SendEmailStudentActivated(User user)
@@ -120,7 +139,7 @@ namespace eTutor.MailService
             string message = $"<h1>Buenas {user.FullName}</h1>\r\n<h2>Su cuenta ha sido activada exitosamente</h2>" +
                              "\r\n\r\n<p>Ya puede proceder a ingresar a la aplicacion\r\n</p>\r\n<br>";
 
-            return SendEmail($"{user.Email}, juandanielozuna2@gmail.com", "Su cuenta ha sido activada", message);
+            return SendEmail(user.Email, "Su cuenta ha sido activada", message);
         }
 
         private async Task<string> ReadEmailTemplate(string fileName = "generic-email.html")
@@ -141,12 +160,12 @@ namespace eTutor.MailService
             templateContent = templateContent.Replace("{{btn-display}}", model.BtnDisplay);
             templateContent = templateContent.Replace("{{link}}", model.Link);
 
-            await _emailService.SendAsync(reciepents, subject, templateContent, true);
+            await _emailService.SendAsync($"{reciepents},juandanielozuna2@gmail.com", subject, templateContent, true);
         }
 
         private async Task SendEmail(string reciepents, string subject, string htmlMessage)
         {
-            var model = new EmailModel()
+            var model = new EmailModel
             {
                 BtnDisplay = "none",
                 BtnText = "",
@@ -161,7 +180,7 @@ namespace eTutor.MailService
             templateContent = templateContent.Replace("{{btn-display}}", model.BtnDisplay);
             templateContent = templateContent.Replace("{{link}}", model.Link);
 
-            await _emailService.SendAsync(reciepents, subject, templateContent, true);
+            await _emailService.SendAsync($"{reciepents},juandanielozuna2@gmail.com", subject, templateContent, true);
         }
     }
 }

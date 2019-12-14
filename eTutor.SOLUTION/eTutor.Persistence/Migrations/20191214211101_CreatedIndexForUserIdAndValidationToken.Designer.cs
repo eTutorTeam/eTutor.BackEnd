@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eTutor.Persistence;
 
 namespace eTutor.Persistence.Migrations
 {
     [DbContext(typeof(ETutorContext))]
-    partial class ETutorContextModelSnapshot : ModelSnapshot
+    [Migration("20191214211101_CreatedIndexForUserIdAndValidationToken")]
+    partial class CreatedIndexForUserIdAndValidationToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,30 +64,6 @@ namespace eTutor.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("EmailValidations");
-                });
-
-            modelBuilder.Entity("eTutor.Core.Models.Device", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("FcmToken");
-
-                    b.Property<string>("Platform");
-
-                    b.Property<DateTime>("UpdatedDate");
-
-                    b.Property<int>("UserId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FcmToken");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Devices");
                 });
 
             modelBuilder.Entity("eTutor.Core.Models.Invoice", b =>
@@ -601,14 +579,6 @@ namespace eTutor.Persistence.Migrations
                     b.HasOne("eTutor.Core.Models.User", "User")
                         .WithOne("EmailValidation")
                         .HasForeignKey("eTutor.Core.Models.EmailValidation", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("eTutor.Core.Models.Device", b =>
-                {
-                    b.HasOne("eTutor.Core.Models.User", "User")
-                        .WithMany("Devices")
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

@@ -133,6 +133,26 @@ namespace eTutor.ServerApi.Controllers
 
             return Ok();
         }
+        
+        /// <summary>
+        /// Allow Guests
+        /// </summary>
+        /// <param name="emailToken">Validation token to represent user entity</param>
+        [HttpPost("validate-email/{emailToken}")]
+        [ProducesResponseType(typeof(IOperationResult<string>), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        [AllowAnonymous]
+        public async Task<IActionResult> ValidateEmailForUser([FromRoute] Guid emailToken)
+        {
+            var result = await _accountsManager.ValidateEmailForUser(emailToken);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            return Ok(result);
+        }
 
         /// <summary>
         /// Allows Guests
@@ -184,6 +204,8 @@ namespace eTutor.ServerApi.Controllers
                 uId = user.Id,
                 UserName = user.UserName,
                 Email = user.Email,
+                FullName = user.FullName,
+                ProfileImageUrl = user.ProfileImageUrl ?? "https://immedilet-invest.com/wp-content/uploads/2016/01/user-placeholder.jpg",
                 Token = writtenToken,
                 Roles = roles.Select(r => r.Id).ToArray()
             };

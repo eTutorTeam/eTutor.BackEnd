@@ -73,6 +73,8 @@ namespace eTutor.Core.Models
         /// Represents the url to the user's profile image
         /// </summary>
         public string ProfileImageUrl { get; set; }
+        
+        public string FileReference { get; set; }
 
         public string FullName => Name + " " + LastName;
 
@@ -96,7 +98,11 @@ namespace eTutor.Core.Models
         
         public ISet<Rating> Ratings { get; set; }
 
+        public ISet<Device> Devices { get; set; }
         public ISet<ChangePassword> ChangeRequests { get; set; }
+        
+        public EmailValidation EmailValidation { get; set; }
+        
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         
         public DateTime UpdatedDate { get; set; } = DateTime.Now;

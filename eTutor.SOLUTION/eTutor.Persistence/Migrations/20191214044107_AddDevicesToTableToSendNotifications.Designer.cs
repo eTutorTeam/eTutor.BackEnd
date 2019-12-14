@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eTutor.Persistence;
 
 namespace eTutor.Persistence.Migrations
 {
     [DbContext(typeof(ETutorContext))]
-    partial class ETutorContextModelSnapshot : ModelSnapshot
+    [Migration("20191214044107_AddDevicesToTableToSendNotifications")]
+    partial class AddDevicesToTableToSendNotifications
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,27 +45,6 @@ namespace eTutor.Persistence.Migrations
                     b.ToTable("ChangePasswordRequests");
                 });
 
-            modelBuilder.Entity("eTutor.Core.Models.EmailValidation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<DateTime>("UpdatedDate");
-
-                    b.Property<int>("UserId");
-
-                    b.Property<Guid>("ValidationToken");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("EmailValidations");
-                });
-
             modelBuilder.Entity("eTutor.Core.Models.Device", b =>
                 {
                     b.Property<int>("Id")
@@ -80,8 +61,6 @@ namespace eTutor.Persistence.Migrations
                     b.Property<int>("UserId");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FcmToken");
 
                     b.HasIndex("UserId");
 
@@ -275,7 +254,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "972f2f59-11dd-4618-aef2-61007ea62d04",
+                            ConcurrencyStamp = "9b024713-3ec2-4afc-a149-751e2fe720fa",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "admin",
                             NormalizedName = "admin",
@@ -284,7 +263,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "a18b65ba-318e-4f21-b25e-e3c4ef38ca2c",
+                            ConcurrencyStamp = "9bd387a1-c902-4866-ad32-291a49e5f58a",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "tutor",
                             NormalizedName = "tutor",
@@ -293,7 +272,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "9ca09e94-415c-4378-8761-47cf8a5d1a1f",
+                            ConcurrencyStamp = "f074c952-5656-41ec-95f1-1e7217bdc49d",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "student",
                             NormalizedName = "student",
@@ -302,7 +281,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "2479beb0-0c36-41fd-9811-adf3b82abef6",
+                            ConcurrencyStamp = "8dd5b800-463e-4271-b321-1ee1da334a43",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "parent",
                             NormalizedName = "parent",
@@ -593,14 +572,6 @@ namespace eTutor.Persistence.Migrations
                     b.HasOne("eTutor.Core.Models.User", "User")
                         .WithMany("ChangeRequests")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("eTutor.Core.Models.EmailValidation", b =>
-                {
-                    b.HasOne("eTutor.Core.Models.User", "User")
-                        .WithOne("EmailValidation")
-                        .HasForeignKey("eTutor.Core.Models.EmailValidation", "UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

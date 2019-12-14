@@ -1,4 +1,4 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29424.173
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -9,6 +9,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eTutor.ServerApi", "eTutor.ServerApi\eTutor.ServerApi.csproj", "{A55D1C24-B637-4A3B-9C8A-5D8587AEE5E5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eTutor.MailService", "eTutor.MailService\eTutor.MailService.csproj", "{52D8E2CC-D5C7-4EED-870B-5B35211A0269}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eTutor.FileHandler", "eTutor.FileHandler\eTutor.FileHandler.csproj", "{4E9890F1-9080-4FAD-841C-3CBFFA607157}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +34,10 @@ Global
 		{52D8E2CC-D5C7-4EED-870B-5B35211A0269}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52D8E2CC-D5C7-4EED-870B-5B35211A0269}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52D8E2CC-D5C7-4EED-870B-5B35211A0269}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E9890F1-9080-4FAD-841C-3CBFFA607157}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E9890F1-9080-4FAD-841C-3CBFFA607157}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E9890F1-9080-4FAD-841C-3CBFFA607157}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E9890F1-9080-4FAD-841C-3CBFFA607157}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
