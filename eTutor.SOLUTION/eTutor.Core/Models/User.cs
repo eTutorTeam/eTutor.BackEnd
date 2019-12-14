@@ -98,6 +98,7 @@ namespace eTutor.Core.Models
         
         public ISet<Rating> Ratings { get; set; }
 
+        public ISet<Device> Devices { get; set; }
         public ISet<ChangePassword> ChangeRequests { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         

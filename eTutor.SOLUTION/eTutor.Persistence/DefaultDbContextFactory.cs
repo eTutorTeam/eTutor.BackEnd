@@ -25,7 +25,7 @@ namespace eTutor.Persistence
 
         public ETutorContext CreateDbContext(string[] args)
         {
-            return Create(_configuration.GetConnectionString("AzureConnection"));
+            return Create(_configuration.GetConnectionString("MainConnection"));
         }
 
         ETutorContext Create(string connectionString)
