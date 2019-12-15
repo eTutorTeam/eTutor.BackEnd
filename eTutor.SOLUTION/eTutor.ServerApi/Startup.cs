@@ -48,7 +48,7 @@ namespace eTutor.ServerApi
 
             services.AddDbContext<ETutorContext>(opts =>
                 {
-                    opts.UseMySql(Configuration.GetConnectionString("AzureConnection"));
+                    opts.UseMySql(Configuration.GetConnectionString("MainConnection"));
                 });
 
 
@@ -132,6 +132,10 @@ namespace eTutor.ServerApi
             var firebaseConfiguration = Configuration.GetSection("Firebase").Get<FirebaseConfiguration>();
             services.AddScoped(typeof(FirebaseConfiguration), fc => firebaseConfiguration);
 
+            var firebaseAdminConfiguration =
+                Configuration.GetSection("FirebaseAdmin").Get<FirebaseAdminConfiguration>();
+            services.AddScoped(typeof(FirebaseAdminConfiguration), c => firebaseAdminConfiguration);
+
             var emailLinksConfiguration = Configuration.GetSection("EmailLinks").Get<EmailLinksConfiguration>();
             services.AddScoped(typeof(EmailLinksConfiguration), elc => emailLinksConfiguration);
 
@@ -141,6 +145,7 @@ namespace eTutor.ServerApi
         {
             services.AddScoped<IMailService, SMTPMailService>();
             services.AddScoped<IFileService, FirebaseStorageFileService>();
+            services.AddScoped<INotificationService, PushNotificationService.PushNotificationService>();
         }
 
         private void ConfigureRepositories(IServiceCollection services)
@@ -165,6 +170,7 @@ namespace eTutor.ServerApi
             services.AddScoped<AccountsManager, AccountsManager>();
             services.AddScoped<TutorSubjectsManager, TutorSubjectsManager>();
             services.AddScoped<DevicesManager, DevicesManager>();
+            services.AddScoped<NotificationManager, NotificationManager>();
         }
 
         private void AuthenticationServiceConfiguration(IServiceCollection services)

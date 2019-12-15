@@ -12,6 +12,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eTutor.MailService", "eTuto
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eTutor.FileHandler", "eTutor.FileHandler\eTutor.FileHandler.csproj", "{4E9890F1-9080-4FAD-841C-3CBFFA607157}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eTutor.PushNotificationService", "eTutor.PushNotificationService\eTutor.PushNotificationService.csproj", "{71D78872-0879-45FD-9A76-9AE2F39BADEF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eTutor.ConsoleTestProject", "eTutor.ConsoleTestProject\eTutor.ConsoleTestProject.csproj", "{0986C074-A95A-4DD5-8445-492C21EC9B38}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +42,14 @@ Global
 		{4E9890F1-9080-4FAD-841C-3CBFFA607157}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E9890F1-9080-4FAD-841C-3CBFFA607157}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E9890F1-9080-4FAD-841C-3CBFFA607157}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71D78872-0879-45FD-9A76-9AE2F39BADEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71D78872-0879-45FD-9A76-9AE2F39BADEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71D78872-0879-45FD-9A76-9AE2F39BADEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71D78872-0879-45FD-9A76-9AE2F39BADEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0986C074-A95A-4DD5-8445-492C21EC9B38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0986C074-A95A-4DD5-8445-492C21EC9B38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0986C074-A95A-4DD5-8445-492C21EC9B38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0986C074-A95A-4DD5-8445-492C21EC9B38}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
