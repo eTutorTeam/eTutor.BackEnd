@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace eTutor.Core.Configurations
 {
-    public class ParentAutorizationConfiguration : IEntityTypeConfiguration<ParentAutorization>
+    public class ParentAuthorizationConfiguration : IEntityTypeConfiguration<ParentAutorization>
     {
         public void Configure(EntityTypeBuilder<ParentAutorization> builder)
         {

@@ -43,10 +43,10 @@ namespace eTutor.Persistence
         private void ApplyConfigurations(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new MeetingConfiguration());
-            modelBuilder.ApplyConfiguration(new ParentAutorizationConfiguration());
+            modelBuilder.ApplyConfiguration(new ParentAuthorizationConfiguration());
             modelBuilder.ApplyConfiguration(new ParentStudentConfiguration());
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
-            modelBuilder.ApplyConfiguration(new UserConiguration());
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new DeviceConfiguration());
         }
     }
