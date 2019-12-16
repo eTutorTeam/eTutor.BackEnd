@@ -13,22 +13,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace eTutor.ServerApi.Controllers
 {
-    [Route("api/accounts")]
+    [Route("api/meetings")]
     [ApiController]
     [Produces("application/json")]
     [Authorize]
     public class MeetingController: EtutorBaseController
     {
-        private readonly UsersManager _usersManager;
         private readonly MeetingsManager _meetingsManager;
-        private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
 
-        public MeetingController(UsersManager usersManager, MeetingsManager meetingsManager,IConfiguration configuration ,IMapper mapper)
+        public MeetingController( MeetingsManager meetingsManager, IMapper mapper)
         {
-            _usersManager = usersManager;
             _meetingsManager = meetingsManager;
-            _configuration = configuration;
             _mapper = mapper;
         }
 
@@ -52,27 +48,31 @@ namespace eTutor.ServerApi.Controllers
         }
 
         [HttpGet("student-meetings")]
-        [ProducesResponseType(typeof(IEnumerable<Meeting>), 200)]
+        [ProducesResponseType(typeof(IEnumerable<MeetingResponse>), 200)]
         [ProducesResponseType(typeof(Error), 400)]
-        public async Task<IActionResult> GetStudentMeetings([FromBody] int userId)
+        public async Task<IActionResult> GetStudentMeetings()
         {
-            var result = await _meetingsManager.GetStudentMeetings(userId);
+            int userId = GetUserId();
+            
+            IOperationResult<IEnumerable<Meeting>> result = await _meetingsManager.GetStudentMeetings(userId);
 
             if (!result.Success)
             {
                 return BadRequest(result.Message);
             }
 
-            var mapped = _mapper.Map<IEnumerable<Meeting>>(result.Entity);
+            var mapped = _mapper.Map<IEnumerable<MeetingResponse>>(result.Entity);
 
             return Ok(mapped);
         }
 
         [HttpGet("tutor-meetings")]
-        [ProducesResponseType(typeof(IEnumerable<Meeting>), 200)]
+        [ProducesResponseType(typeof(IEnumerable<MeetingResponse>), 200)]
         [ProducesResponseType(typeof(Error), 400)]
-        public async Task<IActionResult> GetTutorMeetings([FromBody] int userId)
+        public async Task<IActionResult> GetTutorMeetings()
         {
+            int userId = GetUserId();
+            
             var result = await _meetingsManager.GetTutorMeetings(userId);
 
             if (!result.Success)
@@ -80,7 +80,7 @@ namespace eTutor.ServerApi.Controllers
                 return BadRequest(result.Message);
             }
 
-            var mapped = _mapper.Map<IEnumerable<Meeting>>(result.Entity);
+            var mapped = _mapper.Map<IEnumerable<MeetingResponse>>(result.Entity);
 
             return Ok(mapped);
         }

@@ -16,17 +16,10 @@ namespace eTutor.Core.Managers
 {
     public sealed class MeetingsManager: EntityBase
     {
-        private readonly ISubjectRepository _subjectRepository;
-        private readonly ITutorRepository _tutorRepository;
-        private readonly IUserRepository _userRepository;
         private readonly IMeetingRepository _meetingRepository;
 
-        public MeetingsManager(ISubjectRepository subjectRepository, ITutorRepository tutorRepository,
-            IUserRepository userRepository, IMeetingRepository meetingRepository)
+        public MeetingsManager(IMeetingRepository meetingRepository)
         {
-            _subjectRepository = subjectRepository;
-            _tutorRepository = tutorRepository;
-            _userRepository = userRepository;
             _meetingRepository = meetingRepository;
         }
 
@@ -44,14 +37,14 @@ namespace eTutor.Core.Managers
 
         public async Task<IOperationResult<IEnumerable<Meeting>>> GetTutorMeetings(int userId)
         {
-            var meetings = await _meetingRepository.Set.Include(s => s.TutorId == userId).ToListAsync();
+            var meetings = await _meetingRepository.FindAll(u => u.TutorId == userId, u => u.Tutor, u => u.Subject);
 
-            return BasicOperationResult < IEnumerable < Meeting >>.Ok(meetings);
+            return BasicOperationResult<IEnumerable<Meeting>>.Ok(meetings);
         }
 
         public async Task<IOperationResult<IEnumerable<Meeting>>> GetStudentMeetings(int userId)
         {
-            var meetings = await _meetingRepository.Set.Include(s => s.StudentId == userId).ToListAsync();
+            var meetings = await _meetingRepository.FindAll(u => u.StudentId == userId, u => u.Student, u => u, u => u.Tutor);
 
             return BasicOperationResult<IEnumerable<Meeting>>.Ok(meetings);
         }
