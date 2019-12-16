@@ -1,28 +1,31 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.2",
-    "signature": "eda39b650a7a1796297aff886771e45bdebbc72c"
+    "signature": "141a4dc8c29cf71e6af958b55e46a8bebc3fa51a"
   },
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v2.2": {
       "eTutor.PushNotificationService/1.0.0": {
         "dependencies": {
-          "Firebase.Notification": "1.0.0",
+          "FirebaseAdmin": "1.9.1",
           "eTutor.Core": "1.0.0"
         },
         "runtime": {
           "eTutor.PushNotificationService.dll": {}
         }
       },
-      "Firebase.Notification/1.0.0": {
+      "FirebaseAdmin/1.9.1": {
         "dependencies": {
-          "Newtonsoft.Json": "11.0.2"
+          "Google.Api.Gax": "2.7.0",
+          "Google.Api.Gax.Rest": "2.7.0",
+          "Google.Apis.Auth": "1.40.0",
+          "System.Collections.Immutable": "1.5.0"
         },
         "runtime": {
-          "lib/net45/Firebase.Notification.exe": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
+          "lib/netstandard2.0/FirebaseAdmin.dll": {
+            "assemblyVersion": "1.9.1.0",
+            "fileVersion": "1.9.1.0"
           }
         }
       },
@@ -59,6 +62,69 @@
           "lib/netstandard2.0/FluentValidation.DependencyInjectionExtensions.dll": {
             "assemblyVersion": "8.0.0.0",
             "fileVersion": "8.5.1.0"
+          }
+        }
+      },
+      "Google.Api.Gax/2.7.0": {
+        "dependencies": {
+          "Newtonsoft.Json": "11.0.2",
+          "System.Interactive.Async": "3.2.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Google.Api.Gax.dll": {
+            "assemblyVersion": "2.7.0.0",
+            "fileVersion": "2.7.0.0"
+          }
+        }
+      },
+      "Google.Api.Gax.Rest/2.7.0": {
+        "dependencies": {
+          "Google.Api.Gax": "2.7.0",
+          "Google.Apis.Auth": "1.40.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Google.Api.Gax.Rest.dll": {
+            "assemblyVersion": "2.7.0.0",
+            "fileVersion": "2.7.0.0"
+          }
+        }
+      },
+      "Google.Apis/1.40.0": {
+        "dependencies": {
+          "Google.Apis.Core": "1.40.0",
+          "Newtonsoft.Json": "11.0.2"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Google.Apis.dll": {
+            "assemblyVersion": "1.40.0.0",
+            "fileVersion": "1.40.0.0"
+          }
+        }
+      },
+      "Google.Apis.Auth/1.40.0": {
+        "dependencies": {
+          "Google.Apis": "1.40.0",
+          "Google.Apis.Core": "1.40.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Google.Apis.Auth.PlatformServices.dll": {
+            "assemblyVersion": "1.40.0.0",
+            "fileVersion": "1.40.0.0"
+          },
+          "lib/netstandard2.0/Google.Apis.Auth.dll": {
+            "assemblyVersion": "1.40.0.0",
+            "fileVersion": "1.40.0.0"
+          }
+        }
+      },
+      "Google.Apis.Core/1.40.0": {
+        "dependencies": {
+          "Newtonsoft.Json": "11.0.2"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Google.Apis.Core.dll": {
+            "assemblyVersion": "1.40.0.0",
+            "fileVersion": "1.40.0.0"
           }
         }
       },
@@ -1962,12 +2028,12 @@
       "serviceable": false,
       "sha512": ""
     },
-    "Firebase.Notification/1.0.0": {
+    "FirebaseAdmin/1.9.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-Wv3U4X1EACMr9O7fxXmQJFT+UMlNtj+inV4ouD6UmMwpTVstuk24RiI+VwMLJYmsRf+dV9t847or/XQs3upSJg==",
-      "path": "firebase.notification/1.0.0",
-      "hashPath": "firebase.notification.1.0.0.nupkg.sha512"
+      "sha512": "sha512-Yym1FGGd+LMbh0bes08auxpjka5qOOtf8GA19raktGepwnBVODhr7LBvaSvS0PUuDIqyb28m1MESwpcYRbZS7g==",
+      "path": "firebaseadmin/1.9.1",
+      "hashPath": "firebaseadmin.1.9.1.nupkg.sha512"
     },
     "FluentValidation/8.5.1": {
       "type": "package",
@@ -1989,6 +2055,41 @@
       "sha512": "sha512-nAt6t76rzZxmLlIfdOxBclHF5a2W1gpRjfH3L+ToCNB3JYUds1yoxOLuh9PNdaviwFIAAxXfRf3Xbl9a52ok7w==",
       "path": "fluentvalidation.dependencyinjectionextensions/8.5.1",
       "hashPath": "fluentvalidation.dependencyinjectionextensions.8.5.1.nupkg.sha512"
+    },
+    "Google.Api.Gax/2.7.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-uwmy+gWexSadlrbbABc5gjL71EeSrAhLyouf9o0qlcoMZTgFH5f1HDyy4+Fpz02uU09mu3J96yjMP/K6b7molQ==",
+      "path": "google.api.gax/2.7.0",
+      "hashPath": "google.api.gax.2.7.0.nupkg.sha512"
+    },
+    "Google.Api.Gax.Rest/2.7.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-8Dttj2qBUwyeVXbMCxM8vGZyrvKFAOGXQQPIDQTgTMiVpOQl+xA0+BNxtDq5E2QXrflvgF0gZISLo471MNnJoA==",
+      "path": "google.api.gax.rest/2.7.0",
+      "hashPath": "google.api.gax.rest.2.7.0.nupkg.sha512"
+    },
+    "Google.Apis/1.40.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-QEtefFwCBPBGOTUbAL7fy/S9AxYXGwDEF249I6HA6b8NIY8kVcVEhAUzuKXHIus39w0Je8szpasKwDUFazrjRw==",
+      "path": "google.apis/1.40.0",
+      "hashPath": "google.apis.1.40.0.nupkg.sha512"
+    },
+    "Google.Apis.Auth/1.40.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-0mDs74IZ3Z+ighaPURCnW2vTFyCsQsjiu1WmijDkGj6UnJ5aY73g+lsh6KECjJg9NWgp2cuLKyU6qhwTSLvvyQ==",
+      "path": "google.apis.auth/1.40.0",
+      "hashPath": "google.apis.auth.1.40.0.nupkg.sha512"
+    },
+    "Google.Apis.Core/1.40.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-H595bL7hHvgNqBKRV3DM4YGkil4AO+Kpg3Suti9RFpdjyqeJXgtTxeg8mKzMEsTJw7C20Ey7mpaVEl61/UU5eQ==",
+      "path": "google.apis.core/1.40.0",
+      "hashPath": "google.apis.core.1.40.0.nupkg.sha512"
     },
     "Microsoft.AspNetCore.Antiforgery/2.1.0": {
       "type": "package",

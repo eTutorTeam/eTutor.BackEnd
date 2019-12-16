@@ -17,6 +17,9 @@ using eTutor.MailService;
 using eTutor.Persistence;
 using eTutor.Persistence.Repositories;
 using eTutor.ServerApi.Helpers;
+using FirebaseAdmin;
+using FirebaseAdmin.Messaging;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -131,10 +134,20 @@ namespace eTutor.ServerApi
 
             var firebaseConfiguration = Configuration.GetSection("Firebase").Get<FirebaseConfiguration>();
             services.AddScoped(typeof(FirebaseConfiguration), fc => firebaseConfiguration);
-
-            var firebaseAdminConfiguration =
-                Configuration.GetSection("FirebaseAdmin").Get<FirebaseAdminConfiguration>();
-            services.AddScoped(typeof(FirebaseAdminConfiguration), c => firebaseAdminConfiguration);
+            
+            AppBaseRoute route = new AppBaseRoute {BasePath = Directory.GetCurrentDirectory()};
+            services.AddScoped(typeof(AppBaseRoute), t => route);
+            
+//            services.AddSingleton(typeof(FirebaseMessaging), t =>
+//            {
+//                FirebaseApp.Create(new AppOptions()
+//                {
+//                    Credential =
+//                        GoogleCredential.FromFile(
+//                            Path.Join(Directory.GetCurrentDirectory(), "etutorfirebaseadmin.json"))
+//                });
+//                
+//            })
 
             var emailLinksConfiguration = Configuration.GetSection("EmailLinks").Get<EmailLinksConfiguration>();
             services.AddScoped(typeof(EmailLinksConfiguration), elc => emailLinksConfiguration);

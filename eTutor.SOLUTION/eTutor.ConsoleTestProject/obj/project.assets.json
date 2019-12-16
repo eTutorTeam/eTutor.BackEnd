@@ -2,18 +2,6 @@
   "version": 3,
   "targets": {
     ".NETCoreApp,Version=v2.2": {
-      "Firebase.Notification/1.0.0": {
-        "type": "package",
-        "dependencies": {
-          "Newtonsoft.Json": "11.0.2"
-        },
-        "compile": {
-          "lib/net45/Firebase.Notification.exe": {}
-        },
-        "runtime": {
-          "lib/net45/Firebase.Notification.exe": {}
-        }
-      },
       "FirebaseAdmin/1.9.1": {
         "type": "package",
         "dependencies": {
@@ -2989,7 +2977,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v2.2",
         "dependencies": {
-          "Firebase.Notification": "1.0.0",
+          "FirebaseAdmin": "1.9.1",
           "eTutor.Core": "1.0.0"
         },
         "compile": {
@@ -3002,18 +2990,6 @@
     }
   },
   "libraries": {
-    "Firebase.Notification/1.0.0": {
-      "sha512": "Wv3U4X1EACMr9O7fxXmQJFT+UMlNtj+inV4ouD6UmMwpTVstuk24RiI+VwMLJYmsRf+dV9t847or/XQs3upSJg==",
-      "type": "package",
-      "path": "firebase.notification/1.0.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "firebase.notification.1.0.0.nupkg.sha512",
-        "firebase.notification.nuspec",
-        "lib/net45/Firebase.Notification.exe"
-      ]
-    },
     "FirebaseAdmin/1.9.1": {
       "sha512": "Yym1FGGd+LMbh0bes08auxpjka5qOOtf8GA19raktGepwnBVODhr7LBvaSvS0PUuDIqyb28m1MESwpcYRbZS7g==",
       "type": "package",
@@ -8815,17 +8791,5 @@
         "warn": true
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'Firebase.Notification 1.0.0' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.2'. This package may not be fully compatible with your project.",
-      "libraryId": "Firebase.Notification",
-      "targetGraphs": [
-        ".NETCoreApp,Version=v2.2"
-      ]
-    }
-  ]
+  }
 }

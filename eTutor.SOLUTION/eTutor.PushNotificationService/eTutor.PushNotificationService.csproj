@@ -9,7 +9,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Firebase.Notification" Version="1.0.0" />
+      <PackageReference Include="FirebaseAdmin" Version="1.9.1" />
     </ItemGroup>
 
 </Project>

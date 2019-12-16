@@ -1,12 +1,15 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using eTutor.Core.Contracts;
 using eTutor.Core.Models;
 using eTutor.Core.Models.Configuration;
 using eTutor.Core.Repositories;
-using FireBase.Notification;
-using FirebaseNoti = FireBase.Notification.Firebase;
+using FirebaseAdmin;
+using FirebaseAdmin.Messaging;
+using Google.Apis.Auth.OAuth2;
+using Microsoft.Extensions.Configuration;
 
 namespace eTutor.PushNotificationService
 {
@@ -14,12 +17,27 @@ namespace eTutor.PushNotificationService
     {
 
         private readonly IDeviceRepository _deviceRepository;
-        private readonly FirebaseAdminConfiguration _firebaseAdminConfiguration;
+        private readonly FirebaseMessaging _firebaseMessaging;
+        
 
-        public PushNotificationService(IDeviceRepository deviceRepository, FirebaseAdminConfiguration firebaseAdminConfiguration)
+        public PushNotificationService(IDeviceRepository deviceRepository, AppBaseRoute route)
         {
             _deviceRepository = deviceRepository;
-            _firebaseAdminConfiguration = firebaseAdminConfiguration;
+
+            string jsonPath = Path.Combine(route.BasePath, "etutorfirebaseadmin.json");
+
+            var configurationJson = File.ReadAllText(jsonPath);
+
+            if (FirebaseApp.DefaultInstance == null)
+            {
+                FirebaseApp.Create(new AppOptions()
+                {
+                    Credential = GoogleCredential.FromJson(configurationJson)
+                });
+            }
+
+            _firebaseMessaging = FirebaseMessaging.DefaultInstance;
+
         }
 
         public async Task SendNotificationToUser(User user, string message, string subject = "eTutor")
@@ -27,11 +45,18 @@ namespace eTutor.PushNotificationService
             var devices = await _deviceRepository.FindAll(u => u.UserId == user.Id);
             var deviceTokens = devices.Select(d => d.FcmToken).ToArray();
 
-            using (FirebaseNoti firebase = new FirebaseNoti())
+            var multicastMessage = new MulticastMessage
             {
-                firebase.ServerKey = _firebaseAdminConfiguration.ServerKey;
-                await firebase.PushNotifyAsync(deviceTokens, subject, message);
-            }
+                Tokens = deviceTokens,
+                Notification = new Notification
+                {
+                    Body = message,
+                    Title = subject
+                }
+            };
+
+            await _firebaseMessaging .SendMulticastAsync(multicastMessage);
         }
+        
     }
 }

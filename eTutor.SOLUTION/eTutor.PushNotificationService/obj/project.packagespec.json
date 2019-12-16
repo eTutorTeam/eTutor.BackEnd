@@ -33,9 +33,9 @@
   "frameworks": {
     "netcoreapp2.2": {
       "dependencies": {
-        "Firebase.Notification": {
+        "FirebaseAdmin": {
           "target": "Package",
-          "version": "[1.0.0, )"
+          "version": "[1.9.1, )"
         },
         "Microsoft.NETCore.App": {
           "suppressParent": "All",

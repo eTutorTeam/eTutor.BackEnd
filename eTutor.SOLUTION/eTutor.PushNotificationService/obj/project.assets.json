@@ -2,16 +2,19 @@
   "version": 3,
   "targets": {
     ".NETCoreApp,Version=v2.2": {
-      "Firebase.Notification/1.0.0": {
+      "FirebaseAdmin/1.9.1": {
         "type": "package",
         "dependencies": {
-          "Newtonsoft.Json": "11.0.2"
+          "Google.Api.Gax": "2.7.0",
+          "Google.Api.Gax.Rest": "2.7.0",
+          "Google.Apis.Auth": "1.40.0",
+          "System.Collections.Immutable": "1.5.0"
         },
         "compile": {
-          "lib/net45/Firebase.Notification.exe": {}
+          "lib/netstandard2.0/FirebaseAdmin.dll": {}
         },
         "runtime": {
-          "lib/net45/Firebase.Notification.exe": {}
+          "lib/netstandard2.0/FirebaseAdmin.dll": {}
         }
       },
       "FluentValidation/8.5.1": {
@@ -51,6 +54,72 @@
         },
         "runtime": {
           "lib/netstandard2.0/FluentValidation.DependencyInjectionExtensions.dll": {}
+        }
+      },
+      "Google.Api.Gax/2.7.0": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "11.0.2",
+          "System.Interactive.Async": "3.2.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Google.Api.Gax.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Google.Api.Gax.dll": {}
+        }
+      },
+      "Google.Api.Gax.Rest/2.7.0": {
+        "type": "package",
+        "dependencies": {
+          "Google.Api.Gax": "2.7.0",
+          "Google.Apis.Auth": "1.39.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Google.Api.Gax.Rest.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Google.Api.Gax.Rest.dll": {}
+        }
+      },
+      "Google.Apis/1.40.0": {
+        "type": "package",
+        "dependencies": {
+          "Google.Apis.Core": "1.40.0",
+          "Newtonsoft.Json": "10.0.2"
+        },
+        "compile": {
+          "lib/netstandard2.0/Google.Apis.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Google.Apis.dll": {}
+        }
+      },
+      "Google.Apis.Auth/1.40.0": {
+        "type": "package",
+        "dependencies": {
+          "Google.Apis": "1.40.0",
+          "Google.Apis.Core": "1.40.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Google.Apis.Auth.PlatformServices.dll": {},
+          "lib/netstandard2.0/Google.Apis.Auth.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Google.Apis.Auth.PlatformServices.dll": {},
+          "lib/netstandard2.0/Google.Apis.Auth.dll": {}
+        }
+      },
+      "Google.Apis.Core/1.40.0": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "10.0.2"
+        },
+        "compile": {
+          "lib/netstandard2.0/Google.Apis.Core.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Google.Apis.Core.dll": {}
         }
       },
       "Microsoft.AspNetCore.Antiforgery/2.1.0": {
@@ -2753,16 +2822,21 @@
     }
   },
   "libraries": {
-    "Firebase.Notification/1.0.0": {
-      "sha512": "Wv3U4X1EACMr9O7fxXmQJFT+UMlNtj+inV4ouD6UmMwpTVstuk24RiI+VwMLJYmsRf+dV9t847or/XQs3upSJg==",
+    "FirebaseAdmin/1.9.1": {
+      "sha512": "Yym1FGGd+LMbh0bes08auxpjka5qOOtf8GA19raktGepwnBVODhr7LBvaSvS0PUuDIqyb28m1MESwpcYRbZS7g==",
       "type": "package",
-      "path": "firebase.notification/1.0.0",
+      "path": "firebaseadmin/1.9.1",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "firebase.notification.1.0.0.nupkg.sha512",
-        "firebase.notification.nuspec",
-        "lib/net45/Firebase.Notification.exe"
+        "firebaseadmin.1.9.1.nupkg.sha512",
+        "firebaseadmin.nuspec",
+        "lib/net45/FirebaseAdmin.dll",
+        "lib/net45/FirebaseAdmin.xml",
+        "lib/netstandard1.5/FirebaseAdmin.dll",
+        "lib/netstandard1.5/FirebaseAdmin.xml",
+        "lib/netstandard2.0/FirebaseAdmin.dll",
+        "lib/netstandard2.0/FirebaseAdmin.xml"
       ]
     },
     "FluentValidation/8.5.1": {
@@ -2810,6 +2884,115 @@
         "fluentvalidation.dependencyinjectionextensions.nuspec",
         "lib/netstandard2.0/FluentValidation.DependencyInjectionExtensions.dll",
         "lib/netstandard2.0/FluentValidation.DependencyInjectionExtensions.xml"
+      ]
+    },
+    "Google.Api.Gax/2.7.0": {
+      "sha512": "uwmy+gWexSadlrbbABc5gjL71EeSrAhLyouf9o0qlcoMZTgFH5f1HDyy4+Fpz02uU09mu3J96yjMP/K6b7molQ==",
+      "type": "package",
+      "path": "google.api.gax/2.7.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "google.api.gax.2.7.0.nupkg.sha512",
+        "google.api.gax.nuspec",
+        "lib/net45/Google.Api.Gax.dll",
+        "lib/net45/Google.Api.Gax.pdb",
+        "lib/net45/Google.Api.Gax.xml",
+        "lib/netstandard1.3/Google.Api.Gax.dll",
+        "lib/netstandard1.3/Google.Api.Gax.pdb",
+        "lib/netstandard1.3/Google.Api.Gax.xml",
+        "lib/netstandard2.0/Google.Api.Gax.dll",
+        "lib/netstandard2.0/Google.Api.Gax.pdb",
+        "lib/netstandard2.0/Google.Api.Gax.xml"
+      ]
+    },
+    "Google.Api.Gax.Rest/2.7.0": {
+      "sha512": "8Dttj2qBUwyeVXbMCxM8vGZyrvKFAOGXQQPIDQTgTMiVpOQl+xA0+BNxtDq5E2QXrflvgF0gZISLo471MNnJoA==",
+      "type": "package",
+      "path": "google.api.gax.rest/2.7.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "google.api.gax.rest.2.7.0.nupkg.sha512",
+        "google.api.gax.rest.nuspec",
+        "lib/net45/Google.Api.Gax.Rest.dll",
+        "lib/net45/Google.Api.Gax.Rest.pdb",
+        "lib/net45/Google.Api.Gax.Rest.xml",
+        "lib/netstandard1.3/Google.Api.Gax.Rest.dll",
+        "lib/netstandard1.3/Google.Api.Gax.Rest.pdb",
+        "lib/netstandard1.3/Google.Api.Gax.Rest.xml",
+        "lib/netstandard2.0/Google.Api.Gax.Rest.dll",
+        "lib/netstandard2.0/Google.Api.Gax.Rest.pdb",
+        "lib/netstandard2.0/Google.Api.Gax.Rest.xml"
+      ]
+    },
+    "Google.Apis/1.40.0": {
+      "sha512": "QEtefFwCBPBGOTUbAL7fy/S9AxYXGwDEF249I6HA6b8NIY8kVcVEhAUzuKXHIus39w0Je8szpasKwDUFazrjRw==",
+      "type": "package",
+      "path": "google.apis/1.40.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "google.apis.1.40.0.nupkg.sha512",
+        "google.apis.nuspec",
+        "lib/net45/Google.Apis.PlatformServices.dll",
+        "lib/net45/Google.Apis.dll",
+        "lib/net45/Google.Apis.pdb",
+        "lib/net45/Google.Apis.xml",
+        "lib/netstandard1.3/Google.Apis.dll",
+        "lib/netstandard1.3/Google.Apis.pdb",
+        "lib/netstandard1.3/Google.Apis.xml",
+        "lib/netstandard2.0/Google.Apis.dll",
+        "lib/netstandard2.0/Google.Apis.pdb",
+        "lib/netstandard2.0/Google.Apis.xml"
+      ]
+    },
+    "Google.Apis.Auth/1.40.0": {
+      "sha512": "0mDs74IZ3Z+ighaPURCnW2vTFyCsQsjiu1WmijDkGj6UnJ5aY73g+lsh6KECjJg9NWgp2cuLKyU6qhwTSLvvyQ==",
+      "type": "package",
+      "path": "google.apis.auth/1.40.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "google.apis.auth.1.40.0.nupkg.sha512",
+        "google.apis.auth.nuspec",
+        "lib/net45/Google.Apis.Auth.PlatformServices.dll",
+        "lib/net45/Google.Apis.Auth.dll",
+        "lib/net45/Google.Apis.Auth.pdb",
+        "lib/net45/Google.Apis.Auth.xml",
+        "lib/netstandard1.3/Google.Apis.Auth.PlatformServices.dll",
+        "lib/netstandard1.3/Google.Apis.Auth.dll",
+        "lib/netstandard1.3/Google.Apis.Auth.pdb",
+        "lib/netstandard1.3/Google.Apis.Auth.xml",
+        "lib/netstandard2.0/Google.Apis.Auth.PlatformServices.dll",
+        "lib/netstandard2.0/Google.Apis.Auth.dll",
+        "lib/netstandard2.0/Google.Apis.Auth.pdb",
+        "lib/netstandard2.0/Google.Apis.Auth.xml"
+      ]
+    },
+    "Google.Apis.Core/1.40.0": {
+      "sha512": "H595bL7hHvgNqBKRV3DM4YGkil4AO+Kpg3Suti9RFpdjyqeJXgtTxeg8mKzMEsTJw7C20Ey7mpaVEl61/UU5eQ==",
+      "type": "package",
+      "path": "google.apis.core/1.40.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "google.apis.core.1.40.0.nupkg.sha512",
+        "google.apis.core.nuspec",
+        "lib/net45/Google.Apis.Core.dll",
+        "lib/net45/Google.Apis.Core.pdb",
+        "lib/net45/Google.Apis.Core.xml",
+        "lib/netstandard1.3/Google.Apis.Core.dll",
+        "lib/netstandard1.3/Google.Apis.Core.pdb",
+        "lib/netstandard1.3/Google.Apis.Core.xml",
+        "lib/netstandard2.0/Google.Apis.Core.dll",
+        "lib/netstandard2.0/Google.Apis.Core.pdb",
+        "lib/netstandard2.0/Google.Apis.Core.xml"
       ]
     },
     "Microsoft.AspNetCore.Antiforgery/2.1.0": {
@@ -8217,7 +8400,7 @@
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v2.2": [
-      "Firebase.Notification >= 1.0.0",
+      "FirebaseAdmin >= 1.9.1",
       "Microsoft.NETCore.App >= 2.2.0",
       "eTutor.Core >= 1.0.0"
     ]
@@ -8265,9 +8448,9 @@
     "frameworks": {
       "netcoreapp2.2": {
         "dependencies": {
-          "Firebase.Notification": {
+          "FirebaseAdmin": {
             "target": "Package",
-            "version": "[1.0.0, )"
+            "version": "[1.9.1, )"
           },
           "Microsoft.NETCore.App": {
             "suppressParent": "All",
@@ -8283,17 +8466,5 @@
         "warn": true
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'Firebase.Notification 1.0.0' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.2'. This package may not be fully compatible with your project.",
-      "libraryId": "Firebase.Notification",
-      "targetGraphs": [
-        ".NETCoreApp,Version=v2.2"
-      ]
-    }
-  ]
+  }
 }
