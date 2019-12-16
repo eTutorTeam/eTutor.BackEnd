@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -52,6 +53,10 @@ namespace eTutor.PushNotificationService
                 {
                     Body = message,
                     Title = subject
+                },
+                Data = new Dictionary<string, string>
+                {
+                    {"User", user.FullName}
                 }
             };
 
