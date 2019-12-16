@@ -43,27 +43,6 @@ namespace eTutor.Persistence.Migrations
                     b.ToTable("ChangePasswordRequests");
                 });
 
-            modelBuilder.Entity("eTutor.Core.Models.EmailValidation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<DateTime>("UpdatedDate");
-
-                    b.Property<int>("UserId");
-
-                    b.Property<Guid>("ValidationToken");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("EmailValidations");
-                });
-
             modelBuilder.Entity("eTutor.Core.Models.Device", b =>
                 {
                     b.Property<int>("Id")
@@ -86,6 +65,27 @@ namespace eTutor.Persistence.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Devices");
+                });
+
+            modelBuilder.Entity("eTutor.Core.Models.EmailValidation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<DateTime>("UpdatedDate");
+
+                    b.Property<int>("UserId");
+
+                    b.Property<Guid>("ValidationToken");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("EmailValidations");
                 });
 
             modelBuilder.Entity("eTutor.Core.Models.Invoice", b =>
@@ -121,7 +121,7 @@ namespace eTutor.Persistence.Migrations
 
                     b.Property<DateTime>("EndDateTime");
 
-                    b.Property<int?>("ParentAutorizationId");
+                    b.Property<int?>("ParentAuthorizationId");
 
                     b.Property<DateTime>("StartDateTime");
 
@@ -129,9 +129,7 @@ namespace eTutor.Persistence.Migrations
 
                     b.Property<int>("StudentId");
 
-                    b.Property<int?>("SubjectId");
-
-                    b.Property<int>("TopicId");
+                    b.Property<int>("SubjectId");
 
                     b.Property<int>("TutorId");
 
@@ -139,7 +137,7 @@ namespace eTutor.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ParentAutorizationId");
+                    b.HasIndex("ParentAuthorizationId");
 
                     b.HasIndex("StudentId");
 
@@ -150,7 +148,7 @@ namespace eTutor.Persistence.Migrations
                     b.ToTable("Meetings");
                 });
 
-            modelBuilder.Entity("eTutor.Core.Models.ParentAutorization", b =>
+            modelBuilder.Entity("eTutor.Core.Models.ParentAuthorization", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -167,7 +165,7 @@ namespace eTutor.Persistence.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.ToTable("ParentAutorizations");
+                    b.ToTable("ParentAuthorizations");
                 });
 
             modelBuilder.Entity("eTutor.Core.Models.ParentStudent", b =>
@@ -275,7 +273,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "972f2f59-11dd-4618-aef2-61007ea62d04",
+                            ConcurrencyStamp = "f5f41e8c-978b-4d50-8d26-dba9580b1718",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "admin",
                             NormalizedName = "admin",
@@ -284,7 +282,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "a18b65ba-318e-4f21-b25e-e3c4ef38ca2c",
+                            ConcurrencyStamp = "df8acf69-a73c-45b1-ae2e-a8cc55e93f40",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "tutor",
                             NormalizedName = "tutor",
@@ -293,7 +291,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "9ca09e94-415c-4378-8761-47cf8a5d1a1f",
+                            ConcurrencyStamp = "fdfbca9c-dfe2-4540-8d1d-9f08171c800a",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "student",
                             NormalizedName = "student",
@@ -302,7 +300,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "2479beb0-0c36-41fd-9811-adf3b82abef6",
+                            ConcurrencyStamp = "bc070805-2e30-4c2c-93a7-2771d8f66b36",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "parent",
                             NormalizedName = "parent",
@@ -400,6 +398,8 @@ namespace eTutor.Persistence.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<string>("AboutMe");
 
                     b.Property<int>("AccessFailedCount");
 
@@ -596,19 +596,19 @@ namespace eTutor.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("eTutor.Core.Models.EmailValidation", b =>
-                {
-                    b.HasOne("eTutor.Core.Models.User", "User")
-                        .WithOne("EmailValidation")
-                        .HasForeignKey("eTutor.Core.Models.EmailValidation", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("eTutor.Core.Models.Device", b =>
                 {
                     b.HasOne("eTutor.Core.Models.User", "User")
                         .WithMany("Devices")
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("eTutor.Core.Models.EmailValidation", b =>
+                {
+                    b.HasOne("eTutor.Core.Models.User", "User")
+                        .WithOne("EmailValidation")
+                        .HasForeignKey("eTutor.Core.Models.EmailValidation", "UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -627,26 +627,27 @@ namespace eTutor.Persistence.Migrations
 
             modelBuilder.Entity("eTutor.Core.Models.Meeting", b =>
                 {
-                    b.HasOne("eTutor.Core.Models.ParentAutorization", "Type")
+                    b.HasOne("eTutor.Core.Models.ParentAuthorization", "ParentAuthorization")
                         .WithMany("Meetings")
-                        .HasForeignKey("ParentAutorizationId");
+                        .HasForeignKey("ParentAuthorizationId");
 
                     b.HasOne("eTutor.Core.Models.User", "Student")
-                        .WithMany()
+                        .WithMany("StudentMeetings")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("eTutor.Core.Models.Subject", "Subject")
-                        .WithMany()
-                        .HasForeignKey("SubjectId");
+                        .WithMany("Meetings")
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("eTutor.Core.Models.User", "Tutor")
-                        .WithMany()
+                        .WithMany("TutorMeetings")
                         .HasForeignKey("TutorId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("eTutor.Core.Models.ParentAutorization", b =>
+            modelBuilder.Entity("eTutor.Core.Models.ParentAuthorization", b =>
                 {
                     b.HasOne("eTutor.Core.Models.User", "Parent")
                         .WithMany("Autorizations")

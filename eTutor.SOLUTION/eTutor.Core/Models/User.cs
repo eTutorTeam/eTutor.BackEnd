@@ -90,9 +90,8 @@ namespace eTutor.Core.Models
         public ISet<UserLogin> UserLogins { get; set; }
         
         public ISet<UserToken> UserTokens { get; set; }
-
-        public ISet<ParentStudent> Students { get; set; }
         
+        public ISet<ParentStudent> Students { get; set; }
         public ISet<ParentStudent> Parents { get; set; }
         
         public ISet<TutorSubject> TutorSubjects { get; set; }
@@ -103,6 +102,10 @@ namespace eTutor.Core.Models
         
         public ISet<Rating> Ratings { get; set; }
 
+        public ISet<Meeting> StudentMeetings { get; set; }
+        
+        public ISet<Meeting> TutorMeetings { get; set; }
+        
         public ISet<Device> Devices { get; set; }
         public ISet<ChangePassword> ChangeRequests { get; set; }
         
