@@ -11,6 +11,8 @@ namespace eTutor.Core.Configurations
             builder.HasOne(b => b.Student);
 
             builder.HasOne(b => b.Subject);
+
+            builder.HasOne(b => b.Tutor);
         }
     }
 }

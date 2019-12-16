@@ -15,6 +15,7 @@ namespace eTutor.ServerApi.ViewModels
         public float Latitude { get; set; }
         public float Longitude { get; set; }
         public string Email { get; set; }
+        public string AboutMe { get; set; }
         public string PersonalId { get; set; }
         public string UserName { get; set; }
 
