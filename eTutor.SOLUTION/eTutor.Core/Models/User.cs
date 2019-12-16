@@ -97,7 +97,7 @@ namespace eTutor.Core.Models
         
         public ISet<TutorSubject> TutorSubjects { get; set; }
         
-        public ISet<ParentAutorization> Autorizations { get; set; }
+        public ISet<ParentAuthorization> Autorizations { get; set; }
         
         public ISet<Invoice> Invoices { get; set; }
         

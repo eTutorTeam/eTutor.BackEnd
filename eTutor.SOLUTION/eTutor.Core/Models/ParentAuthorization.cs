@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace eTutor.Core.Models
 {
-    public class ParentAutorization : EntityBase
+    public class ParentAuthorization : EntityBase
     {
         public int ParentId { get; set; }
 

@@ -20,7 +20,7 @@ namespace eTutor.Core.Models
 
         public int? ParentAutorizationId { get; set; }
 
-        public ParentAutorization Type { get; set; }
+        public ParentAuthorization Type { get; set; }
         
         public DateTime StartDateTime { get; set; }
 
