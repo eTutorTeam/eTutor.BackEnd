@@ -44,7 +44,7 @@ namespace eTutor.PushNotificationService
         public async Task SendNotificationToUser(User user, string message, string subject = "eTutor")
         {
             var devices = await _deviceRepository.FindAll(u => u.UserId == user.Id);
-            var deviceTokens = devices.Select(d => d.FcmToken).ToArray();
+            var deviceTokens = devices.Select(d => d.FcmToken).ToHashSet().ToArray();
 
             var multicastMessage = new MulticastMessage
             {
@@ -52,11 +52,14 @@ namespace eTutor.PushNotificationService
                 Notification = new Notification
                 {
                     Body = message,
-                    Title = subject
+                    Title = subject,
+                    ImageUrl = user.ProfileImageUrl ?? "https://image.shutterstock.com/image-vector/sample-stamp-square-grunge-sign-260nw-1474408826.jpg"
                 },
                 Data = new Dictionary<string, string>
                 {
-                    {"User", user.FullName}
+                    {"user", user.FullName},
+                    {"userId", user.Id.ToString()},
+                    {"data-img", user.ProfileImageUrl}
                 }
             };
 
