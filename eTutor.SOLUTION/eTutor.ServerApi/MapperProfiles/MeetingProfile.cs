@@ -9,6 +9,8 @@ namespace eTutor.ServerApi.MapperProfiles
         public MeetingProfile()
         {
             CreateMap<Meeting, MeetingResponse>();
+
+            CreateMap<Meeting, MeetingRequest>();
         }
     }
 }

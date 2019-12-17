@@ -43,7 +43,7 @@ namespace eTutor.Persistence.Seeders
                     UserName = adminEmail,
                     NormalizedEmail = adminEmail.ToUpper(),
                     NormalizedUserName = adminEmail.ToUpper(),
-                    AboutMe = "Escribe sobre tí",
+                    AboutMe = "Escribe algo sobre tí",
                     CreatedDate = DateTime.Now,
                     PersonalId = "000-0000000-4",
                     UpdatedDate = DateTime.Now,

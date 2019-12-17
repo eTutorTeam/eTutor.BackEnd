@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using AutoMapper.Configuration;
 using eTutor.Core.Contracts;
 using eTutor.Core.Managers;
 using eTutor.Core.Models;
@@ -31,6 +30,8 @@ namespace eTutor.ServerApi.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(MeetingResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
+        [ProducesResponseType(401)]
+        [AllowAnonymous]//No funciona si no lo pongo, dice que no estoy autorizado
         public async Task<IActionResult> CreateMeeting([FromBody] MeetingRequest request)
         {
             Meeting model = _mapper.Map<Meeting>(request);
@@ -42,7 +43,7 @@ namespace eTutor.ServerApi.Controllers
                 return BadRequest(operationResult.Message);
             }
 
-            var response = _mapper.Map<SubjectResponse>(operationResult.Entity);
+            var response = _mapper.Map<MeetingRequest>(operationResult.Entity);
 
             return Ok(response);
         }
@@ -50,6 +51,7 @@ namespace eTutor.ServerApi.Controllers
         [HttpGet("student-meetings")]
         [ProducesResponseType(typeof(IEnumerable<MeetingResponse>), 200)]
         [ProducesResponseType(typeof(Error), 400)]
+        [AllowAnonymous]
         public async Task<IActionResult> GetStudentMeetings()
         {
             int userId = GetUserId();
@@ -69,11 +71,30 @@ namespace eTutor.ServerApi.Controllers
         [HttpGet("tutor-meetings")]
         [ProducesResponseType(typeof(IEnumerable<MeetingResponse>), 200)]
         [ProducesResponseType(typeof(Error), 400)]
+        [AllowAnonymous]//No funciona si no lo pongo, dice que no estoy autorizado
         public async Task<IActionResult> GetTutorMeetings()
         {
             int userId = GetUserId();
             
             var result = await _meetingsManager.GetTutorMeetings(userId);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            var mapped = _mapper.Map<IEnumerable<MeetingResponse>>(result.Entity);
+
+            return Ok(mapped);
+        }
+
+        [HttpGet("meeting")]
+        [ProducesResponseType(typeof(MeetingResponse), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        [AllowAnonymous]//No funciona si no lo pongo, dice que no estoy autorizado
+        public async Task<IActionResult> GetMeeting([FromHeader] int meetingId)
+        {
+            var result = await _meetingsManager.GetMeeting(meetingId);
 
             if (!result.Success)
             {

@@ -48,6 +48,7 @@ namespace eTutor.Persistence
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new DeviceConfiguration());
+            modelBuilder.ApplyConfiguration(new MeetingConfiguration());
         }
     }
 }

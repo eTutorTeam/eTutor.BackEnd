@@ -44,7 +44,7 @@ namespace eTutor.Core.Managers
 
         public async Task<IOperationResult<IEnumerable<Meeting>>> GetStudentMeetings(int userId)
         {
-            var meetings = await _meetingRepository.FindAll(u => u.StudentId == userId, u => u.Student, u => u, u => u.Tutor);
+            var meetings = await _meetingRepository.FindAll(u => u.StudentId == userId, u => u.Student, u => u.Tutor);
 
             return BasicOperationResult<IEnumerable<Meeting>>.Ok(meetings);
         }
@@ -55,6 +55,7 @@ namespace eTutor.Core.Managers
 
             if (!validation.Success) return validation;
 
+            meeting.Status = MeetingStatus.Pending;
             var res = _meetingRepository.Create(meeting);
 
             if (!res.Success) return res;
@@ -63,7 +64,6 @@ namespace eTutor.Core.Managers
 
             return BasicOperationResult<Meeting>.Ok(res.Entity);
         }
-
 
         private async Task<IOperationResult<Meeting>> ValidateMeeting(Meeting meeting)
         {
