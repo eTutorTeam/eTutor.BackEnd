@@ -4,6 +4,7 @@ namespace eTutor.Core.Models.Configuration
     {
         public string ApiKey { get; set; }
         public string Bucket { get; set; }
+        public string ServiceAccountId { get; set; }
         public string ProjectId { get; set; }
         public string AuthDomain { get; set; }
         public string AppId { get; set; }

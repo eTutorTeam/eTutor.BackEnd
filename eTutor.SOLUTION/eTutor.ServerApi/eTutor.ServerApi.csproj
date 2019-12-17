@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="6.1.1" />
+    <PackageReference Include="FirebaseAdmin" Version="1.9.1" />
     <PackageReference Include="Microsoft.AspNetCore.App">
       <PrivateAssets Condition="'%(PackageReference.Version)' == ''">all</PrivateAssets>
       <Publish Condition="'%(PackageReference.Version)' == ''">true</Publish>
@@ -38,6 +39,7 @@
     <ProjectReference Include="..\eTutor.Persistence\eTutor.Persistence.csproj">
       <GlobalPropertiesToRemove>;WebPublishProfileFile</GlobalPropertiesToRemove>
     </ProjectReference>
+    <ProjectReference Include="..\eTutor.PushNotificationService\eTutor.PushNotificationService.csproj" />
   </ItemGroup>
 
   <ItemGroup>
