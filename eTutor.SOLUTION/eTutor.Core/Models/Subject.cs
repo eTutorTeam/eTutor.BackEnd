@@ -9,5 +9,7 @@ namespace eTutor.Core.Models
         public string Description { get; set; }
         
         public ISet<TutorSubject> Tutors { get; set; }
+        
+        public ISet<Meeting> Meetings { get; set; }
     }
 }

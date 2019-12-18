@@ -47,6 +47,11 @@ namespace eTutor.ServerApi.ViewModels
         /// Represents the user's email
         /// </summary>
         public string Email { get; set; }
+        
+        /// <summary>
+        /// Represents the user's aboutMe
+        /// </summary>
+        public string AboutMe { get; set; }
 
         /// <summary>
         /// Represents the written address of the user

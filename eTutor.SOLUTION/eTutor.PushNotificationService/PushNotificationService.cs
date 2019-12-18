@@ -63,7 +63,7 @@ namespace eTutor.PushNotificationService
                 }
             };
 
-            await _firebaseMessaging .SendMulticastAsync(multicastMessage);
+            await _firebaseMessaging.SendMulticastAsync(multicastMessage);
         }
         
     }

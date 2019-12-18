@@ -74,6 +74,11 @@ namespace eTutor.Core.Models
         /// </summary>
         public string ProfileImageUrl { get; set; }
         
+        /// <summary>
+        /// Represents the user's description of it's own
+        /// </summary>
+        public string AboutMe { get; set; }
+        
         public string FileReference { get; set; }
 
         public string FullName => Name + " " + LastName;
@@ -85,19 +90,22 @@ namespace eTutor.Core.Models
         public ISet<UserLogin> UserLogins { get; set; }
         
         public ISet<UserToken> UserTokens { get; set; }
-
-        public ISet<ParentStudent> Students { get; set; }
         
+        public ISet<ParentStudent> Students { get; set; }
         public ISet<ParentStudent> Parents { get; set; }
         
         public ISet<TutorSubject> TutorSubjects { get; set; }
         
-        public ISet<ParentAutorization> Autorizations { get; set; }
+        public ISet<ParentAuthorization> Autorizations { get; set; }
         
         public ISet<Invoice> Invoices { get; set; }
         
         public ISet<Rating> Ratings { get; set; }
 
+        public ISet<Meeting> StudentMeetings { get; set; }
+        
+        public ISet<Meeting> TutorMeetings { get; set; }
+        
         public ISet<Device> Devices { get; set; }
         public ISet<ChangePassword> ChangeRequests { get; set; }
         
