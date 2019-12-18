@@ -44,26 +44,33 @@ namespace eTutor.Core.Managers
 
         public async Task<IOperationResult<IEnumerable<Meeting>>> GetStudentMeetings(int userId)
         {
-            var meetings = await _meetingRepository.FindAll(u => u.StudentId == userId, u => u.Student, u => u, u => u.Tutor);
+            var meetings = await _meetingRepository.FindAll(u => u.StudentId == userId, u => u.Student, u => u.Tutor);
 
             return BasicOperationResult<IEnumerable<Meeting>>.Ok(meetings);
         }
 
         public async Task<IOperationResult<Meeting>> CreateMeeting(Meeting meeting)
         {
+
+            if (meeting == null)
+            {
+                return BasicOperationResult<Meeting>.Fail("El objeto que envió es inválido");
+            }
+            
             var validation = await ValidateMeeting(meeting);
 
             if (!validation.Success) return validation;
 
-            var res = _meetingRepository.Create(meeting);
-
-            if (!res.Success) return res;
+            meeting.Status = MeetingStatus.Pending;
+            
+            _meetingRepository.Create(meeting);
 
             await _meetingRepository.Save();
 
-            return BasicOperationResult<Meeting>.Ok(res.Entity);
-        }
+            var response = await _meetingRepository.Find(m => m.Id == meeting.Id, m => m.Subject, m => m.Tutor);
 
+            return BasicOperationResult<Meeting>.Ok(response);
+        }
 
         private async Task<IOperationResult<Meeting>> ValidateMeeting(Meeting meeting)
         {
