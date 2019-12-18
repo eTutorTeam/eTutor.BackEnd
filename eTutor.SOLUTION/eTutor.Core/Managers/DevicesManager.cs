@@ -42,6 +42,17 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<string>.Ok("El Dispositivo ya ha sido guardado para este usuario");
             }
 
+            var updateDevice =
+                await _deviceRepository.Find(d => d.FcmToken == device.FcmToken && d.Platform == device.Platform);
+
+            if (updateDevice != null)
+            {
+                updateDevice.UserId = device.UserId;
+                _deviceRepository.Update(updateDevice);
+                await _deviceRepository.Save();
+                return BasicOperationResult<string>.Ok("El token del usuario ha sido actualizado");
+            }
+
             _deviceRepository.Create(device);
 
             await _deviceRepository.Save();

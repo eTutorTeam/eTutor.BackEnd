@@ -17,6 +17,9 @@ using eTutor.MailService;
 using eTutor.Persistence;
 using eTutor.Persistence.Repositories;
 using eTutor.ServerApi.Helpers;
+using FirebaseAdmin;
+using FirebaseAdmin.Messaging;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -48,7 +51,7 @@ namespace eTutor.ServerApi
 
             services.AddDbContext<ETutorContext>(opts =>
                 {
-                    opts.UseMySql(Configuration.GetConnectionString("AzureConnection"));
+                    opts.UseMySql(Configuration.GetConnectionString("MainConnection"));
                 });
 
 
@@ -131,6 +134,20 @@ namespace eTutor.ServerApi
 
             var firebaseConfiguration = Configuration.GetSection("Firebase").Get<FirebaseConfiguration>();
             services.AddScoped(typeof(FirebaseConfiguration), fc => firebaseConfiguration);
+            
+            AppBaseRoute route = new AppBaseRoute {BasePath = Directory.GetCurrentDirectory()};
+            services.AddScoped(typeof(AppBaseRoute), t => route);
+            
+//            services.AddSingleton(typeof(FirebaseMessaging), t =>
+//            {
+//                FirebaseApp.Create(new AppOptions()
+//                {
+//                    Credential =
+//                        GoogleCredential.FromFile(
+//                            Path.Join(Directory.GetCurrentDirectory(), "etutorfirebaseadmin.json"))
+//                });
+//                
+//            })
 
             var emailLinksConfiguration = Configuration.GetSection("EmailLinks").Get<EmailLinksConfiguration>();
             services.AddScoped(typeof(EmailLinksConfiguration), elc => emailLinksConfiguration);
@@ -141,6 +158,7 @@ namespace eTutor.ServerApi
         {
             services.AddScoped<IMailService, SMTPMailService>();
             services.AddScoped<IFileService, FirebaseStorageFileService>();
+            services.AddScoped<INotificationService, PushNotificationService.PushNotificationService>();
         }
 
         private void ConfigureRepositories(IServiceCollection services)
@@ -154,6 +172,7 @@ namespace eTutor.ServerApi
             services.AddScoped<IChangePasswordRepository, ChangePasswordRepository>();
             services.AddScoped<IDeviceRepository, DeviceRepository>();
             services.AddScoped<IEmailValidationRepository, EmailValidationRepository>();
+            services.AddScoped<IMeetingRepository, MeetingRepository>();
         }
 
         private void ConfigureManagers(IServiceCollection services)
@@ -165,6 +184,8 @@ namespace eTutor.ServerApi
             services.AddScoped<AccountsManager, AccountsManager>();
             services.AddScoped<TutorSubjectsManager, TutorSubjectsManager>();
             services.AddScoped<DevicesManager, DevicesManager>();
+            services.AddScoped<NotificationManager, NotificationManager>();
+            services.AddScoped<MeetingsManager, MeetingsManager>();
         }
 
         private void AuthenticationServiceConfiguration(IServiceCollection services)

@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace eTutor.Core.Configurations
 {
-    public class ParentAutorizationConfiguration : IEntityTypeConfiguration<ParentAutorization>
+    public class ParentAuthorizationConfiguration : IEntityTypeConfiguration<ParentAuthorization>
     {
-        public void Configure(EntityTypeBuilder<ParentAutorization> builder)
+        public void Configure(EntityTypeBuilder<ParentAuthorization> builder)
         {
             builder.HasOne(p => p.Parent)
                 .WithMany(u => u.Autorizations);

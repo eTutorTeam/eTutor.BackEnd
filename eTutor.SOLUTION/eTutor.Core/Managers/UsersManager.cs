@@ -148,9 +148,9 @@ namespace eTutor.Core.Managers
 
             _parentStudentRepository.Create(parentStudent);
 
-             await _parentStudentRepository.Save();
+            await _parentStudentRepository.Save();
 
-             await _mailService.SendEmailToExistingParentToValidateStudent(studentUser, parentUser);
+            await _mailService.SendEmailToExistingParentToValidateStudent(studentUser, parentUser);
 
         }
 
@@ -285,6 +285,7 @@ namespace eTutor.Core.Managers
                 oldUser.Email = user.Email;
                 oldUser.PersonalId = user.PersonalId;
                 oldUser.UserName = user.UserName;
+                oldUser.AboutMe = user.AboutMe;
                 oldUser.NormalizedUserName = user.UserName.ToUpper();
                 oldUser.NormalizedEmail = user.Email.ToUpper();
 
@@ -307,7 +308,7 @@ namespace eTutor.Core.Managers
             for (int i = 0; i < errors.Count(); i++)
             {
                 if (i > 0) text += ", ";
-                    var error = errors.ElementAt(i);
+                var error = errors.ElementAt(i);
                 text += $"({error.Code}) {error.Description}";
                 
             }
@@ -327,7 +328,7 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<User>.Ok(user);
         }
         
-        public async Task<IOperationResult<string>> UploadProfileImageForUser(int userId, Stream fileStream, string fileName)
+        public async Task<IOperationResult<string>> UploadProfileImageForUser(int userId, string base64, string fileName)
         {
             var user = await _userRepository.Find(u => u.Id == userId);
             if (user == null)
@@ -335,15 +336,20 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<string>.Fail("El usuario dado no fue encontrado");
             }
 
+            byte[] fileBytes = Convert.FromBase64String(base64);
+
+            var fileStream = new MemoryStream(fileBytes);
+                
             if (!FileValidations.CheckIfFileIsImage(fileName))
             {
                 return BasicOperationResult<string>.Fail("Debe de subir un archivo valido de imagen");
             }
 
-            int fileSizeInKb = (int)(fileStream.Length / 1000);
+            int fileSizeInKb = (int) (fileStream.Length / 1000);
             if (fileSizeInKb > _maxFileSize)
             {
-                return BasicOperationResult<string>.Fail($"El archivo excede el limite de {_maxFileSize}kb en tamaño, intente con un archivo más pequeño");
+                return BasicOperationResult<string>.Fail(
+                    $"El archivo excede el limite de {_maxFileSize}kb en tamaño, intente con un archivo más pequeño");
             }
 
             fileName = $"{Guid.NewGuid().ToString()}{Path.GetExtension(fileName)}";
@@ -362,7 +368,7 @@ namespace eTutor.Core.Managers
             user.FileReference = fileName;
             _userRepository.Update(user);
             await _userRepository.Save();
-            
+
             return BasicOperationResult<string>.Ok(fileUrl);
         }
 
@@ -381,5 +387,40 @@ namespace eTutor.Core.Managers
             return emailValidation;
         }
 
+       
+        public async Task<IOperationResult<IEnumerable<User>>> GetStudentsByParentId(int userId)
+        {
+            var parentStudents = await _parentStudentRepository
+                .FindAll(x => x.ParentId == userId, 
+                    x => x.Student);
+
+            if (parentStudents == null || !parentStudents.Any())
+            {
+                return BasicOperationResult<IEnumerable<User>>.Fail("Los datos del usuario no fueron encontrados");
+            }
+            
+            var studentsUsers = parentStudents.Select(ps => ps.Student);
+            
+            return BasicOperationResult<IEnumerable<User>>.Ok(studentsUsers);
+        }
+        public async Task<IOperationResult<bool>> ToggleUserAccountState(int userId)
+        {
+            try
+            {
+                var oldUser = await _userRepository.Find(u => u.Id == userId);
+
+                oldUser.IsActive = !oldUser.IsActive;
+
+                _userRepository.Update(oldUser);
+
+                await _userRepository.Save();
+
+                return BasicOperationResult<bool>.Ok(true);
+            }
+            catch (Exception e)
+            {
+                return BasicOperationResult<bool>.Fail(e.Message);
+            }
+        }
     }
 }

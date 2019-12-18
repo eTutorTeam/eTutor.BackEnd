@@ -47,6 +47,11 @@ namespace eTutor.ServerApi.ViewModels
         /// Represents the user's email
         /// </summary>
         public string Email { get; set; }
+        
+        /// <summary>
+        /// Represents the user's aboutMe
+        /// </summary>
+        public string AboutMe { get; set; }
 
         /// <summary>
         /// Represents the written address of the user
@@ -67,6 +72,11 @@ namespace eTutor.ServerApi.ViewModels
         /// Represents the birthdate for the user
         /// </summary>
         public DateTime BirthDate { get; set; }
+        
+        /// <summary>
+        /// Represents the user's name
+        /// </summary>
+        public string UserName { get; set; }
         
         /// <summary>
         /// Represents the url to the user's profile image

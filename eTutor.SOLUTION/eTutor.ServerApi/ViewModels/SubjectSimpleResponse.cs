@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace eTutor.ServerApi.ViewModels
 {
-    public class SubjectResponseTutorDetail
+    public class SubjectSimpleResponse
     {
         public int Id { get; set; }
 

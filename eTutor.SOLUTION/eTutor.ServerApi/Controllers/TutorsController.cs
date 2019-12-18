@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using eTutor.Core.Contracts;
 using eTutor.Core.Managers;
 using eTutor.Core.Models;
 using eTutor.ServerApi.ViewModels;
@@ -97,6 +98,42 @@ namespace eTutor.ServerApi.Controllers
             var mapped = _mapper.Map<UserAdminResponse>(result.Entity);
 
             return Ok(mapped);
+        }
+
+        [HttpGet("{subjectId}/subject")]
+        [Authorize(Roles = "admin, student, parent")]
+        [ProducesResponseType(typeof(ISet<TutorSimpleResponse>), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        public async Task<IActionResult> GetTutorsForSubject([FromRoute] int subjectId)
+        {
+            IOperationResult<ISet<User>> result = await _tutorsManager.GetTutorsBySubjectId(subjectId);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            var mapped = _mapper.Map<ISet<TutorSimpleResponse>>(result.Entity);
+
+            return Ok(mapped);
+        }
+
+        [HttpGet("{tutorId}")]
+        [Authorize(Roles = "student, parent, admin")]
+        [ProducesResponseType(typeof(TutorSimpleResponse), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        public async Task<IActionResult> GetTutorById([FromRoute] int tutorId)
+        {
+            IOperationResult<User> result = await _tutorsManager.GetTutorById(tutorId);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            var response = _mapper.Map<TutorSimpleResponse>(result.Entity);
+
+            return Ok(response);
         }
     }
 }

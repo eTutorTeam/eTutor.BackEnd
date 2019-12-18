@@ -61,7 +61,18 @@ namespace eTutor.Core.Managers
             
             return BasicOperationResult<bool>.Ok(true);
         }
+        public async Task<IOperationResult<IEnumerable<User>>> GetTutorsForSubject(int subjectId)
+        {
+            var tutorSubjects = await _tutorSubjectRepository.FindAll(ts => ts.SubjectId == subjectId, ts => ts.Tutor);
+            var tutors = tutorSubjects.Select(ts => ts.Tutor);
 
+            if (!tutors.Any())
+            {
+                return BasicOperationResult<IEnumerable<User>>.Fail("No hay tutores asociados a esta materia");
+            }
+
+            return BasicOperationResult<IEnumerable<User>>.Ok(tutors);
+        }
         private async Task<IEnumerable<Subject>> GetSubjectsForTutor(int tutorId)
         {
             var tutorSubjects = await _tutorSubjectRepository.FindAll(ts => ts.TutorId == tutorId, ts => ts.Subject);

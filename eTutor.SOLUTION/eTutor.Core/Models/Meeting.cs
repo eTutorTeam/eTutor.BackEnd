@@ -6,7 +6,7 @@ namespace eTutor.Core.Models
 {
     public sealed class Meeting : EntityBase
     {
-        public int TopicId { get; set; }
+        public int SubjectId { get; set; }
 
         public Subject Subject { get; set; }
 
@@ -18,9 +18,9 @@ namespace eTutor.Core.Models
 
         public User Tutor { get; set; }
 
-        public int? ParentAutorizationId { get; set; }
+        public int? ParentAuthorizationId { get; set; }
 
-        public ParentAutorization Type { get; set; }
+        public ParentAuthorization ParentAuthorization { get; set; }
         
         public DateTime StartDateTime { get; set; }
 

@@ -19,5 +19,7 @@ namespace eTutor.ServerApi.ViewModels
         public Gender Gender { get; set; }
 
         public string FullName => $"{Name} {LastName}";
+
+        public string ProfileImageUrl { get; set; }
     }
 }

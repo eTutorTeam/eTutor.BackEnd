@@ -85,6 +85,5 @@ namespace eTutor.ServerApi.Controllers
 
             return Accepted();
         }
-        
     }
 }
