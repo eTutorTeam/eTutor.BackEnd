@@ -9,11 +9,18 @@ namespace eTutor.ServerApi.ViewModels
     public class MeetingResponse
     {
         public int Id { get; set; }
+        
         public int StudentId { get; set; }
 
         public int TutorId { get; set; }
+        
+        public string TutorName { get; set; }
+        
+        public string TutorImage { get; set; }
 
         public int SubjectId { get; set; }
+        
+        public string SubjectName { get; set; }
 
         public DateTime StartDateTime { get; set; }
 

@@ -51,18 +51,25 @@ namespace eTutor.Core.Managers
 
         public async Task<IOperationResult<Meeting>> CreateMeeting(Meeting meeting)
         {
+
+            if (meeting == null)
+            {
+                return BasicOperationResult<Meeting>.Fail("El objeto que envió es inválido");
+            }
+            
             var validation = await ValidateMeeting(meeting);
 
             if (!validation.Success) return validation;
 
             meeting.Status = MeetingStatus.Pending;
-            var res = _meetingRepository.Create(meeting);
-
-            if (!res.Success) return res;
+            
+            _meetingRepository.Create(meeting);
 
             await _meetingRepository.Save();
 
-            return BasicOperationResult<Meeting>.Ok(res.Entity);
+            var response = await _meetingRepository.Find(m => m.Id == meeting.Id, m => m.Subject, m => m.Tutor);
+
+            return BasicOperationResult<Meeting>.Ok(response);
         }
 
         private async Task<IOperationResult<Meeting>> ValidateMeeting(Meeting meeting)

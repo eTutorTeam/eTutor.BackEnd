@@ -8,9 +8,12 @@ namespace eTutor.ServerApi.MapperProfiles
     {
         public MeetingProfile()
         {
-            CreateMap<MeetingRequest, Meeting>();
+            CreateMap<MeetingStudentRequest, Meeting>().ReverseMap();
 
-            CreateMap<Meeting, MeetingResponse>();
+            CreateMap<Meeting, MeetingResponse>()
+                .ForMember(dest => dest.SubjectName, opt => opt.MapFrom(src => src.Subject.Name))
+                .ForMember(dest => dest.TutorName, opt => opt.MapFrom(src => src.Tutor.FullName))
+                .ForMember(dest => dest.TutorImage, opt => opt.MapFrom(src => src.Tutor.ProfileImageUrl));
         }
     }
 }

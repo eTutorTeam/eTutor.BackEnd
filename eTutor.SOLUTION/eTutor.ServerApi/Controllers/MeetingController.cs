@@ -31,10 +31,12 @@ namespace eTutor.ServerApi.Controllers
         [ProducesResponseType(typeof(MeetingResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         [ProducesResponseType(401)]
-        [AllowAnonymous]//No funciona si no lo pongo, dice que no estoy autorizado
-        public async Task<IActionResult> CreateMeeting([FromBody] MeetingRequest request)
+        [Authorize(Roles = "student")]//No funciona si no lo pongo, dice que no estoy autorizado
+        public async Task<IActionResult> CreateMeeting([FromBody] MeetingStudentRequest studentRequest)
         {
-            Meeting model = _mapper.Map<Meeting>(request);
+            int studentId = GetUserId();
+            Meeting model = _mapper.Map<Meeting>(studentRequest);
+            model.StudentId = studentId;
 
             IOperationResult<Meeting> operationResult = await _meetingsManager.CreateMeeting(model);
 
@@ -43,7 +45,7 @@ namespace eTutor.ServerApi.Controllers
                 return BadRequest(operationResult.Message);
             }
 
-            var response = _mapper.Map<MeetingRequest>(operationResult.Entity);
+            var response = _mapper.Map<MeetingResponse>(operationResult.Entity);
 
             return Ok(response);
         }
@@ -51,7 +53,7 @@ namespace eTutor.ServerApi.Controllers
         [HttpGet("student-meetings")]
         [ProducesResponseType(typeof(IEnumerable<MeetingResponse>), 200)]
         [ProducesResponseType(typeof(Error), 400)]
-        [AllowAnonymous]
+        [Authorize(Roles = "student")]
         public async Task<IActionResult> GetStudentMeetings()
         {
             int userId = GetUserId();
