@@ -12,7 +12,10 @@ namespace eTutor.ServerApi.MapperProfiles
     {
         public TutorsProfile()
         {
-            CreateMap<User, TutorSimpleResponse>().ReverseMap();
+            CreateMap<User, TutorSimpleResponse>()
+                .ForMember(dest => dest.ProfileImageUrl, opt => opt.MapFrom(src => src.ProfileImageUrl 
+                                                                                   ?? "https://immedilet-invest.com/wp-content/uploads/2016/01/user-placeholder.jpg"))
+                .ReverseMap();
         }
     }
 }
