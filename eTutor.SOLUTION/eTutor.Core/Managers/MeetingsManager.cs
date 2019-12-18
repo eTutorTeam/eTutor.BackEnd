@@ -19,13 +19,17 @@ namespace eTutor.Core.Managers
     {
         private readonly IMeetingRepository _meetingRepository;
         private readonly ISubjectRepository _subjectRepository;
+        private readonly NotificationManager _notificationManager;
         private readonly IUserRepository _userRepository;
 
-        public MeetingsManager(IMeetingRepository meetingRepository, ISubjectRepository subjectRepository, IUserRepository userRepository)
+        public MeetingsManager(IMeetingRepository meetingRepository,
+            ISubjectRepository subjectRepository, IUserRepository userRepository,
+            NotificationManager notificationManager)
         {
             _meetingRepository = meetingRepository;
             _subjectRepository = subjectRepository;
             _userRepository = userRepository;
+            _notificationManager = notificationManager;
         }
 
         public async Task<IOperationResult<Meeting>> GetMeeting(int meetingId)
@@ -72,7 +76,10 @@ namespace eTutor.Core.Managers
 
             await _meetingRepository.Save();
 
-            var response = await _meetingRepository.Find(m => m.Id == meeting.Id, m => m.Subject, m => m.Tutor);
+            var response = await _meetingRepository.Find(m => m.Id == meeting.Id, m => m.Subject, m => m.Tutor, m => m.Student);
+
+            await _notificationManager.NotifyStudentMeetingWasCreated(meeting.StudentId, meeting.Subject.Name, meeting.Tutor.FullName);
+            await _notificationManager.NotifyTutorOfSolicitedMeeting(meeting.TutorId, meeting.Subject, meeting.Student, meeting.Id);
 
             return BasicOperationResult<Meeting>.Ok(response);
         }

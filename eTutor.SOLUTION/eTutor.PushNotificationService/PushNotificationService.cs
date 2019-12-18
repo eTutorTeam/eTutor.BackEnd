@@ -41,29 +41,27 @@ namespace eTutor.PushNotificationService
 
         }
 
-        public async Task SendNotificationToUser(User user, string message, string subject = "eTutor")
+        public async Task SendNotificationToUser(User user, string message, string subject = "eTutor", Dictionary<string, string> data = null)
         {
             var devices = await _deviceRepository.FindAll(u => u.UserId == user.Id);
             var deviceTokens = devices.Select(d => d.FcmToken).ToHashSet().ToArray();
 
-            var multicastMessage = new MulticastMessage
+            if (deviceTokens.Length > 0)
             {
-                Tokens = deviceTokens,
-                Notification = new Notification
-                {
-                    Body = message,
-                    Title = subject,
-                    ImageUrl = user.ProfileImageUrl ?? "https://image.shutterstock.com/image-vector/sample-stamp-square-grunge-sign-260nw-1474408826.jpg"
-                },
-                Data = new Dictionary<string, string>
-                {
-                    {"user", user.FullName},
-                    {"userId", user.Id.ToString()},
-                    {"data-img", user.ProfileImageUrl}
-                }
-            };
 
-            await _firebaseMessaging.SendMulticastAsync(multicastMessage);
+                var multicastMessage = new MulticastMessage
+                {
+                    Tokens = deviceTokens,
+                    Notification = new Notification
+                    {
+                        Body = message,
+                        Title = subject
+                    },
+                    Data = data
+                };
+
+                await _firebaseMessaging.SendMulticastAsync(multicastMessage);
+            }
         }
         
     }

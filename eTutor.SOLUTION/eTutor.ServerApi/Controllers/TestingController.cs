@@ -21,9 +21,8 @@ namespace eTutor.ServerApi.Controllers
         }
 
         [HttpGet("test-notification")]
-        public async Task<IActionResult> TestSendingNotifications()
+        public async Task<IActionResult> TestSendingNotifications([FromQuery] int userId = 5)
         {
-            int userId = 3;
             IOperationResult<string> result = await _notificationManager.NotifyMeetingAccepted(userId);
 
             return Ok(result);
