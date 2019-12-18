@@ -83,5 +83,21 @@ namespace eTutor.Core.Managers
 
 
         }
+
+        public async Task<IOperationResult<User>> GetTutorById(int tutorId)
+        {
+            var tutor = await _userRepository.Find(t =>
+                    t.Id == tutorId && t.IsEmailValidated && t.IsActive
+                    && t.UserRoles.Any(ur => ur.RoleId == (int) RoleTypes.Tutor),
+                t => t.UserRoles
+            );
+
+            if (tutor == null)
+            {
+                return BasicOperationResult<User>.Fail("El tutor solicitado no fue encontrado, o ha sido inhabilitado en nuestro sistema");
+            }
+            
+            return BasicOperationResult<User>.Ok(tutor);
+        }
     }
 }

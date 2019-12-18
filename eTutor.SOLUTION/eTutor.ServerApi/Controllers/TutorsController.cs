@@ -117,5 +117,23 @@ namespace eTutor.ServerApi.Controllers
 
             return Ok(mapped);
         }
+
+        [HttpGet("{tutorId}")]
+        [Authorize(Roles = "student, parent, admin")]
+        [ProducesResponseType(typeof(TutorSimpleResponse), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        public async Task<IActionResult> GetTutorById([FromRoute] int tutorId)
+        {
+            IOperationResult<User> result = await _tutorsManager.GetTutorById(tutorId);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            var response = _mapper.Map<TutorSimpleResponse>(result.Entity);
+
+            return Ok(response);
+        }
     }
 }
