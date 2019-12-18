@@ -74,6 +74,11 @@ namespace eTutor.ServerApi.ViewModels
         public DateTime BirthDate { get; set; }
         
         /// <summary>
+        /// Represents the user's name
+        /// </summary>
+        public string UserName { get; set; }
+        
+        /// <summary>
         /// Represents the url to the user's profile image
         /// </summary>
         public string ProfileImageUrl { get; set; }

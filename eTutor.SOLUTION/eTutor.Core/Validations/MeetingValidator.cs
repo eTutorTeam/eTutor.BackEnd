@@ -14,7 +14,7 @@ namespace eTutor.Core.Validations
 
             RuleFor(s => s.StudentId).NotEmpty();
 
-            RuleFor(s => s.Subject).NotNull();
+            RuleFor(s => s.SubjectId).NotNull();
 
             RuleFor(s => s.StartDateTime).NotEmpty();
 

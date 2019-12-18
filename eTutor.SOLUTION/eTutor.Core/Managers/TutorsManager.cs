@@ -15,10 +15,15 @@ namespace eTutor.Core.Managers
     public sealed class TutorsManager
     {
         private readonly IUserRepository _userRepository;
+        private readonly ITutorSubjectRepository _tutorSubjectRepository;
+        private readonly ISubjectRepository _subjectRepository;
 
-        public TutorsManager(IUserRepository userRepository)
+        public TutorsManager(IUserRepository userRepository, 
+            ITutorSubjectRepository tutorSubjectRepository, ISubjectRepository subjectRepository)
         {
             _userRepository = userRepository;
+            _tutorSubjectRepository = tutorSubjectRepository;
+            _subjectRepository = subjectRepository;
         }
 
 
@@ -58,6 +63,41 @@ namespace eTutor.Core.Managers
 
             return BasicOperationResult<User>.Ok(tutor);
 
+        }
+
+        public async Task<IOperationResult<ISet<User>>> GetTutorsBySubjectId(int subjectId)
+        {
+            var subjectExists = await _subjectRepository.Exists(s => s.Id == subjectId);
+
+            if (!subjectExists)
+            {
+                return BasicOperationResult<ISet<User>>.Fail("La materia que por la que intenta buscar tutores no existe en el sistema ya");
+            }
+            
+            var tutorList = await _tutorSubjectRepository.FindAll(t => t.SubjectId == subjectId, 
+                t => t.Tutor);
+
+            var tutors = tutorList.Select(t => t.Tutor).Where(t => t.IsActive && t.IsEmailValidated).ToHashSet();
+            
+            return BasicOperationResult<ISet<User>>.Ok(tutors);
+
+
+        }
+
+        public async Task<IOperationResult<User>> GetTutorById(int tutorId)
+        {
+            var tutor = await _userRepository.Find(t =>
+                    t.Id == tutorId && t.IsEmailValidated && t.IsActive
+                    && t.UserRoles.Any(ur => ur.RoleId == (int) RoleTypes.Tutor),
+                t => t.UserRoles
+            );
+
+            if (tutor == null)
+            {
+                return BasicOperationResult<User>.Fail("El tutor solicitado no fue encontrado, o ha sido inhabilitado en nuestro sistema");
+            }
+            
+            return BasicOperationResult<User>.Ok(tutor);
         }
     }
 }

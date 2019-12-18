@@ -69,7 +69,7 @@ namespace eTutor.ServerApi.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(SubjectResponseTutorDetail), 200)]
+        [ProducesResponseType(typeof(SubjectSimpleResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         public async Task<IActionResult> Get([FromRoute]int id)
         {
@@ -80,7 +80,7 @@ namespace eTutor.ServerApi.Controllers
                 return BadRequest(result.Message);
             }
 
-            var response = _mapper.Map<SubjectResponseTutorDetail>(result.Entity);
+            var response = _mapper.Map<SubjectSimpleResponse>(result.Entity);
 
             return Ok(response);
         }
