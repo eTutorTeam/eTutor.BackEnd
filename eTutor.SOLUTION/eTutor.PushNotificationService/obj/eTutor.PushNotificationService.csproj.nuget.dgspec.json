@@ -1,0 +1,140 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\Angel Ruiz\\Desktop\\eTutorProjects\\eTutor.BackEnd\\eTutor.SOLUTION\\eTutor.PushNotificationService\\eTutor.PushNotificationService.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\Angel Ruiz\\Desktop\\eTutorProjects\\eTutor.BackEnd\\eTutor.SOLUTION\\eTutor.Core\\eTutor.Core.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Angel Ruiz\\Desktop\\eTutorProjects\\eTutor.BackEnd\\eTutor.SOLUTION\\eTutor.Core\\eTutor.Core.csproj",
+        "projectName": "eTutor.Core",
+        "projectPath": "C:\\Users\\Angel Ruiz\\Desktop\\eTutorProjects\\eTutor.BackEnd\\eTutor.SOLUTION\\eTutor.Core\\eTutor.Core.csproj",
+        "packagesPath": "C:\\Users\\Angel Ruiz\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Angel Ruiz\\Desktop\\eTutorProjects\\eTutor.BackEnd\\eTutor.SOLUTION\\eTutor.Core\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Angel Ruiz\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp2.2"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp2.2": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp2.2": {
+          "dependencies": {
+            "FluentValidation.AspNetCore": {
+              "target": "Package",
+              "version": "[8.5.1, )"
+            },
+            "Microsoft.AspNetCore.Identity": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[2.2.6, )"
+            },
+            "Microsoft.NETCore.App": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.2.0, )",
+              "autoReferenced": true
+            }
+          },
+          "imports": [
+            "net461"
+          ],
+          "assetTargetFallback": true,
+          "warn": true
+        }
+      }
+    },
+    "C:\\Users\\Angel Ruiz\\Desktop\\eTutorProjects\\eTutor.BackEnd\\eTutor.SOLUTION\\eTutor.PushNotificationService\\eTutor.PushNotificationService.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Angel Ruiz\\Desktop\\eTutorProjects\\eTutor.BackEnd\\eTutor.SOLUTION\\eTutor.PushNotificationService\\eTutor.PushNotificationService.csproj",
+        "projectName": "eTutor.PushNotificationService",
+        "projectPath": "C:\\Users\\Angel Ruiz\\Desktop\\eTutorProjects\\eTutor.BackEnd\\eTutor.SOLUTION\\eTutor.PushNotificationService\\eTutor.PushNotificationService.csproj",
+        "packagesPath": "C:\\Users\\Angel Ruiz\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Angel Ruiz\\Desktop\\eTutorProjects\\eTutor.BackEnd\\eTutor.SOLUTION\\eTutor.PushNotificationService\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Angel Ruiz\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp2.2"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp2.2": {
+            "projectReferences": {
+              "C:\\Users\\Angel Ruiz\\Desktop\\eTutorProjects\\eTutor.BackEnd\\eTutor.SOLUTION\\eTutor.Core\\eTutor.Core.csproj": {
+                "projectPath": "C:\\Users\\Angel Ruiz\\Desktop\\eTutorProjects\\eTutor.BackEnd\\eTutor.SOLUTION\\eTutor.Core\\eTutor.Core.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp2.2": {
+          "dependencies": {
+            "FirebaseAdmin": {
+              "target": "Package",
+              "version": "[1.9.1, )"
+            },
+            "Microsoft.NETCore.App": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.2.0, )",
+              "autoReferenced": true
+            }
+          },
+          "imports": [
+            "net461"
+          ],
+          "assetTargetFallback": true,
+          "warn": true
+        }
+      }
+    }
+  }
+}
