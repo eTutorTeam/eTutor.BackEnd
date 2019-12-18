@@ -31,7 +31,7 @@ namespace eTutor.ServerApi.Controllers
         [ProducesResponseType(typeof(MeetingResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         [ProducesResponseType(401)]
-        [Authorize(Roles = "student")]//No funciona si no lo pongo, dice que no estoy autorizado
+        [Authorize(Roles = "student")]
         public async Task<IActionResult> CreateMeeting([FromBody] MeetingStudentRequest studentRequest)
         {
             int studentId = GetUserId();
@@ -73,7 +73,7 @@ namespace eTutor.ServerApi.Controllers
         [HttpGet("tutor-meetings")]
         [ProducesResponseType(typeof(IEnumerable<MeetingResponse>), 200)]
         [ProducesResponseType(typeof(Error), 400)]
-        [AllowAnonymous]//No funciona si no lo pongo, dice que no estoy autorizado
+        [AllowAnonymous]
         public async Task<IActionResult> GetTutorMeetings()
         {
             int userId = GetUserId();
@@ -93,7 +93,7 @@ namespace eTutor.ServerApi.Controllers
         [HttpGet("meeting")]
         [ProducesResponseType(typeof(MeetingResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
-        [AllowAnonymous]//No funciona si no lo pongo, dice que no estoy autorizado
+        [AllowAnonymous]
         public async Task<IActionResult> GetMeeting([FromHeader] int meetingId)
         {
             var result = await _meetingsManager.GetMeeting(meetingId);

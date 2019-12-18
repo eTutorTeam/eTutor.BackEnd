@@ -85,6 +85,27 @@ namespace eTutor.ServerApi.Controllers
 
             return Accepted();
         }
-        
+
+        [HttpGet("get-tutors/subject")]
+        [ProducesResponseType(typeof(IEnumerable<SubjectResponse>), 200)]
+        [ProducesResponseType(typeof(Error), 404)]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetTutorsFromSubject([FromHeader] int subjectId)
+        {
+
+            var result = await _tutorSubjectsManager.GetTutorsForSubject(subjectId);
+
+            if (!result.Success)
+            {
+                return NotFound(result.Message);
+            }
+
+            var tutors = result.Entity;
+            var response = _mapper.Map<IEnumerable<UserResponse>>(tutors);
+
+            return Ok(response);
+        }
+
+
     }
 }

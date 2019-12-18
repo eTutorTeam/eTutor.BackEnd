@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using eTutor.Core.Contracts;
@@ -17,10 +18,14 @@ namespace eTutor.Core.Managers
     public sealed class MeetingsManager: EntityBase
     {
         private readonly IMeetingRepository _meetingRepository;
+        private readonly ISubjectRepository _subjectRepository;
+        private readonly IUserRepository _userRepository;
 
-        public MeetingsManager(IMeetingRepository meetingRepository)
+        public MeetingsManager(IMeetingRepository meetingRepository, ISubjectRepository subjectRepository, IUserRepository userRepository)
         {
             _meetingRepository = meetingRepository;
+            _subjectRepository = subjectRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<IOperationResult<Meeting>> GetMeeting(int meetingId)
@@ -84,6 +89,27 @@ namespace eTutor.Core.Managers
             }
 
             return BasicOperationResult<Meeting>.Ok();
+        }
+
+        private bool SubjectExists(int subjectId)
+        {
+            var subject = _subjectRepository.Find(s => s.Id == subjectId);
+            if (subject == null) return false;
+            return true;
+        }
+
+        private bool StudentExistsAndIsStudent(int studentId)
+        {
+            var student = _userRepository.Find(s => s.Id == studentId);
+            if (student == null) return false;
+            return true;
+        }
+        private bool TutorExistsAndIsTutor(int tutorId)
+        {
+            var tutor = _userRepository.Find(u => u.Id == tutorId);
+            if (tutor == null) return false;
+
+            return true;
         }
     }
 }
