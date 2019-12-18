@@ -88,23 +88,21 @@ namespace eTutor.ServerApi.Controllers
         }
 
 
-        [HttpPost("profile/image")]
+        [HttpPatch("profile/image")]
         [ProducesResponseType(typeof(IOperationResult<string>), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         [ProducesResponseType(400)]
         [AllowAnonymous]
-        public async Task<IActionResult> AddProfileImageToProfile(IFormFile file)
+        public async Task<IActionResult> AddProfileImageToProfile([FromBody] UserProfileImageRequest request)
         {
-            int userId = 4;
+            int userId = GetUserId();
             
-            if (file == null)
+            if (request == null)
             {
                 return BadRequest();
             }
             
-            string fileName = file.FileName;
-            Stream stream = file.OpenReadStream();
-            var result = await _usersManager.UploadProfileImageForUser(userId, stream, fileName);
+            var result = await _usersManager.UploadProfileImageForUser(userId, request.Base64Img, request.FileName);
 
             if (!result.Success)
             {
