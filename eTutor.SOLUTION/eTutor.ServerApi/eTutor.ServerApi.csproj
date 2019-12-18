@@ -41,7 +41,9 @@
     <ProjectReference Include="..\eTutor.Persistence\eTutor.Persistence.csproj">
       <GlobalPropertiesToRemove>;WebPublishProfileFile</GlobalPropertiesToRemove>
     </ProjectReference>
-    <ProjectReference Include="..\eTutor.PushNotificationService\eTutor.PushNotificationService.csproj" />
+    <ProjectReference Include="..\eTutor.PushNotificationService\eTutor.PushNotificationService.csproj">
+      <GlobalPropertiesToRemove>;WebPublishProfileFile</GlobalPropertiesToRemove>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
