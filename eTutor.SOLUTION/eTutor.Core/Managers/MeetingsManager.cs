@@ -95,25 +95,44 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<Meeting>.Fail(validationResult.JSONFormatErrors());
             }
 
+            if (!await SubjectExists(meeting.SubjectId))
+            {
+                return BasicOperationResult<Meeting>.Fail("La materia no existe");
+            }
+
+            if (!await TutorExistsAndIsTutor(meeting.TutorId))
+            {
+                return BasicOperationResult<Meeting>.Fail("El tutor no existe");
+            }
+
+            if (!await StudentExistsAndIsStudent(meeting.StudentId))
+            {
+                return BasicOperationResult<Meeting>.Fail("El estudiante no existe");
+            }
+
             return BasicOperationResult<Meeting>.Ok();
         }
 
-        private bool SubjectExists(int subjectId)
+        private async Task<bool> SubjectExists(int subjectId)
         {
-            var subject = _subjectRepository.Find(s => s.Id == subjectId);
+            var subject = await _subjectRepository.Find(s => s.Id == subjectId);
             if (subject == null) return false;
             return true;
         }
 
-        private bool StudentExistsAndIsStudent(int studentId)
+        private async Task<bool> StudentExistsAndIsStudent(int studentId)
         {
-            var student = _userRepository.Find(s => s.Id == studentId);
+            var student = await _userRepository.Set
+                .Include(u => u.UserRoles)
+                .FirstOrDefaultAsync(u => u.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Student) && u.Id == studentId);
             if (student == null) return false;
             return true;
         }
-        private bool TutorExistsAndIsTutor(int tutorId)
+        private async Task<bool> TutorExistsAndIsTutor(int tutorId)
         {
-            var tutor = _userRepository.Find(u => u.Id == tutorId);
+            var tutor = await _userRepository.Set
+                .Include(u => u.UserRoles)
+                .FirstOrDefaultAsync(u => u.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Tutor) && u.Id == tutorId); 
             if (tutor == null) return false;
 
             return true;
