@@ -98,22 +98,22 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<Meeting>.Ok();
         }
 
-        private bool SubjectExists(int subjectId)
+        private async Task<bool> SubjectExists(int subjectId)
         {
-            var subject = _subjectRepository.Find(s => s.Id == subjectId);
+            var subject = await _subjectRepository.Find(s => s.Id == subjectId);
             if (subject == null) return false;
             return true;
         }
 
-        private bool StudentExistsAndIsStudent(int studentId)
+        private async Task<bool> StudentExistsAndIsStudent(int studentId)
         {
-            var student = _userRepository.Find(s => s.Id == studentId);
+            var student = await _userRepository.Find(s => s.Id == studentId);
             if (student == null) return false;
             return true;
         }
-        private bool TutorExistsAndIsTutor(int tutorId)
+        private async Task<bool> TutorExistsAndIsTutor(int tutorId)
         {
-            var tutor = _userRepository.Find(u => u.Id == tutorId);
+            var tutor =  await _userRepository.Find(u => u.Id == tutorId);
             if (tutor == null) return false;
 
             return true;
