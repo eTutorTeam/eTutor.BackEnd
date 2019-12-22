@@ -51,7 +51,7 @@ namespace eTutor.ServerApi
 
             services.AddDbContext<ETutorContext>(opts =>
                 {
-                    opts.UseMySql(Configuration.GetConnectionString("AzureConnection"));
+                    opts.UseMySql(Configuration.GetConnectionString("MainConnection"));
                 });
 
 
@@ -173,6 +173,7 @@ namespace eTutor.ServerApi
             services.AddScoped<IDeviceRepository, DeviceRepository>();
             services.AddScoped<IEmailValidationRepository, EmailValidationRepository>();
             services.AddScoped<IMeetingRepository, MeetingRepository>();
+            services.AddScoped<IRatingRepository, RatingRepository>();
         }
 
         private void ConfigureManagers(IServiceCollection services)
@@ -186,6 +187,7 @@ namespace eTutor.ServerApi
             services.AddScoped<DevicesManager, DevicesManager>();
             services.AddScoped<NotificationManager, NotificationManager>();
             services.AddScoped<MeetingsManager, MeetingsManager>();
+            services.AddScoped<RatingManager, RatingManager>();
         }
 
         private void AuthenticationServiceConfiguration(IServiceCollection services)
