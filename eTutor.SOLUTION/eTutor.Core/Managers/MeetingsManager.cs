@@ -116,7 +116,7 @@ namespace eTutor.Core.Managers
             }
 
             MeetingStatus status = answeredStatusAnsweredStatus;
-            if (status != MeetingStatus.Accepted || status != MeetingStatus.Rejected)
+            if (status != MeetingStatus.Accepted && status != MeetingStatus.Rejected)
             {
                 return BasicOperationResult<string>.Fail("No tiene los permisos para dar ese tipo de respuesta");
             }
@@ -131,7 +131,7 @@ namespace eTutor.Core.Managers
                 ? "La tutoría ha sido aceptada exitosamente"
                 : "La tutoría ha sido rechazada exitosamente";
 
-            _notificationManager.NotifySolicitedMeetingByStudentAnswered(meeting);
+            await _notificationManager.NotifySolicitedMeetingByStudentAnswered(meeting);
             
             return BasicOperationResult<string>.Ok(responseMessage);
         }

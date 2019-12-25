@@ -62,10 +62,7 @@ namespace eTutor.Core.Managers
         {
             var tutorResult = await GetUser(meeting.TutorId);
 
-            if (!tutorResult.Success)
-            {
-                return BasicOperationResult<string>.Fail(tutorResult.Message.Message);
-            }
+            var student = await GetUser(meeting.StudentId);
 
             User tutorUser = tutorResult.Entity;
 
@@ -83,7 +80,7 @@ namespace eTutor.Core.Managers
                 data.Add("meetingRejected", "true");
             }
 
-            await _notificationService.SendNotificationToUser(meeting.Student, message, subject, data);
+            await _notificationService.SendNotificationToUser(student.Entity, message, subject, data);
 
             return BasicOperationResult<string>.Ok("Notification was sent");
         }
