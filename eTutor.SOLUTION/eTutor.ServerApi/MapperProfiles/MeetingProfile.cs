@@ -23,6 +23,8 @@ namespace eTutor.ServerApi.MapperProfiles
                 .ForMember(dest => dest.SubjectName, opt => opt.MapFrom(src => src.Subject.Name))
                 .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => src.StartDateTime ))
                 .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => src.EndDateTime));
+
+            CreateMap<Meeting, ParentMeetingResponse>();
         }
     }
 }

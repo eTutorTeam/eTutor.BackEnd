@@ -137,6 +137,29 @@ namespace eTutor.Core.Managers
         }
 
 
+        public async Task<IOperationResult<IEnumerable<Meeting>>> GetFutureParentMeetings(int parentId)
+        {
+            var parentExists = await _userRepository.Exists(u =>
+                    u.Id == parentId && u.UserRoles.Any(ur => ur.RoleId == (int) RoleTypes.Parent),
+                u => u.UserRoles
+            );
+
+            if (!parentExists)
+            {
+                return BasicOperationResult<IEnumerable<Meeting>>.Fail("Este padre no existe en nuestra base de datos");
+            }
+            
+            var meetings = await _meetingRepository.GetAllMeetingsOfParentStudents(parentId);
+            var filteredMeetings = meetings.Where(
+                m => m.StartDateTime > DateTime.Now.AddHours(-2)
+                     && m.ParentAuthorizationId == null
+                     && m.Status == MeetingStatus.Pending
+                     );
+            
+            return BasicOperationResult<IEnumerable<Meeting>>.Ok(filteredMeetings);
+        }
+
+
         private async Task<Meeting> FindMeetingWithTutor(int meetingId, int tutorId)
         {
             var meeting = await _meetingRepository.Find(

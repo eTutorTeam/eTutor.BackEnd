@@ -8,6 +8,7 @@ namespace eTutor.Core.Enums
         InProgress = 4,
         Complete = 5,
         Rejected = 6,
-        Cancelled = 7
+        Cancelled = 7,
+        Unapproved = 8
     }
 }
