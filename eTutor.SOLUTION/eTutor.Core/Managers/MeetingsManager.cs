@@ -105,6 +105,47 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<Meeting>.Ok(meeting);
 
         }
+        
+        public async Task<IOperationResult<string>> TutorResponseToMeetingRequest(int meetingId, MeetingStatus answeredStatusAnsweredStatus, int userId)
+        {
+            var meeting = await FindMeetingWithTutor(meetingId, userId);
+
+            if (meeting == null)
+            {
+                return BasicOperationResult<string>.Fail("La tutoría agendada a la que intenta responder no existe");
+            }
+
+            MeetingStatus status = answeredStatusAnsweredStatus;
+            if (status != MeetingStatus.Accepted || status != MeetingStatus.Rejected)
+            {
+                return BasicOperationResult<string>.Fail("No tiene los permisos para dar ese tipo de respuesta");
+            }
+
+            meeting.Status = status;
+
+            _meetingRepository.Update(meeting);
+
+            await _meetingRepository.Save();
+
+            string responseMessage = status == MeetingStatus.Accepted
+                ? "La tutoría ha sido aceptada exitosamente"
+                : "La tutoría ha sido rechazada exitosamente";
+
+            _notificationManager.NotifySolicitedMeetingByStudentAnswered(meeting);
+            
+            return BasicOperationResult<string>.Ok(responseMessage);
+        }
+
+
+        private async Task<Meeting> FindMeetingWithTutor(int meetingId, int tutorId)
+        {
+            var meeting = await _meetingRepository.Find(
+                m => m.Id == meetingId && m.TutorId == tutorId,
+                m => m.Student, m => m.Subject
+            );
+
+            return meeting;
+        }
 
         private async Task<IOperationResult<Meeting>> ValidateMeeting(Meeting meeting)
         {
