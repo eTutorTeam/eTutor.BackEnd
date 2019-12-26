@@ -49,6 +49,24 @@ namespace eTutor.ServerApi.Controllers
 
             return Ok(response);
         }
+        [HttpPut("cancel-meeting")]
+        [ProducesResponseType(typeof(MeetingResponse), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        [AllowAnonymous]
+        public async Task<IActionResult> CancelMeeting([FromHeader] int meetingId)
+        {
+
+            IOperationResult<Meeting> result = await _meetingsManager.CancelMeeting(meetingId);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            var mapped = _mapper.Map<MeetingResponse>(result.Entity);
+
+            return Ok(mapped);
+        }
 
         [HttpGet("student-meetings")]
         [ProducesResponseType(typeof(IEnumerable<MeetingResponse>), 200)]

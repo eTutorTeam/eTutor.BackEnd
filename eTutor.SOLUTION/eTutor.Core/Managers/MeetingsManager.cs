@@ -44,6 +44,23 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<Meeting>.Ok(meeting);
         }
 
+        public async Task<IOperationResult<Meeting>> CancelMeeting(int meetingId)
+        {
+            var meeting = await _meetingRepository.Find(s => s.Id == meetingId);
+
+            if (meeting == null)
+            {
+                return BasicOperationResult<Meeting>.Fail("La tutoría no fue encontrada");
+            }
+
+            meeting.Status = MeetingStatus.Cancelled; 
+            _meetingRepository.Update(meeting);
+
+            await _meetingRepository.Save();
+
+            return BasicOperationResult<Meeting>.Ok(meeting);
+        }
+
         public async Task<IOperationResult<IEnumerable<Meeting>>> GetTutorMeetings(int userId)
         {
             var meetings = await _meetingRepository.FindAll(u => u.TutorId == userId, u => u.Tutor, u => u.Subject);
@@ -57,7 +74,7 @@ namespace eTutor.Core.Managers
 
             return BasicOperationResult<IEnumerable<Meeting>>.Ok(meetings);
         }
-
+      
         public async Task<IOperationResult<Meeting>> CreateMeeting(Meeting meeting)
         {
 
