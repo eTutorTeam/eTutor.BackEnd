@@ -8,9 +8,11 @@ namespace eTutor.Core.Configurations
     {
         public void Configure(EntityTypeBuilder<ParentAuthorization> builder)
         {
-            builder.HasOne(p => p.Parent)
-                .WithMany(u => u.Autorizations);
 
+            builder.HasOne(p => p.Parent)
+                .WithMany(u => u.Autorizations)
+                .HasForeignKey(p => p.ParentId)
+                .HasPrincipalKey(u => u.Id);
         }
     }
 }

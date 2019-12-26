@@ -51,7 +51,7 @@ namespace eTutor.ServerApi
 
             services.AddDbContext<ETutorContext>(opts =>
                 {
-                    opts.UseMySql(Configuration.GetConnectionString("MainConnection"));
+                    opts.UseMySql(Configuration.GetConnectionString("AzureConnection"));
                 });
 
 
@@ -137,17 +137,6 @@ namespace eTutor.ServerApi
             
             AppBaseRoute route = new AppBaseRoute {BasePath = Directory.GetCurrentDirectory()};
             services.AddScoped(typeof(AppBaseRoute), t => route);
-            
-//            services.AddSingleton(typeof(FirebaseMessaging), t =>
-//            {
-//                FirebaseApp.Create(new AppOptions()
-//                {
-//                    Credential =
-//                        GoogleCredential.FromFile(
-//                            Path.Join(Directory.GetCurrentDirectory(), "etutorfirebaseadmin.json"))
-//                });
-//                
-//            })
 
             var emailLinksConfiguration = Configuration.GetSection("EmailLinks").Get<EmailLinksConfiguration>();
             services.AddScoped(typeof(EmailLinksConfiguration), elc => emailLinksConfiguration);
@@ -173,6 +162,7 @@ namespace eTutor.ServerApi
             services.AddScoped<IDeviceRepository, DeviceRepository>();
             services.AddScoped<IEmailValidationRepository, EmailValidationRepository>();
             services.AddScoped<IMeetingRepository, MeetingRepository>();
+            services.AddScoped<IParentAuthorizationRepository, ParentAuthorizationRepository>();
         }
 
         private void ConfigureManagers(IServiceCollection services)
@@ -186,6 +176,7 @@ namespace eTutor.ServerApi
             services.AddScoped<DevicesManager, DevicesManager>();
             services.AddScoped<NotificationManager, NotificationManager>();
             services.AddScoped<MeetingsManager, MeetingsManager>();
+            services.AddScoped<ParentAuthorizationManager, ParentAuthorizationManager>();
         }
 
         private void AuthenticationServiceConfiguration(IServiceCollection services)
