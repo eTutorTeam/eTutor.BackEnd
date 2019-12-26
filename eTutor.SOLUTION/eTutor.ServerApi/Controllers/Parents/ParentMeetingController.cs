@@ -76,11 +76,12 @@ namespace eTutor.ServerApi.Controllers
             var authorization = new ParentAuthorization
             {
                 Status = answer.StatusAnswer,
-                Reason = answer.Reason
+                Reason = answer.Reason,
+                ParentId = parentId
             };
 
             IOperationResult<ParentAuthorization> result =
-                await _parentAuthorizationManager.CreateParentAuthorization(meetingId, parentId, authorization);
+                await _parentAuthorizationManager.CreateParentAuthorization(meetingId, authorization);
 
             if (!result.Success)
             {

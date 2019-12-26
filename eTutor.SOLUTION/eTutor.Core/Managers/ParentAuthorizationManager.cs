@@ -31,7 +31,7 @@ namespace eTutor.Core.Managers
             };
         }
 
-        public async Task<IOperationResult<ParentAuthorization>> CreateParentAuthorization(int meetingId, int parentId, ParentAuthorization answer)
+        public async Task<IOperationResult<ParentAuthorization>> CreateParentAuthorization(int meetingId, ParentAuthorization answer)
         {
             var meeting = await _meetingRepository.Find(m => m.Id == meetingId,
                 m => m.Tutor, m => m.Student, m => m.Subject);
@@ -45,7 +45,8 @@ namespace eTutor.Core.Managers
             {
                 AuthorizationDate = DateTime.Now,
                 ParentId = answer.ParentId,
-                Status = answer.Status
+                Status = answer.Status,
+                Reason = answer.Reason
             };
 
             _parentAuthorizationRepository.Create(authorization);
