@@ -25,7 +25,7 @@ namespace eTutor.Persistence.Repositories
                 .ThenInclude(s => s.Parents)
                 .Include(m => m.Subject)
                 .Include(m => m.Tutor)
-                .Where(m => m.Student.Parents.Any(p => p.Id == parentId))
+                .Where(m => m.Student.Parents.Any(p => p.ParentId == parentId))
                 .ToListAsync();
             
 
