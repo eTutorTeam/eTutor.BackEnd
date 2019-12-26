@@ -50,10 +50,11 @@ namespace eTutor.ServerApi.Controllers
             return Ok(response);
         }
 
-        [HttpGet("student-meetings")]
+        
+        [HttpGet("all")]
         [ProducesResponseType(typeof(IEnumerable<MeetingResponse>), 200)]
         [ProducesResponseType(typeof(Error), 400)]
-        [Authorize(Roles = "student")]
+        [Authorize(Roles = "student, tutor, parent")]
         public async Task<IActionResult> GetStudentMeetings()
         {
             int userId = GetUserId();
@@ -69,16 +70,15 @@ namespace eTutor.ServerApi.Controllers
 
             return Ok(mapped);
         }
-
-        [HttpGet("tutor-meetings")]
-        [ProducesResponseType(typeof(IEnumerable<MeetingResponse>), 200)]
+        
+        [HttpGet("{meetingId}")]
+        [ProducesResponseType(typeof(MeetingResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetTutorMeetings()
+        public async Task<IActionResult> GetMeeting([FromRoute] int meetingId)
         {
             int userId = GetUserId();
             
-            var result = await _meetingsManager.GetTutorMeetings(userId);
+            var result = await _meetingsManager.GetMeeting(meetingId, userId);
 
             if (!result.Success)
             {
@@ -90,24 +90,46 @@ namespace eTutor.ServerApi.Controllers
             return Ok(mapped);
         }
 
-        [HttpGet("meeting")]
-        [ProducesResponseType(typeof(MeetingResponse), 200)]
+        [HttpGet("{meetingId}/summary")]
+        [ProducesResponseType(typeof(MeetingSummaryModel), 200)]
         [ProducesResponseType(typeof(Error), 400)]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetMeeting([FromHeader] int meetingId)
+        [Authorize(Roles = "tutor, student")]
+        public async Task<IActionResult> GetTutorMeetingSummary([FromRoute] int meetingId)
         {
-            var result = await _meetingsManager.GetMeeting(meetingId);
+            int userId = GetUserId();
+
+            IOperationResult<Meeting> operationResult =
+                await _meetingsManager.GetTutorMeetingSummary(meetingId, userId);
+
+            if (!operationResult.Success)
+            {
+                return BadRequest(operationResult.Message);
+            }
+
+            MeetingSummaryModel mapped = _mapper.Map<MeetingSummaryModel>(operationResult.Entity);
+
+            return Ok(mapped);
+        }
+
+        [HttpPatch("{meetingId}/tutor-answer")]
+        [ProducesResponseType(typeof(IOperationResult<string>),202)]
+        [ProducesResponseType(typeof(Error), 400)]
+        [Authorize(Roles = "tutor")]
+        public async Task<IActionResult> SetTutorMeetingResponseToNotification( [FromRoute] int meetingId,
+            [FromBody] MeetingStatusRequest answeredStatus)
+        {
+            int userId = GetUserId();
+
+            IOperationResult<string> result =
+                await _meetingsManager.TutorResponseToMeetingRequest(meetingId, answeredStatus.AnsweredStatus, userId);
 
             if (!result.Success)
             {
                 return BadRequest(result.Message);
             }
 
-            var mapped = _mapper.Map<IEnumerable<MeetingResponse>>(result.Entity);
-
-            return Ok(mapped);
+            return Accepted(result);
         }
-
 
     }
 }
