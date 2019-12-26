@@ -14,5 +14,7 @@ namespace eTutor.ServerApi.ViewModels
         [Range(0, 10)]
         public int Calification { get; set; }
 
+        public decimal? AvgRating { get; }
+
     }
 }

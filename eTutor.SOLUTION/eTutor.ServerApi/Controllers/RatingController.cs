@@ -50,6 +50,37 @@ namespace eTutor.ServerApi.Controllers
             return Ok(response);
         }
 
+        [HttpGet("user-ratings")]
+        [ProducesResponseType(typeof(MeetingResponse), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUserRatings([FromHeader] int userId)
+        {
+            var result = await _ratingManager.GetUserRatings(userId);
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            var mapped = _mapper.Map<IEnumerable<MeetingResponse>>(result.Entity);
+            
+            return Ok(mapped);
+        }
+
+        [HttpGet("user-avgRating")]
+        [ProducesResponseType(typeof(MeetingResponse), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUserAvgRatings([FromHeader] int userId)
+        {
+            var result = await _ratingManager.GetUserAvgRating(userId);
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            return Ok(result);
+        }
 
 
 

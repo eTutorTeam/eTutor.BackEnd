@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,16 +23,29 @@ namespace eTutor.Core.Managers
             _ratingRepository = ratingRepository;
         }
 
-        public async Task<IOperationResult<IEnumerable<Rating>>> getUserRatings(int userId)
+        public async Task<IOperationResult<IEnumerable<Rating>>> GetUserRatings(int userId)
+        {
+            var rating = await _ratingRepository.FindAll(r => r.UserId == userId);
+            
+            if (rating == null)
+            {
+                return BasicOperationResult<IEnumerable<Rating>>.Fail("Los ratings no están disponibles");
+            }
+
+            return BasicOperationResult<IEnumerable<Rating>>.Ok(rating);
+        }
+
+        public async Task<IOperationResult<decimal>> GetUserAvgRating(int userId)
         {
             var rating = await _ratingRepository.FindAll(r => r.UserId == userId);
 
             if (rating == null)
             {
-                return BasicOperationResult<IEnumerable<Rating>>.Fail("El rating no esta disponible");
+                return BasicOperationResult<decimal>.Fail("El rating no esta disponible");
             }
+            var avgRating = rating.Sum(r => r.Calification) / rating.Count();
 
-            return BasicOperationResult<IEnumerable<Rating>>.Ok(rating);
+            return BasicOperationResult<decimal>.Ok(avgRating);
         }
 
         public async Task<IOperationResult<Rating>> CreateUserRating(Rating rating)
@@ -66,5 +80,6 @@ namespace eTutor.Core.Managers
 
             return BasicOperationResult<Rating>.Ok();
         }
+
     }
 }
