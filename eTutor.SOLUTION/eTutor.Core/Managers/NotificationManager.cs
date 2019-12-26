@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using eTutor.Core.Contracts;
 using eTutor.Core.Enums;
@@ -35,6 +36,32 @@ namespace eTutor.Core.Managers
             await _notificationService.SendNotificationToUser(user, message, "Tutoria Creada");
             
             return BasicOperationResult<string>.Ok("Tutoria Creada");
+        }
+
+        public async Task<IOperationResult<string>> NotifyParentsOfMeetingCreatedForStudent(Meeting meeting)
+        {
+            var studentResult =  await GetUser(meeting.StudentId);
+
+            if (!studentResult.Success)
+            {
+                return BasicOperationResult<string>.Fail(studentResult.Message.Message);
+            }
+
+            User student = studentResult.Entity;
+            
+            ISet<User> parents = await _userRepository.GetAllParentsForStudent(student.Id);
+            
+            if (!parents.Any()) return BasicOperationResult<string>.Fail("No fueron encontrados padres para este estudiante");
+
+            string message =
+                $"{student.FullName} ha solicitado una tutoría de {meeting.Subject.Name}. Presione el mensaje para obtener más información";
+            
+            var data = new Dictionary<string, string>
+            {
+                {"parentMeetingId", meeting.Id.ToString()}
+            };
+            
+            return BasicOperationResult<string>.Ok("Notificación enviada");
         }
         
         public async Task<IOperationResult<string>> NotifyTutorOfSolicitedMeeting(int tutorId, Subject subject, User student, int meetingId)

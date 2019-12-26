@@ -91,7 +91,8 @@ namespace eTutor.Core.Managers
             var response = await _meetingRepository.Find(m => m.Id == meeting.Id, m => m.Subject, m => m.Tutor, m => m.Student);
 
             await _notificationManager.NotifyStudentMeetingWasCreated(meeting.StudentId, meeting.Subject.Name, meeting.Tutor.FullName);
-            await _notificationManager.NotifyTutorOfSolicitedMeeting(meeting.TutorId, meeting.Subject, meeting.Student, meeting.Id);
+
+            await _notificationManager.NotifyParentsOfMeetingCreatedForStudent(meeting);
 
             return BasicOperationResult<Meeting>.Ok(response);
         }
