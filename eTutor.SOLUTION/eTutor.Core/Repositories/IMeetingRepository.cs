@@ -9,5 +9,7 @@ namespace eTutor.Core.Repositories
     public interface IMeetingRepository: IGenericRepository<Meeting>
     {
         Task<ISet<Meeting>> GetAllMeetingsOfParentStudents(int parentId);
+
+        Task<Meeting> GetMeetingForParent(int parentId, int meetingId);
     }
 }

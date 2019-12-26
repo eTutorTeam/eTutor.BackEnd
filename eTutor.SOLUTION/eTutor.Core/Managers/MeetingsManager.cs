@@ -43,6 +43,18 @@ namespace eTutor.Core.Managers
 
             return BasicOperationResult<Meeting>.Ok(meeting);
         }
+        
+        public async Task<IOperationResult<Meeting>> GetMeetingForParent(int meetingId, int parentId)
+        {
+            var meeting = await _meetingRepository.GetMeetingForParent(meetingId, parentId);
+
+            if (meeting == null)
+            {
+                return BasicOperationResult<Meeting>.Fail("La tutoría agendada no fue encontrada");
+            }
+            
+            return BasicOperationResult<Meeting>.Ok(meeting);
+        }
 
         public async Task<IOperationResult<IEnumerable<Meeting>>> GetTutorMeetings(int userId)
         {
