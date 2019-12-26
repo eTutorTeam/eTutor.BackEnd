@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis;
 
 namespace eTutor.ServerApi.Controllers
 {
-    [Route("api/parent-meeting")]
+    [Route("api/parent-meetings")]
     [Authorize(Roles = "parent")]
     [Produces("application/json")]
     public class ParentMeetingController : EtutorBaseController
