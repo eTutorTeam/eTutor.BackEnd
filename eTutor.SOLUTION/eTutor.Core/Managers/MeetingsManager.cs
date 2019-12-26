@@ -150,7 +150,7 @@ namespace eTutor.Core.Managers
         }
 
 
-        public async Task<IOperationResult<IEnumerable<Meeting>>> GetFutureParentMeetings(int parentId)
+        public async Task<IOperationResult<ISet<Meeting>>> GetFutureParentMeetings(int parentId)
         {
             var parentExists = await _userRepository.Exists(u =>
                     u.Id == parentId && u.UserRoles.Any(ur => ur.RoleId == (int) RoleTypes.Parent),
@@ -159,7 +159,7 @@ namespace eTutor.Core.Managers
 
             if (!parentExists)
             {
-                return BasicOperationResult<IEnumerable<Meeting>>.Fail("Este padre no existe en nuestra base de datos");
+                return BasicOperationResult<ISet<Meeting>>.Fail("Este padre no existe en nuestra base de datos");
             }
             
             var meetings = await _meetingRepository.GetAllMeetingsOfParentStudents(parentId);
@@ -167,9 +167,9 @@ namespace eTutor.Core.Managers
                 m => m.StartDateTime > DateTime.Now.AddHours(-2)
                      && m.ParentAuthorizationId == null
                      && m.Status == MeetingStatus.Pending
-                     );
+            ).ToHashSet();
             
-            return BasicOperationResult<IEnumerable<Meeting>>.Ok(filteredMeetings);
+            return BasicOperationResult<ISet<Meeting>>.Ok(filteredMeetings);
         }
 
 

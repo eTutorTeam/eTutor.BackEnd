@@ -21,14 +21,15 @@ namespace eTutor.ServerApi.Controllers
         private readonly ParentAuthorizationManager _parentAuthorizationManager;
 
         public ParentMeetingController(MeetingsManager meetingsManager, 
-            ParentAuthorizationManager parentAuthorizationManager)
+            ParentAuthorizationManager parentAuthorizationManager, IMapper mapper)
         {
             _meetingsManager = meetingsManager;
             _parentAuthorizationManager = parentAuthorizationManager;
+            _mapper = mapper;
         }
 
         [HttpGet("pending")]
-        [ProducesResponseType(typeof(IEnumerable<ParentMeetingResponse>), 200)]
+        [ProducesResponseType(typeof(ISet<ParentMeetingResponse>), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         public async Task<IActionResult> GetMeetingsPendingApprove()
         {
@@ -41,7 +42,7 @@ namespace eTutor.ServerApi.Controllers
                 return BadRequest(result.Message);
             }
 
-            var mapped = _mapper.Map<IEnumerable<ParentMeetingResponse>>(result.Entity);
+            var mapped = _mapper.Map<ISet<ParentMeetingResponse>>(result.Entity);
 
             return Ok(mapped);
         }

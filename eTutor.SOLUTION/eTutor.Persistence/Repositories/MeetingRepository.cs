@@ -19,18 +19,15 @@ namespace eTutor.Persistence.Repositories
 
         public async Task<ISet<Meeting>> GetAllMeetingsOfParentStudents(int parentId)
         {
-            var result = await _context.ParentStudents
-                .Include(ps => ps.Student)
-                    .ThenInclude(s => s.StudentMeetings)
-                        .ThenInclude(m => m.Subject)
-                .Include(ps => ps.Student)
-                    .ThenInclude(s => s.StudentMeetings)
-                        .ThenInclude(m => m.Tutor)
-                .Include(ps => ps.Student)
-                    .ThenInclude(s => s.StudentMeetings)
-                        .ThenInclude(m => m.Student)
-                .SelectMany(ps => ps.Student.StudentMeetings)
+
+            var result = await _context.Meetings
+                .Include(m => m.Student)
+                .ThenInclude(s => s.Parents)
+                .Include(m => m.Subject)
+                .Include(m => m.Tutor)
+                .Where(m => m.Student.Parents.Any(p => p.Id == parentId))
                 .ToListAsync();
+            
 
             return result.ToHashSet();
         }
