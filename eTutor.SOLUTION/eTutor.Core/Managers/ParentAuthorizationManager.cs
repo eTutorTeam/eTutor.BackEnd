@@ -57,9 +57,11 @@ namespace eTutor.Core.Managers
                 : MeetingStatus.Rejected;
             _meetingRepository.Update(meeting);
 
+            ParentAuthorizationStatus status = answer.Status;
+
             await _meetingRepository.Save();
 
-            await _notificationActions[authorization.Status](meeting, authorization);
+            await _notificationActions[status](meeting, authorization);
             
             return BasicOperationResult<ParentAuthorization>.Ok(authorization);
         }

@@ -7,5 +7,8 @@ namespace eTutor.Core.Contracts
     public interface INotificationService
     {
         Task SendNotificationToUser(User user, string message, string subject = "eTutor", Dictionary<string, string> data = null);
+        
+        Task SendNotificationToMultipleUsers(ISet<User> user, string message, string subject = "eTutor", Dictionary<string, string> data = null);
+
     }
 }

@@ -60,6 +60,8 @@ namespace eTutor.Core.Managers
             {
                 {"parentMeetingId", meeting.Id.ToString()}
             };
+
+            await _notificationService.SendNotificationToMultipleUsers(parents, message, "Tutoria Solicitada", data);
             
             return BasicOperationResult<string>.Ok("Notificación enviada");
         }

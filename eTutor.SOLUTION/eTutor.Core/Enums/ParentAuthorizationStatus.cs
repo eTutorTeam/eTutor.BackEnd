@@ -2,7 +2,7 @@ namespace eTutor.Core.Enums
 {
     public enum ParentAuthorizationStatus
     {
-        Approved,
-        Rejected
+        Approved = 1,
+        Rejected = 2
     }
 }

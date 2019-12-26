@@ -10,6 +10,7 @@ using eTutor.Core.Repositories;
 using FirebaseAdmin;
 using FirebaseAdmin.Messaging;
 using Google.Apis.Auth.OAuth2;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace eTutor.PushNotificationService
@@ -63,6 +64,30 @@ namespace eTutor.PushNotificationService
                 await _firebaseMessaging.SendMulticastAsync(multicastMessage);
             }
         }
-        
+
+        public async Task SendNotificationToMultipleUsers(ISet<User> user, string message, string subject = "eTutor", Dictionary<string, string> data = null)
+        {
+            string[] deviceTokens = await _deviceRepository
+                .Set.Where(d => user.Any(u => u.Id == d.UserId))
+                .Select(d => d.FcmToken)
+                .ToArrayAsync();
+            
+            if (deviceTokens.Length > 0)
+            {
+
+                var multicastMessage = new MulticastMessage
+                {
+                    Tokens = deviceTokens,
+                    Notification = new Notification
+                    {
+                        Body = message,
+                        Title = subject
+                    },
+                    Data = data
+                };
+
+                await _firebaseMessaging.SendMulticastAsync(multicastMessage);
+            }
+        }
     }
 }

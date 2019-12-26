@@ -17,6 +17,7 @@ namespace eTutor.Core.Models
 
         public DateTime AuthorizationDate { get; set; }
         
+        
         public ISet<Meeting> Meetings { get; set; }
     }
 }
