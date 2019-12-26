@@ -32,17 +32,17 @@ namespace eTutor.Persistence.Repositories
             return result.ToHashSet();
         }
 
-        public async Task<Meeting> GetMeetingForParent(int parentId, int meetingId)
+        public async Task<Meeting> GetMeetingForParent(int meetingId, int parentId)
         {
-            var result = await Set
+            var result = await _context.Meetings
                 .Include(m => m.Subject)
                 .Include(m => m.Tutor)
                 .Include(m => m.Student)
                 .ThenInclude(st => st.Parents)
                 .FirstOrDefaultAsync(m => m.Id == meetingId &&
-                                          m.Student.Parents.Any(p => p.Id == parentId));
+                                          m.Student.Parents.Any(p => p.ParentId == parentId));
 
-            return result;
+                return result;
         }
     }
 

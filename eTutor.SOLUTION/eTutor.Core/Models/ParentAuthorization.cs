@@ -6,11 +6,12 @@ namespace eTutor.Core.Models
 {
     public class ParentAuthorization : EntityBase
     {
-        public int ParentId { get; set; }
-        
+
         public ParentAuthorizationStatus Status { get; set; }
         
         public string Reason { get; set; }
+        
+        public int? ParentId { get; set; }
         
         public User Parent { get; set; }
 

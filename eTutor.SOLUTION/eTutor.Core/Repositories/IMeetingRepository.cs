@@ -10,6 +10,6 @@ namespace eTutor.Core.Repositories
     {
         Task<ISet<Meeting>> GetAllMeetingsOfParentStudents(int parentId);
 
-        Task<Meeting> GetMeetingForParent(int parentId, int meetingId);
+        Task<Meeting> GetMeetingForParent(int meetingId, int parentId);
     }
 }
