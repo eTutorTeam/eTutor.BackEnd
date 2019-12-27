@@ -111,25 +111,5 @@ namespace eTutor.ServerApi.Controllers
             return Ok(mapped);
         }
 
-        [HttpPatch("{meetingId}/tutor-answer")]
-        [ProducesResponseType(typeof(IOperationResult<string>),202)]
-        [ProducesResponseType(typeof(Error), 400)]
-        [Authorize(Roles = "tutor")]
-        public async Task<IActionResult> SetTutorMeetingResponseToNotification( [FromRoute] int meetingId,
-            [FromBody] MeetingStatusRequest answeredStatus)
-        {
-            int userId = GetUserId();
-
-            IOperationResult<string> result =
-                await _meetingsManager.TutorResponseToMeetingRequest(meetingId, answeredStatus.AnsweredStatus, userId);
-
-            if (!result.Success)
-            {
-                return BadRequest(result.Message);
-            }
-
-            return Accepted(result);
-        }
-
     }
 }
