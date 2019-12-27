@@ -215,8 +215,6 @@ namespace eTutor.Core.Managers
             {
                 return BasicOperationResult<Meeting>.Fail("La materia inidicada en la solicitud no existe");
             }
-
-<<<<<<< HEAD
             if (!await SubjectExists(meeting.SubjectId))
             {
                 return BasicOperationResult<Meeting>.Fail("La materia no existe");
@@ -232,36 +230,16 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<Meeting>.Fail("El estudiante no existe");
             }
 
-            return BasicOperationResult<Meeting>.Ok();
-=======
-            if (!await StudentExistsAndIsStudent(meeting.StudentId))
-            {
-                return BasicOperationResult<Meeting>.Fail("El estudiante indicado no existe");
-            }
-            
-            if (!await TutorExistsAndIsTutor(meeting.TutorId))
-            {
-                return BasicOperationResult<Meeting>.Fail("El tutor indicado no existe");
-            }
-            
             return BasicOperationResult<Meeting>.Ok(meeting);
->>>>>>> b97045df0541f0484ad0ffcb66c6f33d43fa62f6
         }
 
         private async Task<bool> SubjectExists(int subjectId)
         {
-<<<<<<< HEAD
-            var subject = await _subjectRepository.Find(s => s.Id == subjectId);
-            if (subject == null) return false;
-            return true;
-=======
             return await _subjectRepository.Exists(s => s.Id == subjectId);
->>>>>>> b97045df0541f0484ad0ffcb66c6f33d43fa62f6
         }
 
         private async Task<bool> StudentExistsAndIsStudent(int studentId)
         {
-<<<<<<< HEAD
             var student = await _userRepository.Set
                 .Include(u => u.UserRoles)
                 .FirstOrDefaultAsync(u => u.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Student) && u.Id == studentId);
@@ -276,18 +254,7 @@ namespace eTutor.Core.Managers
             if (tutor == null) return false;
 
             return true;
-=======
-            return await _userRepository.Exists(s => s.Id == studentId 
-                                                     && s.IsActive && s.IsEmailValidated
-                                                     && s.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Student), s => s.UserRoles);
         }
-        
-        private async Task<bool> TutorExistsAndIsTutor(int tutorId)
-        {
-            return await _userRepository.Exists(s => s.Id == tutorId 
-                                                     && s.IsActive && s.IsEmailValidated
-                                                     && s.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Tutor), s => s.UserRoles);
->>>>>>> b97045df0541f0484ad0ffcb66c6f33d43fa62f6
-        }
+
     }
 }
