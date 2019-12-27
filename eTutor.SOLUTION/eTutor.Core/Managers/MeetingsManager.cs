@@ -230,5 +230,39 @@ namespace eTutor.Core.Managers
                                                      && s.IsActive && s.IsEmailValidated
                                                      && s.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Tutor), s => s.UserRoles);
         }
+
+        public async Task<IOperationResult<Meeting>> RescheduleTutorForStudentMeeting(int meetingId, int tutorId, int studentId)
+        {
+            var meeting = await _meetingRepository.Find(m =>
+                    m.Id == meetingId
+                    && m.StudentId == studentId
+                    && m.ParentAuthorizationId != null,
+                m => m.Student, m => m.Subject
+            );
+
+            if (meeting == null)
+            {
+                return BasicOperationResult<Meeting>.Fail("La tutoría no pudo ser encontrada en nuestros registros.");
+            }
+
+            var tutor = await _userRepository.Find(u =>
+                u.Id == tutorId && u.UserRoles.Any(ur => ur.RoleId == (int) RoleTypes.Tutor), u => u.UserRoles);
+
+            if (tutor == null)
+            {
+                return BasicOperationResult<Meeting>.Fail("El tutor con quien intenta reprogammar no existe en nuestros registros");
+            }
+
+            meeting.TutorId = tutorId;
+
+            _meetingRepository.Update(meeting);
+            await _meetingRepository.Save();
+
+            meeting.Tutor = tutor;
+            
+            //TODO: send notification.
+            
+            return BasicOperationResult<Meeting>.Ok(meeting);
+        }
     }
 }
