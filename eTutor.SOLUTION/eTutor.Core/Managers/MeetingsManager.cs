@@ -254,13 +254,15 @@ namespace eTutor.Core.Managers
             }
 
             meeting.TutorId = tutorId;
-
+            meeting.Status = MeetingStatus.Approved;
             _meetingRepository.Update(meeting);
             await _meetingRepository.Save();
 
             meeting.Tutor = tutor;
-            
-            //TODO: send notification.
+
+            await _notificationManager.NotifyStudentMeetingWasCreated(studentId, meeting.Subject.Name, tutor.FullName);
+            await _notificationManager.NotifyTutorOfSolicitedMeeting(tutor.Id, meeting.Subject, meeting.Student, meetingId);
+            await _notificationManager.NotifyParentsOfMeetingUpdatedForStudent(meeting);
             
             return BasicOperationResult<Meeting>.Ok(meeting);
         }

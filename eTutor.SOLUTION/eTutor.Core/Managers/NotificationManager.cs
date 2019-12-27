@@ -66,6 +66,34 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<string>.Ok("Notificación enviada");
         }
         
+        public async Task<IOperationResult<string>> NotifyParentsOfMeetingUpdatedForStudent(Meeting meeting)
+        {
+            var studentResult =  await GetUser(meeting.StudentId);
+
+            if (!studentResult.Success)
+            {
+                return BasicOperationResult<string>.Fail(studentResult.Message.Message);
+            }
+
+            User student = studentResult.Entity;
+            
+            ISet<User> parents = await _userRepository.GetAllParentsForStudent(student.Id);
+            
+            if (!parents.Any()) return BasicOperationResult<string>.Fail("No fueron encontrados padres para este estudiante");
+
+            string message =
+                $"{student.FullName} ha hecho un cambio en la tutoría de {meeting.Subject.Name}. Su autorización no es requerida";
+            
+            var data = new Dictionary<string, string>
+            {
+                {"parentMeetingId", meeting.Id.ToString()}
+            };
+
+            await _notificationService.SendNotificationToMultipleUsers(parents, message, "Tutoria Actualizada", data);
+            
+            return BasicOperationResult<string>.Ok("Notificación enviada");
+        }
+        
         public async Task<IOperationResult<string>> NotifyTutorOfSolicitedMeeting(int tutorId, Subject subject, User student, int meetingId)
         {
             var userResult = await GetUser(tutorId);
