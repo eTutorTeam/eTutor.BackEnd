@@ -68,7 +68,7 @@ namespace eTutor.ServerApi.Controllers
         }
 
         [HttpGet("user-avgRating")]
-        [ProducesResponseType(typeof(MeetingResponse), 200)]
+        [ProducesResponseType(typeof(decimal), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         [AllowAnonymous]
         public async Task<IActionResult> GetUserAvgRatings([FromHeader] int userId)
@@ -81,8 +81,5 @@ namespace eTutor.ServerApi.Controllers
 
             return Ok(result);
         }
-
-
-
     }
 }
