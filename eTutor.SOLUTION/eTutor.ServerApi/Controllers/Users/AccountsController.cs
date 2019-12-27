@@ -67,13 +67,33 @@ namespace eTutor.ServerApi.Controllers
             return Ok(token);
         }
 
+        [HttpGet("updated-info-token")]
+        [Authorize]
+        [ProducesResponseType(typeof(UserTokenResponse), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        public async Task<IActionResult> UpdateUserInfoIfLogged()
+        {
+            int userId = GetUserId();
+
+            IOperationResult<User> result = await _usersManager.GetUserProfile(userId);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            var token = await GenerateJwtToken(result.Entity);
+
+            return Ok(token);
+        }
+
         /// <summary>
         /// Allows Guests
         /// </summary>
         /// <returns></returns>
         [HttpPost("register-tutor")]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(UserTokenResponse), 200)]
+        [ProducesResponseType(200)]
         [ProducesResponseType(typeof(Error), 400)]
         public async Task<IActionResult> RegisterTutor([FromBody] TutorUserRegistrationRequest request)
         {
@@ -90,7 +110,7 @@ namespace eTutor.ServerApi.Controllers
 
             var token = await GenerateJwtToken(operationResult.Entity);
 
-            return Ok(token);
+            return Ok();
         }
 
         /// <summary>

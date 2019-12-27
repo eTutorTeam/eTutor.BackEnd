@@ -3,10 +3,12 @@ namespace eTutor.Core.Enums
     public enum MeetingStatus
     {
         Pending = 1,
-        Accepted = 2,
-        Approved = 3,
+        Approved = 2,
+        Accepted = 3,
         InProgress = 4,
         Complete = 5,
-        Cancelled = 6
+        Rejected = 6,
+        Cancelled = 7,
+        Unapproved = 8
     }
 }
