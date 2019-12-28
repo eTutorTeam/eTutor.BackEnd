@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
@@ -163,6 +163,7 @@ namespace eTutor.ServerApi
             services.AddScoped<IEmailValidationRepository, EmailValidationRepository>();
             services.AddScoped<IMeetingRepository, MeetingRepository>();
             services.AddScoped<IParentAuthorizationRepository, ParentAuthorizationRepository>();
+            services.AddScoped<IRejectedMeetingRepository, RejectedMeetingRepository>();
         }
 
         private void ConfigureManagers(IServiceCollection services)

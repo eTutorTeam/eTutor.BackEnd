@@ -21,15 +21,17 @@ namespace eTutor.Core.Managers
         private readonly ISubjectRepository _subjectRepository;
         private readonly NotificationManager _notificationManager;
         private readonly IUserRepository _userRepository;
+        private readonly IRejectedMeetingRepository _rejectedMeetingRepository;
 
         public MeetingsManager(IMeetingRepository meetingRepository,
             ISubjectRepository subjectRepository, IUserRepository userRepository,
-            NotificationManager notificationManager)
+            NotificationManager notificationManager, IRejectedMeetingRepository rejectedMeetingRepository)
         {
             _meetingRepository = meetingRepository;
             _subjectRepository = subjectRepository;
             _userRepository = userRepository;
             _notificationManager = notificationManager;
+            _rejectedMeetingRepository = rejectedMeetingRepository;
         }
 
         public async Task<IOperationResult<Meeting>> GetMeeting(int meetingId, int userId)
@@ -135,6 +137,16 @@ namespace eTutor.Core.Managers
             }
 
             meeting.Status = status;
+
+            if (status == MeetingStatus.Rejected)
+            {
+                var rejection = new RejectedMeeting
+                {
+                    TutorId = meeting.TutorId,
+                    MeetingId = meetingId
+                };
+                _rejectedMeetingRepository.Create(rejection);
+            }
 
             _meetingRepository.Update(meeting);
 

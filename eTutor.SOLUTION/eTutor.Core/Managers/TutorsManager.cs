@@ -18,16 +18,17 @@ namespace eTutor.Core.Managers
         private readonly ITutorSubjectRepository _tutorSubjectRepository;
         private readonly ISubjectRepository _subjectRepository;
         private readonly IMeetingRepository _meetingRepository;
-        
+        private readonly IRejectedMeetingRepository _rejectedMeetingRepository;
 
         public TutorsManager(IUserRepository userRepository, 
             ITutorSubjectRepository tutorSubjectRepository, ISubjectRepository subjectRepository, 
-            IMeetingRepository meetingRepository)
+            IMeetingRepository meetingRepository, IRejectedMeetingRepository rejectedMeetingRepository)
         {
             _userRepository = userRepository;
             _tutorSubjectRepository = tutorSubjectRepository;
             _subjectRepository = subjectRepository;
             _meetingRepository = meetingRepository;
+            _rejectedMeetingRepository = rejectedMeetingRepository;
         }
 
 
@@ -120,9 +121,11 @@ namespace eTutor.Core.Managers
                 return tutorsResult;
             }
 
+            var rejections = await _rejectedMeetingRepository.FindAll(r => r.MeetingId == meeting.Id);
+
             ISet<User> tutors = tutorsResult
                 .Entity
-                .Where(t => t.Id != meeting.TutorId)
+                .Where(t => t.Id != meeting.TutorId && rejections.All(r => r.TutorId != t.Id))
                 .ToHashSet();
             
             return BasicOperationResult<ISet<User>>.Ok(tutors);
