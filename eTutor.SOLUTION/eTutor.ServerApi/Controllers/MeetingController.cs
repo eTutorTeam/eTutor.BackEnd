@@ -49,17 +49,33 @@ namespace eTutor.ServerApi.Controllers
 
             return Ok(response);
         }
+        [HttpPut("cancel-meeting/{meetingId}")]
+        [ProducesResponseType(typeof(MeetingResponse), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        public async Task<IActionResult> CancelMeeting([FromRoute] int meetingId)
+        {
+            int userId = GetUserId();
+            IOperationResult<Meeting> result = await _meetingsManager.CancelMeeting(meetingId, userId);
 
-        
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            var mapped = _mapper.Map<MeetingResponse>(result.Entity);
+
+            return Ok(mapped);
+        }
+
         [HttpGet("all")]
         [ProducesResponseType(typeof(IEnumerable<MeetingResponse>), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         [Authorize(Roles = "student, tutor, parent")]
-        public async Task<IActionResult> GetStudentMeetings()
+        public async Task<IActionResult> GetStudentTutorMeetings()
         {
             int userId = GetUserId();
             
-            IOperationResult<IEnumerable<Meeting>> result = await _meetingsManager.GetStudentMeetings(userId);
+            IOperationResult<IEnumerable<Meeting>> result = await _meetingsManager.GetStudentTutorMeetings(userId);
 
             if (!result.Success)
             {

@@ -13,6 +13,7 @@ namespace eTutor.ServerApi.MapperProfiles
             CreateMap<Meeting, MeetingResponse>()
                 .ForMember(dest => dest.SubjectName, opt => opt.MapFrom(src => src.Subject.Name))
                 .ForMember(dest => dest.TutorName, opt => opt.MapFrom(src => src.Tutor.FullName))
+                .ForMember(dest => dest.TutorContact, opt => opt.MapFrom(src => src.Tutor.PhoneNumber))
                 .ForMember(dest => dest.TutorImage, opt => opt.MapFrom(src => src.Tutor.ProfileImageUrl));
 
             CreateMap<Meeting, MeetingSummaryModel>()

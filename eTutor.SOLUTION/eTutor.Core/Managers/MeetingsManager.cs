@@ -58,20 +58,77 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<Meeting>.Ok(meeting);
         }
 
-        public async Task<IOperationResult<IEnumerable<Meeting>>> GetTutorMeetings(int userId)
+        public async Task<IOperationResult<Meeting>> CancelMeeting(int meetingId, int userId)
         {
-            var meetings = await _meetingRepository.FindAll(u => u.TutorId == userId, u => u.Tutor, u => u.Subject);
+            var user = await _userRepository.Find(u => u.Id == userId, u => u.UserRoles);
+
+            if (user == null)
+            {
+                return BasicOperationResult<Meeting>.Fail("El usuario no fue encontrado");
+            }
+
+            var meeting = await _meetingRepository.Find(s => s.Id == meetingId);
+
+            if (meeting == null)
+            {
+                return BasicOperationResult<Meeting>.Fail("La tutoría no fue encontrada");
+            }
+
+            if (!(meeting.StudentId == userId || meeting.TutorId == userId))
+                return BasicOperationResult<Meeting>.Fail("El usuario no esta asociado a esta tutoría");
+
+
+            meeting.Status = MeetingStatus.Cancelled; 
+            _meetingRepository.Update(meeting);
+
+            await _meetingRepository.Save();
+
+            await _notificationManager.NotifyMeetingWasCanceled(meeting);
+
+            return BasicOperationResult<Meeting>.Ok(meeting);
+        }
+
+        public async Task<IOperationResult<IEnumerable<Meeting>>> GetTutorMeetings(int tutorId)
+        {
+            var tutor = await _userRepository.Find(u => u.Id == tutorId, u => u.UserRoles);
+
+            if (tutor == null)
+            {
+                return BasicOperationResult<IEnumerable<Meeting>>.Fail("El usuario no fue encontrado");
+            }
+
+            var meetings = await _meetingRepository.FindAll(u => u.TutorId == tutorId, u => u.Tutor, u => u.Subject);
 
             return BasicOperationResult<IEnumerable<Meeting>>.Ok(meetings);
         }
 
-        public async Task<IOperationResult<IEnumerable<Meeting>>> GetStudentMeetings(int userId)
+        public async Task<IOperationResult<IEnumerable<Meeting>>> GetStudentTutorMeetings(int userId)
         {
-            var meetings = await _meetingRepository.FindAll(u => u.StudentId == userId, u => u.Student, u => u.Tutor);
+            IEnumerable<Meeting> meetings;
+            var user = await _userRepository.Find(u => u.Id == userId, u => u.UserRoles);
+
+            if (user == null)
+            {
+                return BasicOperationResult<IEnumerable<Meeting>>.Fail("El usuario no fue encontrado");
+            }
+
+            if (user.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Tutor))
+            {
+                meetings = await _meetingRepository.FindAll(s => s.TutorId == userId);
+
+            }
+            else if (user.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Student))
+            {
+                meetings = await _meetingRepository.FindAll(s =>  s.StudentId == userId);
+            }
+            else
+            {
+               return BasicOperationResult<IEnumerable< Meeting >>.Fail("El usuario no es un tutor o un estudiante");
+            }
 
             return BasicOperationResult<IEnumerable<Meeting>>.Ok(meetings);
         }
-
+      
         public async Task<IOperationResult<Meeting>> CreateMeeting(Meeting meeting)
         {
 
@@ -210,17 +267,21 @@ namespace eTutor.Core.Managers
             {
                 return BasicOperationResult<Meeting>.Fail("La materia inidicada en la solicitud no existe");
             }
+            if (!await SubjectExists(meeting.SubjectId))
+            {
+                return BasicOperationResult<Meeting>.Fail("La materia no existe");
+            }
+
+            if (!await TutorExistsAndIsTutor(meeting.TutorId))
+            {
+                return BasicOperationResult<Meeting>.Fail("El tutor no existe");
+            }
 
             if (!await StudentExistsAndIsStudent(meeting.StudentId))
             {
-                return BasicOperationResult<Meeting>.Fail("El estudiante indicado no existe");
+                return BasicOperationResult<Meeting>.Fail("El estudiante no existe");
             }
-            
-            if (!await TutorExistsAndIsTutor(meeting.TutorId))
-            {
-                return BasicOperationResult<Meeting>.Fail("El tutor indicado no existe");
-            }
-            
+
             return BasicOperationResult<Meeting>.Ok(meeting);
         }
 
@@ -231,16 +292,18 @@ namespace eTutor.Core.Managers
 
         private async Task<bool> StudentExistsAndIsStudent(int studentId)
         {
-            return await _userRepository.Exists(s => s.Id == studentId 
-                                                     && s.IsActive && s.IsEmailValidated
-                                                     && s.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Student), s => s.UserRoles);
+            var student = await _userRepository.Set
+                .Include(u => u.UserRoles)
+                .FirstOrDefaultAsync(u => u.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Student)
+                                          && u.Id == studentId && u.Id == studentId && u.IsActive && u.IsEmailValidated);
+            if (student == null) return false;
+            return true;
         }
-        
         private async Task<bool> TutorExistsAndIsTutor(int tutorId)
         {
-            return await _userRepository.Exists(s => s.Id == tutorId 
-                                                     && s.IsActive && s.IsEmailValidated
-                                                     && s.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Tutor), s => s.UserRoles);
+            var tutor = await _userRepository.Set
+                .Include(u => u.UserRoles)
+                .FirstOrDefaultAsync(u => u.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Tutor) 
         }
 
         public async Task<IOperationResult<Meeting>> RescheduleTutorForStudentMeeting(int meetingId, int tutorId, int studentId)
@@ -278,5 +341,6 @@ namespace eTutor.Core.Managers
             
             return BasicOperationResult<Meeting>.Ok(meeting);
         }
+
     }
 }

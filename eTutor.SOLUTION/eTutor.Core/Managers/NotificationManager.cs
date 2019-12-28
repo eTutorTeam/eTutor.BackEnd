@@ -158,6 +158,43 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<string>.Ok("La notificacion ha sido enviada");
         }
 
+        public async Task<IOperationResult<string>> NotifyMeetingWasCanceled(Meeting meeting)
+        {
+            string subject = "Tutoría Cancelada";
+            var studentResult = await GetUser(meeting.StudentId);
+            var tutorResult = await GetUser(meeting.TutorId);
+
+            if (!studentResult.Success)
+            {
+                return BasicOperationResult<string>.Fail(studentResult.Message.Message);
+            }
+            if (!tutorResult.Success)
+            {
+                return BasicOperationResult<string>.Fail(tutorResult.Message.Message);
+            }
+
+            User student = studentResult.Entity;
+            User tutor = tutorResult.Entity;
+            ISet<User> parents = await _userRepository.GetAllParentsForStudent(student.Id);
+
+            if (!parents.Any()) return BasicOperationResult<string>.Fail("No fueron encontrados padres para este estudiante");
+
+            string messageToParents =
+                $"La tutoría programada para {meeting.Student.FullName} del tema: {meeting.Subject.Name} ha sido cancelada";
+
+            string messageToUsers = $"La tutoría programada del tema: {meeting.Subject.Name} ha sido cancelada";
+            var data = new Dictionary<string, string>
+            {
+                {"parentMeetingId", meeting.Id.ToString()}
+            };
+
+            await _notificationService.SendNotificationToMultipleUsers(parents, messageToParents, subject, data);
+            await _notificationService.SendNotificationToUser(student, messageToUsers, subject);
+            await _notificationService.SendNotificationToUser(tutor, messageToUsers, subject);
+
+            return BasicOperationResult<string>.Ok("Tutoria Cancelada");
+        }
+
         private async Task<IOperationResult<User>> GetUser(int userId)
         {
             User user = await _userRepository.Find(u => u.Id == userId, u => u.UserRoles);
