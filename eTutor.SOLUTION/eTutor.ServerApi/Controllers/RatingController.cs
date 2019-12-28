@@ -13,9 +13,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace eTutor.ServerApi.Controllers
 {
     [Route("api/ratings")]
-    [ApiController]
     [Produces("application/json")]
-    [Authorize(Roles = "student, tutor")]
+    [Authorize]
     public class RatingController : EtutorBaseController
     {
         private readonly RatingManager _ratingManager;
@@ -31,6 +30,7 @@ namespace eTutor.ServerApi.Controllers
         [ProducesResponseType(typeof(RatingResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         [ProducesResponseType(401)]
+        [Authorize(Roles = "student, tutor")]
         public async Task<IActionResult> CreateRating([FromBody] RatingRequest request)
         {
             int studentId = GetUserId();
