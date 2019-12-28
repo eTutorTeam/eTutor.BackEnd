@@ -18,6 +18,8 @@ namespace eTutor.ServerApi.ViewModels
         
         public string TutorImage { get; set; }
 
+        public string TutorContact { get; set; }
+
         public int SubjectId { get; set; }
         
         public string SubjectName { get; set; }
