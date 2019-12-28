@@ -65,7 +65,7 @@ namespace eTutor.ServerApi.Controllers
             return Ok(mapped);
         }
 
-        [HttpGet("user-avgRating/{userId}")]
+        [HttpGet("user-avg-rating/{userId}")]
         [ProducesResponseType(typeof(decimal), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         public async Task<IActionResult> GetUserAvgRatings([FromRoute] int userId)

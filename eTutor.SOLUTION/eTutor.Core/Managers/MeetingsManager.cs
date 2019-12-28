@@ -226,16 +226,20 @@ namespace eTutor.Core.Managers
         {
             var student = await _userRepository.Set
                 .Include(u => u.UserRoles)
-                .FirstOrDefaultAsync(u => u.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Student) && u.Id == studentId);
+                .FirstOrDefaultAsync(u => u.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Student)
+                                          && u.Id == studentId && u.Id == studentId && u.IsActive && u.IsEmailValidated);
             if (student == null) return false;
             return true;
         }
-        
         private async Task<bool> TutorExistsAndIsTutor(int tutorId)
         {
-            return await _userRepository.Exists(s => s.Id == tutorId 
-                                                     && s.IsActive && s.IsEmailValidated
-                                                     && s.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Tutor), s => s.UserRoles);
+            var tutor = await _userRepository.Set
+                .Include(u => u.UserRoles)
+                .FirstOrDefaultAsync(u => u.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Tutor)
+                                          && u.Id == tutorId && u.Id == tutorId && u.IsActive && u.IsEmailValidated);
+            if (tutor == null) return false;
+
+            return true;
         }
     }
 }
