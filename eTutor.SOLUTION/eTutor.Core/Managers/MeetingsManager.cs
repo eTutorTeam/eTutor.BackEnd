@@ -56,8 +56,15 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<Meeting>.Ok(meeting);
         }
 
-        public async Task<IOperationResult<Meeting>> CancelMeeting(int meetingId)
+        public async Task<IOperationResult<Meeting>> CancelMeeting(int meetingId, int userId)
         {
+            var user = await _userRepository.Find(u => u.Id == userId, u => u.UserRoles);
+
+            if (user == null)
+            {
+                return BasicOperationResult<Meeting>.Fail("El usuario no fue encontrado");
+            }
+
             var meeting = await _meetingRepository.Find(s => s.Id == meetingId);
 
             if (meeting == null)
@@ -65,24 +72,57 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<Meeting>.Fail("La tutoría no fue encontrada");
             }
 
+            if (!(meeting.StudentId == userId || meeting.TutorId == userId))
+                return BasicOperationResult<Meeting>.Fail("El usuario no esta asociado a esta tutoría");
+
+
             meeting.Status = MeetingStatus.Cancelled; 
             _meetingRepository.Update(meeting);
 
             await _meetingRepository.Save();
 
+            await _notificationManager.NotifyMeetingWasCanceled(meeting);
+
             return BasicOperationResult<Meeting>.Ok(meeting);
         }
 
-        public async Task<IOperationResult<IEnumerable<Meeting>>> GetTutorMeetings(int userId)
+        public async Task<IOperationResult<IEnumerable<Meeting>>> GetTutorMeetings(int tutorId)
         {
-            var meetings = await _meetingRepository.FindAll(u => u.TutorId == userId, u => u.Tutor, u => u.Subject);
+            var tutor = await _userRepository.Find(u => u.Id == tutorId, u => u.UserRoles);
+
+            if (tutor == null)
+            {
+                return BasicOperationResult<IEnumerable<Meeting>>.Fail("El usuario no fue encontrado");
+            }
+
+            var meetings = await _meetingRepository.FindAll(u => u.TutorId == tutorId, u => u.Tutor, u => u.Subject);
 
             return BasicOperationResult<IEnumerable<Meeting>>.Ok(meetings);
         }
 
-        public async Task<IOperationResult<IEnumerable<Meeting>>> GetStudentMeetings(int userId)
+        public async Task<IOperationResult<IEnumerable<Meeting>>> GetStudentTutorMeetings(int userId)
         {
-            var meetings = await _meetingRepository.FindAll(u => u.StudentId == userId, u => u.Student, u => u.Tutor);
+            IEnumerable<Meeting> meetings;
+            var user = await _userRepository.Find(u => u.Id == userId, u => u.UserRoles);
+
+            if (user == null)
+            {
+                return BasicOperationResult<IEnumerable<Meeting>>.Fail("El usuario no fue encontrado");
+            }
+
+            if (user.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Tutor))
+            {
+                meetings = await _meetingRepository.FindAll(s => s.TutorId == userId);
+
+            }
+            else if (user.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Student))
+            {
+                meetings = await _meetingRepository.FindAll(s =>  s.StudentId == userId);
+            }
+            else
+            {
+               return BasicOperationResult<IEnumerable< Meeting >>.Fail("El usuario no es un tutor o un estudiante");
+            }
 
             return BasicOperationResult<IEnumerable<Meeting>>.Ok(meetings);
         }
@@ -242,7 +282,8 @@ namespace eTutor.Core.Managers
         {
             var student = await _userRepository.Set
                 .Include(u => u.UserRoles)
-                .FirstOrDefaultAsync(u => u.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Student) && u.Id == studentId);
+                .FirstOrDefaultAsync(u => u.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Student)
+                                          && u.Id == studentId && u.Id == studentId && u.IsActive && u.IsEmailValidated);
             if (student == null) return false;
             return true;
         }
@@ -250,7 +291,8 @@ namespace eTutor.Core.Managers
         {
             var tutor = await _userRepository.Set
                 .Include(u => u.UserRoles)
-                .FirstOrDefaultAsync(u => u.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Tutor) && u.Id == tutorId); 
+                .FirstOrDefaultAsync(u => u.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Tutor) 
+                                          && u.Id == tutorId && u.Id == tutorId && u.IsActive && u.IsEmailValidated);
             if (tutor == null) return false;
 
             return true;

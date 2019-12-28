@@ -52,11 +52,10 @@ namespace eTutor.ServerApi.Controllers
         [HttpPut("cancel-meeting")]
         [ProducesResponseType(typeof(MeetingResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
-        [AllowAnonymous]
-        public async Task<IActionResult> CancelMeeting([FromHeader] int meetingId)
+        public async Task<IActionResult> CancelMeeting([FromRoute] int meetingId)
         {
-
-            IOperationResult<Meeting> result = await _meetingsManager.CancelMeeting(meetingId);
+            int userId = GetUserId();
+            IOperationResult<Meeting> result = await _meetingsManager.CancelMeeting(meetingId, userId);
 
             if (!result.Success)
             {
@@ -68,16 +67,15 @@ namespace eTutor.ServerApi.Controllers
             return Ok(mapped);
         }
 
-        
         [HttpGet("all")]
         [ProducesResponseType(typeof(IEnumerable<MeetingResponse>), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         [Authorize(Roles = "student, tutor, parent")]
-        public async Task<IActionResult> GetStudentMeetings()
+        public async Task<IActionResult> GetStudentTutorMeetings()
         {
             int userId = GetUserId();
             
-            IOperationResult<IEnumerable<Meeting>> result = await _meetingsManager.GetStudentMeetings(userId);
+            IOperationResult<IEnumerable<Meeting>> result = await _meetingsManager.GetStudentTutorMeetings(userId);
 
             if (!result.Success)
             {
