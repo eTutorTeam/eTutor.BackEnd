@@ -49,7 +49,7 @@ namespace eTutor.ServerApi.Controllers
             return Ok(response);
         }
 
-        [HttpGet("user-ratings")]
+        [HttpGet("user-ratings/{userId}")]
         [ProducesResponseType(typeof(MeetingResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         public async Task<IActionResult> GetUserRatings([FromRoute] int userId)
