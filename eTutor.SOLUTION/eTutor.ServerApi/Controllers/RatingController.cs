@@ -15,7 +15,7 @@ namespace eTutor.ServerApi.Controllers
     [Route("api/ratings")]
     [ApiController]
     [Produces("application/json")]
-    [Authorize]
+    [Authorize(Roles = "student, tutor")]
     public class RatingController : EtutorBaseController
     {
         private readonly RatingManager _ratingManager;
@@ -31,7 +31,6 @@ namespace eTutor.ServerApi.Controllers
         [ProducesResponseType(typeof(RatingResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         [ProducesResponseType(401)]
-        [AllowAnonymous]
         public async Task<IActionResult> CreateRating([FromBody] RatingRequest request)
         {
             int studentId = GetUserId();
@@ -53,8 +52,7 @@ namespace eTutor.ServerApi.Controllers
         [HttpGet("user-ratings")]
         [ProducesResponseType(typeof(MeetingResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetUserRatings([FromHeader] int userId)
+        public async Task<IActionResult> GetUserRatings([FromRoute] int userId)
         {
             var result = await _ratingManager.GetUserRatings(userId);
             if (!result.Success)
@@ -67,11 +65,10 @@ namespace eTutor.ServerApi.Controllers
             return Ok(mapped);
         }
 
-        [HttpGet("user-avgRating")]
+        [HttpGet("user-avgRating/{userId}")]
         [ProducesResponseType(typeof(decimal), 200)]
         [ProducesResponseType(typeof(Error), 400)]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetUserAvgRatings([FromHeader] int userId)
+        public async Task<IActionResult> GetUserAvgRatings([FromRoute] int userId)
         {
             var result = await _ratingManager.GetUserAvgRating(userId);
             if (!result.Success)
