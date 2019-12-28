@@ -131,5 +131,38 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<ISet<User>>.Ok(tutors);
 
         }
+
+        public async Task<IOperationResult<User>> GetRandomNotUsedTutorForMeeting(int meetingId)
+        {
+            var meeting = await _meetingRepository.Find(m => m.Id == meetingId);
+
+            if (meeting == null)
+            {
+                return BasicOperationResult<User>.Fail("La tutoría no fue encontrada");
+            }
+            
+            var tutorsResult = await GetTutorsBySubjectId(meeting.SubjectId);
+
+            if (!tutorsResult.Success)
+            {
+                return BasicOperationResult<User>.Fail(tutorsResult.Message.Message);
+            }
+
+            var rejections = await _rejectedMeetingRepository.FindAll(r => r.MeetingId == meetingId);
+
+            var tutors = tutorsResult.Entity.Where(t => rejections.All(r => r.TutorId == t.Id));
+
+            var rand = new Random();
+            int index = rand.Next(tutors.Count());
+
+            var selectedTutor = tutors.ElementAtOrDefault(index);
+
+            if (selectedTutor == null)
+            {
+                return BasicOperationResult<User>.Fail("No se pudo seleccionar ningún tutor de manera aleatoria");
+            }
+            
+            return BasicOperationResult<User>.Ok(selectedTutor);
+        }
     }
 }

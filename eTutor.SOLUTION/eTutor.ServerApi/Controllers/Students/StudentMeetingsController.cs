@@ -8,6 +8,7 @@ using eTutor.ServerApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.CodeAnalysis;
 
 namespace eTutor.ServerApi.Controllers.Students
 {
@@ -26,7 +27,7 @@ namespace eTutor.ServerApi.Controllers.Students
             _mapper = mapper;
         }
 
-        [Route("{meetingId}/not-selected-tutors")]
+        [HttpGet("{meetingId}/not-selected-tutors")]
         [ProducesResponseType(typeof(ISet<TutorSimpleResponse>), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         public async Task<IActionResult> GetNotSelectedTutorsInMeetingForStudent([FromRoute] int meetingId)
@@ -43,6 +44,25 @@ namespace eTutor.ServerApi.Controllers.Students
 
             return Ok(tutors);
         }
+
+
+        [HttpGet("{meetingId}/random-tutor")]
+        [ProducesResponseType(typeof(TutorSimpleResponse), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        public async Task<IActionResult> GetRandomTutorForMeeting([FromRoute] int meetingId)
+        {
+            IOperationResult<User> operationResult = await _tutorsManager.GetRandomNotUsedTutorForMeeting(meetingId);
+
+            if (!operationResult.Success)
+            {
+                return BadRequest(operationResult.Message);
+            }
+
+            var mapped = _mapper.Map<TutorSimpleResponse>(operationResult.Entity);
+
+            return Ok(mapped);
+        }
+        
 
         [HttpPatch("reschedule-tutor")]
         [ProducesResponseType(typeof(MeetingResponse), 200)]
@@ -64,5 +84,7 @@ namespace eTutor.ServerApi.Controllers.Students
 
             return Ok(mapped);
         }
+        
+        
     }
 }
