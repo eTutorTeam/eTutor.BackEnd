@@ -49,7 +49,7 @@ namespace eTutor.ServerApi.Controllers
 
             return Ok(response);
         }
-        [HttpPut("cancel-meeting")]
+        [HttpPut("cancel-meeting/{meetingId}")]
         [ProducesResponseType(typeof(MeetingResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         public async Task<IActionResult> CancelMeeting([FromRoute] int meetingId)
