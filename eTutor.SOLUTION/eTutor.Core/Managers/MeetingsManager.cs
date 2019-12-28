@@ -267,16 +267,10 @@ namespace eTutor.Core.Managers
             {
                 return BasicOperationResult<Meeting>.Fail("La materia inidicada en la solicitud no existe");
             }
-            if (!await SubjectExists(meeting.SubjectId))
-            {
-                return BasicOperationResult<Meeting>.Fail("La materia no existe");
-            }
-
             if (!await TutorExistsAndIsTutor(meeting.TutorId))
             {
                 return BasicOperationResult<Meeting>.Fail("El tutor no existe");
             }
-
             if (!await StudentExistsAndIsStudent(meeting.StudentId))
             {
                 return BasicOperationResult<Meeting>.Fail("El estudiante no existe");
@@ -303,8 +297,9 @@ namespace eTutor.Core.Managers
         {
             var tutor = await _userRepository.Set
                 .Include(u => u.UserRoles)
-                .FirstOrDefaultAsync(u => u.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Tutor) 
-        }
+                .FirstOrDefaultAsync(u => u.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Tutor)
+                                          && u.Id == tutorId && u.Id == tutorId && u.IsActive && u.IsEmailValidated);
+            if (tutor == null) return false;
 
         public async Task<IOperationResult<Meeting>> RescheduleTutorForStudentMeeting(int meetingId, int tutorId, int studentId)
         {

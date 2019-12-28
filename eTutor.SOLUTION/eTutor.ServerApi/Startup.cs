@@ -162,6 +162,7 @@ namespace eTutor.ServerApi
             services.AddScoped<IDeviceRepository, DeviceRepository>();
             services.AddScoped<IEmailValidationRepository, EmailValidationRepository>();
             services.AddScoped<IMeetingRepository, MeetingRepository>();
+            services.AddScoped<IRatingRepository, RatingRepository>();
             services.AddScoped<IParentAuthorizationRepository, ParentAuthorizationRepository>();
             services.AddScoped<IRejectedMeetingRepository, RejectedMeetingRepository>();
         }
@@ -177,6 +178,7 @@ namespace eTutor.ServerApi
             services.AddScoped<DevicesManager, DevicesManager>();
             services.AddScoped<NotificationManager, NotificationManager>();
             services.AddScoped<MeetingsManager, MeetingsManager>();
+            services.AddScoped<RatingManager, RatingManager>();
             services.AddScoped<ParentAuthorizationManager, ParentAuthorizationManager>();
         }
 
