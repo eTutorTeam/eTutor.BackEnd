@@ -293,13 +293,17 @@ namespace eTutor.Core.Managers
             if (student == null) return false;
             return true;
         }
+
         private async Task<bool> TutorExistsAndIsTutor(int tutorId)
         {
             var tutor = await _userRepository.Set
                 .Include(u => u.UserRoles)
-                .FirstOrDefaultAsync(u => u.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Tutor)
+                .FirstOrDefaultAsync(u => u.UserRoles.Any(ur => ur.RoleId == (int) RoleTypes.Tutor)
                                           && u.Id == tutorId && u.Id == tutorId && u.IsActive && u.IsEmailValidated);
             if (tutor == null) return false;
+
+            return true;
+        }
 
         public async Task<IOperationResult<Meeting>> RescheduleTutorForStudentMeeting(int meetingId, int tutorId, int studentId)
         {
