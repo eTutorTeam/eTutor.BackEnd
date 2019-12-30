@@ -66,6 +66,30 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<string>.Ok("Notificación enviada");
         }
         
+        public async Task<IOperationResult<string>> NotifyParentsOfMeetingUpdatedForStudent(Meeting meeting)
+        {
+            var studentResult =  await GetUser(meeting.StudentId);
+
+            if (!studentResult.Success)
+            {
+                return BasicOperationResult<string>.Fail(studentResult.Message.Message);
+            }
+
+            User student = studentResult.Entity;
+            
+            ISet<User> parents = await _userRepository.GetAllParentsForStudent(student.Id);
+            
+            if (!parents.Any()) return BasicOperationResult<string>.Fail("No fueron encontrados padres para este estudiante");
+
+            string message =
+                $"{student.FullName} ha hecho un cambio en la tutoría de {meeting.Subject.Name}. Su autorización no es requerida";
+            
+
+            await _notificationService.SendNotificationToMultipleUsers(parents, message, "Tutoria Actualizada");
+            
+            return BasicOperationResult<string>.Ok("Notificación enviada");
+        }
+        
         public async Task<IOperationResult<string>> NotifyTutorOfSolicitedMeeting(int tutorId, Subject subject, User student, int meetingId)
         {
             var userResult = await GetUser(tutorId);
@@ -104,7 +128,7 @@ namespace eTutor.Core.Managers
             var data = new Dictionary<string, string>();
             data.Add("answeredMeetingId", meeting.Id.ToString());
             
-            if (meeting.Status != MeetingStatus.Rejected)
+            if (meeting.Status == MeetingStatus.Rejected)
             {
                 data.Add("meetingRejected", "true");
             }
@@ -152,15 +176,11 @@ namespace eTutor.Core.Managers
             if (!parents.Any()) return BasicOperationResult<string>.Fail("No fueron encontrados padres para este estudiante");
 
             string messageToParents =
-                $"La tutoría programada para {meeting.Student.FullName} del tema: {meeting.Subject.Name} ha sido cancelada";
+                $"La tutoría programada para {student.FullName} del tema: {meeting.Subject.Name} ha sido cancelada";
 
             string messageToUsers = $"La tutoría programada del tema: {meeting.Subject.Name} ha sido cancelada";
-            var data = new Dictionary<string, string>
-            {
-                {"parentMeetingId", meeting.Id.ToString()}
-            };
 
-            await _notificationService.SendNotificationToMultipleUsers(parents, messageToParents, subject, data);
+            await _notificationService.SendNotificationToMultipleUsers(parents, messageToParents, subject);
             await _notificationService.SendNotificationToUser(student, messageToUsers, subject);
             await _notificationService.SendNotificationToUser(tutor, messageToUsers, subject);
 

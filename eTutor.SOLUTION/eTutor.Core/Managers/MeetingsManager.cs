@@ -21,20 +21,37 @@ namespace eTutor.Core.Managers
         private readonly ISubjectRepository _subjectRepository;
         private readonly NotificationManager _notificationManager;
         private readonly IUserRepository _userRepository;
+        private readonly IRejectedMeetingRepository _rejectedMeetingRepository;
 
         public MeetingsManager(IMeetingRepository meetingRepository,
             ISubjectRepository subjectRepository, IUserRepository userRepository,
-            NotificationManager notificationManager)
+            NotificationManager notificationManager, IRejectedMeetingRepository rejectedMeetingRepository)
         {
             _meetingRepository = meetingRepository;
             _subjectRepository = subjectRepository;
             _userRepository = userRepository;
             _notificationManager = notificationManager;
+            _rejectedMeetingRepository = rejectedMeetingRepository;
         }
 
         public async Task<IOperationResult<Meeting>> GetMeeting(int meetingId, int userId)
         {
-            var meeting = await _meetingRepository.Find(s => s.Id == meetingId && (s.StudentId == userId || s.TutorId == userId));
+
+            var user = await _userRepository.Find(u => u.Id == userId, u => u.UserRoles);
+            
+            Meeting meeting;
+
+            if (user.UserRoles.Any(u => u.RoleId == (int) RoleTypes.Student))
+            {
+                meeting = await _meetingRepository.Find(s => s.Id == meetingId && s.StudentId == userId, 
+                    s => s.Student, s => s.Tutor, s => s.Subject );
+            }
+            else
+            {
+                meeting = await _meetingRepository.Find(s => s.Id == meetingId && s.TutorId == userId, 
+                    s => s.Student, s => s.Tutor, s => s.Subject );
+            }
+            
 
             if (meeting == null)
             {
@@ -65,7 +82,7 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<Meeting>.Fail("El usuario no fue encontrado");
             }
 
-            var meeting = await _meetingRepository.Find(s => s.Id == meetingId);
+            var meeting = await _meetingRepository.Find(s => s.Id == meetingId, s => s.Subject);
 
             if (meeting == null)
             {
@@ -154,28 +171,6 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<Meeting>.Ok(response);
         }
 
-        public async Task<IOperationResult<Meeting>> GetTutorMeetingSummary(int meetingId, int tutorId)
-        {
-            var meeting = await _meetingRepository.Find(
-                m => m.Id == meetingId && m.TutorId == tutorId,
-                m => m.Student, m => m.Subject
-                     );
-
-            if (meeting == null)
-            {
-                return BasicOperationResult<Meeting>.Fail("La solicitud no fue encontrada");
-            }
-
-            var validateResult = await ValidateMeeting(meeting);
-            if (!validateResult.Success)
-            {
-                return validateResult;
-            }
-            
-            return BasicOperationResult<Meeting>.Ok(meeting);
-
-        }
-        
         public async Task<IOperationResult<string>> TutorResponseToMeetingRequest(int meetingId, MeetingStatus answeredStatusAnsweredStatus, int userId)
         {
             var meeting = await FindMeetingWithTutor(meetingId, userId);
@@ -192,6 +187,16 @@ namespace eTutor.Core.Managers
             }
 
             meeting.Status = status;
+
+            if (status == MeetingStatus.Rejected)
+            {
+                var rejection = new RejectedMeeting
+                {
+                    TutorId = meeting.TutorId,
+                    MeetingId = meetingId
+                };
+                _rejectedMeetingRepository.Create(rejection);
+            }
 
             _meetingRepository.Update(meeting);
 
@@ -281,16 +286,51 @@ namespace eTutor.Core.Managers
             if (student == null) return false;
             return true;
         }
+
         private async Task<bool> TutorExistsAndIsTutor(int tutorId)
         {
             var tutor = await _userRepository.Set
                 .Include(u => u.UserRoles)
-                .FirstOrDefaultAsync(u => u.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Tutor)
+                .FirstOrDefaultAsync(u => u.UserRoles.Any(ur => ur.RoleId == (int) RoleTypes.Tutor)
                                           && u.Id == tutorId && u.Id == tutorId && u.IsActive && u.IsEmailValidated);
             if (tutor == null) return false;
 
             return true;
         }
 
+        public async Task<IOperationResult<Meeting>> RescheduleTutorForStudentMeeting(int meetingId, int tutorId, int studentId)
+        {
+            var meeting = await _meetingRepository.Find(m =>
+                    m.Id == meetingId
+                    && m.StudentId == studentId,
+                m => m.Student, m => m.Subject
+            );
+
+            if (meeting == null)
+            {
+                return BasicOperationResult<Meeting>.Fail("La tutoría no pudo ser encontrada en nuestros registros.");
+            }
+
+            var tutor = await _userRepository.Find(u =>
+                u.Id == tutorId && u.UserRoles.Any(ur => ur.RoleId == (int) RoleTypes.Tutor), u => u.UserRoles);
+
+            if (tutor == null)
+            {
+                return BasicOperationResult<Meeting>.Fail("El tutor con quien intenta reprogammar no existe en nuestros registros");
+            }
+
+            meeting.TutorId = tutorId;
+            meeting.Status = MeetingStatus.Approved;
+            _meetingRepository.Update(meeting);
+            await _meetingRepository.Save();
+
+            meeting.Tutor = tutor;
+
+            await _notificationManager.NotifyStudentMeetingWasCreated(studentId, meeting.Subject.Name, tutor.FullName);
+            await _notificationManager.NotifyTutorOfSolicitedMeeting(tutor.Id, meeting.Subject, meeting.Student, meetingId);
+            await _notificationManager.NotifyParentsOfMeetingUpdatedForStudent(meeting);
+            
+            return BasicOperationResult<Meeting>.Ok(meeting);
+        }
     }
 }
