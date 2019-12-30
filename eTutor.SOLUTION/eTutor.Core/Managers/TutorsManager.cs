@@ -155,7 +155,7 @@ namespace eTutor.Core.Managers
 
             var rejections = await _rejectedMeetingRepository.FindAll(r => r.MeetingId == meetingId);
 
-            var tutors = tutorsResult.Entity.Where(t => rejections.All(r => r.TutorId == t.Id));
+            var tutors = tutorsResult.Entity.Where(t => rejections.All(r => r.TutorId != t.Id));
             
             if (!tutors.Any())
             {
@@ -167,7 +167,7 @@ namespace eTutor.Core.Managers
 
             var selectedTutor = tutors.ElementAtOrDefault(index);
 
-            if (selectedTutor == null)
+             if (selectedTutor == null)
             {
                 return BasicOperationResult<User>.Fail("No se pudo seleccionar ningún tutor de manera aleatoria");
             }

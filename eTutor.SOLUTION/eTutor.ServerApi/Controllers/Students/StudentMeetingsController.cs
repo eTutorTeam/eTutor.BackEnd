@@ -21,10 +21,12 @@ namespace eTutor.ServerApi.Controllers.Students
         private readonly TutorsManager _tutorsManager;
         private readonly IMapper _mapper;
 
-        public StudentMeetingsController(MeetingsManager meetingsManager, IMapper mapper)
+        public StudentMeetingsController(MeetingsManager meetingsManager, 
+            IMapper mapper, TutorsManager tutorsManager)
         {
             _meetingsManager = meetingsManager;
             _mapper = mapper;
+            _tutorsManager = tutorsManager;
         }
 
         [HttpGet("{meetingId}/not-selected-tutors")]

@@ -36,7 +36,22 @@ namespace eTutor.Core.Managers
 
         public async Task<IOperationResult<Meeting>> GetMeeting(int meetingId, int userId)
         {
-            var meeting = await _meetingRepository.Find(s => s.Id == meetingId && (s.StudentId == userId || s.TutorId == userId));
+
+            var user = await _userRepository.Find(u => u.Id == userId, u => u.UserRoles);
+            
+            Meeting meeting;
+
+            if (user.UserRoles.Any(u => u.RoleId == (int) RoleTypes.Student))
+            {
+                meeting = await _meetingRepository.Find(s => s.Id == meetingId && s.StudentId == userId, 
+                    s => s.Student, s => s.Tutor, s => s.Subject );
+            }
+            else
+            {
+                meeting = await _meetingRepository.Find(s => s.Id == meetingId && s.TutorId == userId, 
+                    s => s.Student, s => s.Tutor, s => s.Subject );
+            }
+            
 
             if (meeting == null)
             {
@@ -156,28 +171,6 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<Meeting>.Ok(response);
         }
 
-        public async Task<IOperationResult<Meeting>> GetTutorMeetingSummary(int meetingId, int tutorId)
-        {
-            var meeting = await _meetingRepository.Find(
-                m => m.Id == meetingId && m.TutorId == tutorId,
-                m => m.Student, m => m.Subject
-                     );
-
-            if (meeting == null)
-            {
-                return BasicOperationResult<Meeting>.Fail("La solicitud no fue encontrada");
-            }
-
-            var validateResult = await ValidateMeeting(meeting);
-            if (!validateResult.Success)
-            {
-                return validateResult;
-            }
-            
-            return BasicOperationResult<Meeting>.Ok(meeting);
-
-        }
-        
         public async Task<IOperationResult<string>> TutorResponseToMeetingRequest(int meetingId, MeetingStatus answeredStatusAnsweredStatus, int userId)
         {
             var meeting = await FindMeetingWithTutor(meetingId, userId);
@@ -309,8 +302,7 @@ namespace eTutor.Core.Managers
         {
             var meeting = await _meetingRepository.Find(m =>
                     m.Id == meetingId
-                    && m.StudentId == studentId
-                    && m.ParentAuthorizationId != null,
+                    && m.StudentId == studentId,
                 m => m.Student, m => m.Subject
             );
 
@@ -340,6 +332,5 @@ namespace eTutor.Core.Managers
             
             return BasicOperationResult<Meeting>.Ok(meeting);
         }
-
     }
 }

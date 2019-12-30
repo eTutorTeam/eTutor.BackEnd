@@ -84,12 +84,8 @@ namespace eTutor.Core.Managers
             string message =
                 $"{student.FullName} ha hecho un cambio en la tutoría de {meeting.Subject.Name}. Su autorización no es requerida";
             
-            var data = new Dictionary<string, string>
-            {
-                {"parentMeetingId", meeting.Id.ToString()}
-            };
 
-            await _notificationService.SendNotificationToMultipleUsers(parents, message, "Tutoria Actualizada", data);
+            await _notificationService.SendNotificationToMultipleUsers(parents, message, "Tutoria Actualizada");
             
             return BasicOperationResult<string>.Ok("Notificación enviada");
         }
