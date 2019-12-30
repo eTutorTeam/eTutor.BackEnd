@@ -127,6 +127,11 @@ namespace eTutor.Core.Managers
                 .Entity
                 .Where(t => t.Id != meeting.TutorId && rejections.All(r => r.TutorId != t.Id))
                 .ToHashSet();
+
+            if (!tutors.Any())
+            {
+                return BasicOperationResult<ISet<User>>.Fail("No hay más tutores disponibles para esta matería, lo sentimos, estamos trabajando por obtener más");
+            }
             
             return BasicOperationResult<ISet<User>>.Ok(tutors);
 
@@ -151,7 +156,12 @@ namespace eTutor.Core.Managers
             var rejections = await _rejectedMeetingRepository.FindAll(r => r.MeetingId == meetingId);
 
             var tutors = tutorsResult.Entity.Where(t => rejections.All(r => r.TutorId == t.Id));
-
+            
+            if (!tutors.Any())
+            {
+                return BasicOperationResult<User>.Fail("No hay más tutores disponibles para esta matería, lo sentimos, estamos trabajando por obtener más");
+            }
+            
             var rand = new Random();
             int index = rand.Next(tutors.Count());
 

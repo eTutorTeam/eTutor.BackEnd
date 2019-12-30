@@ -132,7 +132,7 @@ namespace eTutor.Core.Managers
             var data = new Dictionary<string, string>();
             data.Add("answeredMeetingId", meeting.Id.ToString());
             
-            if (meeting.Status != MeetingStatus.Rejected)
+            if (meeting.Status == MeetingStatus.Rejected)
             {
                 data.Add("meetingRejected", "true");
             }
@@ -180,15 +180,11 @@ namespace eTutor.Core.Managers
             if (!parents.Any()) return BasicOperationResult<string>.Fail("No fueron encontrados padres para este estudiante");
 
             string messageToParents =
-                $"La tutoría programada para {meeting.Student.FullName} del tema: {meeting.Subject.Name} ha sido cancelada";
+                $"La tutoría programada para {student.FullName} del tema: {meeting.Subject.Name} ha sido cancelada";
 
             string messageToUsers = $"La tutoría programada del tema: {meeting.Subject.Name} ha sido cancelada";
-            var data = new Dictionary<string, string>
-            {
-                {"parentMeetingId", meeting.Id.ToString()}
-            };
 
-            await _notificationService.SendNotificationToMultipleUsers(parents, messageToParents, subject, data);
+            await _notificationService.SendNotificationToMultipleUsers(parents, messageToParents, subject);
             await _notificationService.SendNotificationToUser(student, messageToUsers, subject);
             await _notificationService.SendNotificationToUser(tutor, messageToUsers, subject);
 
