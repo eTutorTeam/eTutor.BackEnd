@@ -82,7 +82,7 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<Meeting>.Fail("El usuario no fue encontrado");
             }
 
-            var meeting = await _meetingRepository.Find(s => s.Id == meetingId);
+            var meeting = await _meetingRepository.Find(s => s.Id == meetingId, s => s.Subject);
 
             if (meeting == null)
             {
