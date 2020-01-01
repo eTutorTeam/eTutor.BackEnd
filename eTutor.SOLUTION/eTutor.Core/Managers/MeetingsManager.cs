@@ -359,7 +359,9 @@ namespace eTutor.Core.Managers
                 meetings.AddRange(foundMeetings);
             }
 
-            var meetingsDistinct = meetings.Distinct().ToHashSet();
+            var meetingsDistinct = meetings
+                .Where(m => m.Status == MeetingStatus.Accepted)
+                .Distinct().ToHashSet();
 
             return BasicOperationResult<ISet<Meeting>>.Ok(meetingsDistinct);
         }
