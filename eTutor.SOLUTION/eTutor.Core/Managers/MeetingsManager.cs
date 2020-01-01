@@ -332,5 +332,63 @@ namespace eTutor.Core.Managers
             
             return BasicOperationResult<Meeting>.Ok(meeting);
         }
+
+        public async Task<IOperationResult<ISet<Meeting>>> GetMeetingsForUserCalendar(int userId)
+        {
+            bool userExists = await _userRepository.Exists(u => u.Id == userId && u.IsActive && u.IsEmailValidated);
+
+            if (!userExists)
+            {
+                return BasicOperationResult<ISet<Meeting>>.Fail("El usuario no está en nuestra base de datos.");
+            }
+            
+            var roles = await _userRepository.GetRolesForUser(userId);
+            
+            var functions = new Dictionary<RoleTypes, Func<int, Task<IEnumerable<Meeting>>>>
+            {
+                {RoleTypes.Parent, GetMeetingsForParent},
+                {RoleTypes.Tutor, GetMeetingsForTutor},
+                {RoleTypes.Student, GetMeetingsForStudent}
+            };
+
+            var meetings = new List<Meeting>();
+            
+            foreach (var role in roles)
+            {
+                var foundMeetings = await functions[role](userId);
+                meetings.AddRange(foundMeetings);
+            }
+
+            var meetingsDistinct = meetings.Distinct().ToHashSet();
+
+            return BasicOperationResult<ISet<Meeting>>.Ok(meetingsDistinct);
+        }
+
+        private Task<IEnumerable<Meeting>> GetMeetingsForTutor(int tutorId)
+        {
+            return _meetingRepository.FindAll(
+                m => m.TutorId == tutorId &&
+                     m.StartDateTime.Date >= DateTime.Now.Date
+            );
+        }
+
+        private Task<IEnumerable<Meeting>> GetMeetingsForStudent(int studentId)
+        {
+            return _meetingRepository.FindAll(
+                    m => m.StudentId == studentId &&
+                         m.StartDateTime.Date >= DateTime.Now.Date
+                );
+        }
+
+        private async Task<IEnumerable<Meeting>> GetMeetingsForParent(int parentId)
+        {
+            var students = await _userRepository.GetAllStudentsForParent(parentId);
+            var studentIds = students.Select(s => s.Id);
+
+            return await _meetingRepository.FindAll(
+                m => studentIds.Any(s => s == m.StudentId)
+                && m.StartDateTime.Date > DateTime.Now.Date
+            );
+        }
     }
 }
