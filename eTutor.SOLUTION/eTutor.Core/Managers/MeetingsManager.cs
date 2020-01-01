@@ -368,7 +368,8 @@ namespace eTutor.Core.Managers
         {
             return _meetingRepository.FindAll(
                 m => m.TutorId == tutorId &&
-                     m.StartDateTime.Date >= DateTime.Now.Date
+                     m.StartDateTime.Date >= DateTime.Now.Date,
+                m => m.Student, m => m.Tutor, m => m.Subject
             );
         }
 
@@ -376,7 +377,8 @@ namespace eTutor.Core.Managers
         {
             return _meetingRepository.FindAll(
                     m => m.StudentId == studentId &&
-                         m.StartDateTime.Date >= DateTime.Now.Date
+                         m.StartDateTime.Date >= DateTime.Now.Date,
+                    m => m.Student, m => m.Tutor, m => m.Subject
                 );
         }
 
@@ -387,7 +389,8 @@ namespace eTutor.Core.Managers
 
             return await _meetingRepository.FindAll(
                 m => studentIds.Any(s => s == m.StudentId)
-                && m.StartDateTime.Date > DateTime.Now.Date
+                && m.StartDateTime.Date > DateTime.Now.Date,
+            m => m.Student, m => m.Tutor, m => m.Subject
             );
         }
     }

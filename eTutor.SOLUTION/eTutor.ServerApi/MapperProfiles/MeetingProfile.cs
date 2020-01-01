@@ -28,7 +28,9 @@ namespace eTutor.ServerApi.MapperProfiles
             CreateMap<Meeting, ParentMeetingResponse>();
 
             CreateMap<Meeting, CalendarMeetingEventModel>()
-                .ForMember(dest => dest.MeetingId, opt => opt.MapFrom(src => src.Id));
+                .ForMember(dest => dest.MeetingId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => src.StartDateTime))
+                .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => src.EndDateTime));
         }
     }
 }
