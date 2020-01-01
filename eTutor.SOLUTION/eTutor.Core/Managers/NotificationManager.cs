@@ -130,9 +130,10 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<string>.Ok("La notificacion ha sido enviada");
         }
 
-        public async Task<IOperationResult<string>> NotifyMeetingWasCanceled(Meeting meeting)
+        public async Task<IOperationResult<string>> NotifyMeetingHasStarted(Meeting meeting)
         {
-            string subject = "Tutoría Cancelada";
+
+            string subject = "Tutoría Iniciada";
             var studentResult = await GetUser(meeting.StudentId);
             var tutorResult = await GetUser(meeting.TutorId);
 
@@ -152,9 +153,107 @@ namespace eTutor.Core.Managers
             if (!parents.Any()) return BasicOperationResult<string>.Fail("No fueron encontrados padres para este estudiante");
 
             string messageToParents =
-                $"La tutoría programada para {meeting.Student.FullName} del tema: {meeting.Subject.Name} ha sido cancelada";
+                $"La tutoría de {meeting.Student.FullName} del tema: {meeting.Subject.Name} ha iniciado\nEstá pautada para terminar a" +
+                $"las {meeting.EndDateTime.Hour}";
 
-            string messageToUsers = $"La tutoría programada del tema: {meeting.Subject.Name} ha sido cancelada";
+            string messageToUsers = $"La tutoría ahora está en curso, entra a la aplicación para ver más detalles.";
+            var data = new Dictionary<string, string>
+            {
+                {"parentMeetingId", meeting.Id.ToString()}
+            };
+
+            await _notificationService.SendNotificationToMultipleUsers(parents, messageToParents, subject, data);
+            await _notificationService.SendNotificationToUser(student, messageToUsers, subject);
+            await _notificationService.SendNotificationToUser(tutor, messageToUsers, subject);
+                
+            return BasicOperationResult<string>.Ok("Tutoria Completada");
+        }
+
+        public async Task<IOperationResult<string>> NotifyMeetingCompleted(Meeting meeting, decimal amount)
+        {
+            string subject = "¡Tutoría Completada!";
+            var studentResult = await GetUser(meeting.StudentId);
+            var tutorResult = await GetUser(meeting.TutorId);
+            
+            if (!studentResult.Success)
+            {
+                return BasicOperationResult<string>.Fail(studentResult.Message.Message);
+            }
+            if (!tutorResult.Success)
+            {
+                return BasicOperationResult<string>.Fail(tutorResult.Message.Message);
+            }
+
+            User student = studentResult.Entity;
+            User tutor = tutorResult.Entity;
+            ISet<User> parents = await _userRepository.GetAllParentsForStudent(student.Id);
+
+            if (!parents.Any()) return BasicOperationResult<string>.Fail("No fueron encontrados padres para este estudiante");
+
+            string messageToParents =
+                $"La tutoría de {meeting.Student.FullName} del tema: {meeting.Subject.Name} ha sido completada satisfactoriamente por un monto" +
+                $"de {amount}";
+
+            string messageToUsers = $"¡La tutoría ha terminado! \nEl monto total es: RD${amount}, Gracias por utilizar eTutor";
+            var data = new Dictionary<string, string>
+            {
+                {"parentMeetingId", meeting.Id.ToString()}
+            };
+
+            await _notificationService.SendNotificationToMultipleUsers(parents, messageToParents, subject, data);
+            await _notificationService.SendNotificationToUser(student, messageToUsers, subject);
+            await _notificationService.SendNotificationToUser(tutor, messageToUsers, subject);
+
+            return BasicOperationResult<string>.Ok("Tutoria Completada");
+        }
+
+        public async Task<IOperationResult<string>> NotifyMeetingWasCanceled(Meeting meeting, int userId, decimal amount)
+        {
+            bool calculateAmount = false;
+            string subject = "Tutoría Cancelada";
+            var studentResult = await GetUser(meeting.StudentId);
+            var tutorResult = await GetUser(meeting.TutorId);
+            string messageToParents;
+            string messageToUsers;
+
+            if (!studentResult.Success)
+            {
+                return BasicOperationResult<string>.Fail(studentResult.Message.Message);
+            }
+            if (!tutorResult.Success)
+            {
+                return BasicOperationResult<string>.Fail(tutorResult.Message.Message);
+            }
+
+            User student = studentResult.Entity;
+            User tutor = tutorResult.Entity;
+            ISet<User> parents = await _userRepository.GetAllParentsForStudent(student.Id);
+
+            if (!parents.Any()) return BasicOperationResult<string>.Fail("No fueron encontrados padres para este estudiante");
+
+            if (userId == student.Id)
+            {
+                calculateAmount = true;
+            }
+            else if (parents.Any(p => p.Id == userId))
+            {
+                calculateAmount = true;
+            }
+
+            if (calculateAmount)
+            {
+                messageToParents = $"La tutoría programada para {meeting.Student.FullName} del tema: {meeting.Subject.Name} ha sido cancelada" +
+                                   $"se le aplicara un cargo de: {amount}";
+                messageToUsers = $"La tutoría programada del tema: {meeting.Subject.Name} ha sido cancelada, se le aplicara un cargo de: {amount}";
+
+            }
+            else
+            {
+               messageToParents = $"La tutoría programada para {meeting.Student.FullName} del tema: {meeting.Subject.Name} ha sido cancelada por el tutor" +
+                                  $"sin cargos adicionales";
+               messageToUsers = $"La tutoría programada del tema: {meeting.Subject.Name} ha sido cancelada por el tutor";
+            }
+
             var data = new Dictionary<string, string>
             {
                 {"parentMeetingId", meeting.Id.ToString()}

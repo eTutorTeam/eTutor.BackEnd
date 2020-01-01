@@ -31,5 +31,9 @@ namespace eTutor.Core.Models
         public ISet<Rating> Ratings { get; set; }
         
         public ISet<Invoice> Invoices { get; set; }
+
+        public int? CancelerUserId { get; set; }
+
+        public DateTime RealStartedDateTime { get; set; }
     }
 }

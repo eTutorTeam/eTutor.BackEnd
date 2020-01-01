@@ -67,6 +67,62 @@ namespace eTutor.ServerApi.Controllers
             return Ok(mapped);
         }
 
+        [HttpPut("start-meeting/{meetingId}")]
+        [ProducesResponseType(typeof(MeetingResponse), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        public async Task<IActionResult> StartMeeting([FromRoute] int meetingId)
+        {
+            int userId = GetUserId();
+            IOperationResult<Meeting> result = await _meetingsManager.StartMeeting(meetingId, userId);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            var mapped = _mapper.Map<MeetingResponse>(result.Entity);
+
+            return Ok(mapped);
+        }
+
+        [HttpPut("end-meeting/{meetingId}")]
+        [ProducesResponseType(typeof(MeetingResponse), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        public async Task<IActionResult> EndMeeting([FromRoute] int meetingId)
+        {
+            int userId = GetUserId();
+            IOperationResult<Meeting> result = await _meetingsManager.EndMeeting(meetingId, userId);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            var mapped = _mapper.Map<MeetingResponse>(result.Entity);
+
+            return Ok(mapped);
+        }
+
+        [HttpGet("meeting-in-course")]
+        [ProducesResponseType(typeof(IEnumerable<MeetingResponse>), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        [Authorize(Roles = "student, tutor, parent")]
+        public async Task<IActionResult> GetCurrentMeeting()
+        {
+            int userId = GetUserId();
+
+            IOperationResult<Meeting> result = await _meetingsManager.GetCurrentMeeting(userId);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            var mapped = _mapper.Map<MeetingResponse>(result.Entity);
+
+            return Ok(mapped);
+        }
+
         [HttpGet("all")]
         [ProducesResponseType(typeof(IEnumerable<MeetingResponse>), 200)]
         [ProducesResponseType(typeof(Error), 400)]
