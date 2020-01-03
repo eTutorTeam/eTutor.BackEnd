@@ -21,5 +21,7 @@ namespace eTutor.ServerApi.ViewModels
         public decimal Ratings { get; set; }
         
         public string FullName => $"{Name} {LastName}";
+        
+        public string AboutMe { get; set; }
     }
 }
