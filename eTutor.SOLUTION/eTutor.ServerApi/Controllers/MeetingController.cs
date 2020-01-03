@@ -9,6 +9,7 @@ using eTutor.Core.Models;
 using eTutor.ServerApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 
 namespace eTutor.ServerApi.Controllers
 {
@@ -67,6 +68,27 @@ namespace eTutor.ServerApi.Controllers
             return Ok(mapped);
         }
 
+        [HttpGet("calendar")]
+        [ProducesResponseType(typeof(ISet<CalendarMeetingEventModel>), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        [Authorize(Roles = "student, tutor, parent")]
+        public async Task<IActionResult> GetMeetingsDependingOnUserRoleForCalendar()
+        {
+            int userId = GetUserId();
+
+            IOperationResult<ISet<Meeting>> operationResult = await _meetingsManager.GetMeetingsForUserCalendar(userId);
+
+            if (!operationResult.Success)
+            {
+                return BadRequest(operationResult.Message);
+            }
+
+            var mapped = _mapper.Map<ISet<CalendarMeetingEventModel>>(operationResult.Entity);
+
+            return Ok(mapped);
+        }
+        
+
         [HttpGet("all")]
         [ProducesResponseType(typeof(IEnumerable<MeetingResponse>), 200)]
         [ProducesResponseType(typeof(Error), 400)]
@@ -107,7 +129,7 @@ namespace eTutor.ServerApi.Controllers
         }
 
         [HttpGet("{meetingId}/summary")]
-        [ProducesResponseType(typeof(MeetingResponse), 200)]
+        [ProducesResponseType(typeof(MeetingSummaryModel), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         [Authorize(Roles = "tutor, student")]
         public async Task<IActionResult> GetTutorMeetingSummary([FromRoute] int meetingId)
@@ -122,7 +144,7 @@ namespace eTutor.ServerApi.Controllers
                 return BadRequest(operationResult.Message);
             }
 
-            MeetingResponse mapped = _mapper.Map<MeetingResponse>(operationResult.Entity);
+            MeetingSummaryModel mapped = _mapper.Map<MeetingSummaryModel>(operationResult.Entity);
 
             return Ok(mapped);
         }

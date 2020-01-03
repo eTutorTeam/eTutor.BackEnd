@@ -15,8 +15,11 @@ namespace eTutor.ServerApi.ViewModels
         public DateTime BirthDate { get; set; }
         
         public string ProfileImageUrl { get; set; }
+        
         public int Age { get; set; }
         
         public string FullName => $"{Name} {LastName}";
+        
+        public string AboutMe { get; set; }
     }
 }
