@@ -19,12 +19,14 @@ namespace eTutor.ServerApi.Controllers
     public class MeetingController: EtutorBaseController
     {
         private readonly MeetingsManager _meetingsManager;
+        private readonly RatingManager _ratingManager;
         private readonly IMapper _mapper;
 
-        public MeetingController( MeetingsManager meetingsManager, IMapper mapper)
+        public MeetingController( MeetingsManager meetingsManager, IMapper mapper, RatingManager ratingManager)
         {
             _meetingsManager = meetingsManager;
             _mapper = mapper;
+            _ratingManager = ratingManager;
         }
 
         [HttpPost]
@@ -107,7 +109,7 @@ namespace eTutor.ServerApi.Controllers
         }
 
         [HttpGet("{meetingId}/summary")]
-        [ProducesResponseType(typeof(MeetingResponse), 200)]
+        [ProducesResponseType(typeof(MeetingSummaryModel), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         [Authorize(Roles = "tutor, student")]
         public async Task<IActionResult> GetTutorMeetingSummary([FromRoute] int meetingId)
@@ -122,8 +124,10 @@ namespace eTutor.ServerApi.Controllers
                 return BadRequest(operationResult.Message);
             }
 
-            MeetingResponse mapped = _mapper.Map<MeetingResponse>(operationResult.Entity);
+            MeetingSummaryModel mapped = _mapper.Map<MeetingSummaryModel>(operationResult.Entity);
 
+            mapped.StudentRatings = _ratingManager.GetUserAvgRatings(mapped.StudentId);
+            
             return Ok(mapped);
         }
 

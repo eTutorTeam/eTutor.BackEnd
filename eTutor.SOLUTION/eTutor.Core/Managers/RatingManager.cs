@@ -35,17 +35,32 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<IEnumerable<Rating>>.Ok(rating);
         }
 
-        public async Task<IOperationResult<decimal>> GetUserAvgRating(int userId)
+        public async Task<IOperationResult<decimal>> GetUserAvgRatingAsync(int userId)
         {
-            var rating = await _ratingRepository.FindAll(r => r.UserId == userId);
+            var ratings = await _ratingRepository.FindAll(r => r.UserId == userId);
 
-            if (rating == null)
+            if (!ratings.Any())
             {
                 return BasicOperationResult<decimal>.Fail("El rating no esta disponible");
             }
-            var avgRating = rating.Sum(r => r.Calification) / rating.Count();
+
+            decimal avgRating = ratings.Sum(r => r.Calification) / ratings.Count() / 2;
 
             return BasicOperationResult<decimal>.Ok(avgRating);
+        }
+
+        public decimal GetUserAvgRatings(int userId)
+        {
+            IOperationResult<decimal> result = GetUserAvgRatingAsync(userId).Result;
+
+            Task.WaitAll();
+
+            if (!result.Success)
+            {
+                return 5;
+            }
+            
+            return result.Entity;
         }
 
         public async Task<IOperationResult<Rating>> CreateUserRating(Rating rating)

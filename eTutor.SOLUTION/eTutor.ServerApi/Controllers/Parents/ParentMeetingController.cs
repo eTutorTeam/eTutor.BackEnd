@@ -17,15 +17,17 @@ namespace eTutor.ServerApi.Controllers
     public class ParentMeetingController : EtutorBaseController
     {
         private readonly MeetingsManager _meetingsManager;
+        private readonly RatingManager _ratingManager;
         private readonly IMapper _mapper;
         private readonly ParentAuthorizationManager _parentAuthorizationManager;
 
         public ParentMeetingController(MeetingsManager meetingsManager, 
-            ParentAuthorizationManager parentAuthorizationManager, IMapper mapper)
+            ParentAuthorizationManager parentAuthorizationManager, IMapper mapper, RatingManager ratingManager)
         {
             _meetingsManager = meetingsManager;
             _parentAuthorizationManager = parentAuthorizationManager;
             _mapper = mapper;
+            _ratingManager = ratingManager;
         }
 
         [HttpGet("pending")]
@@ -62,6 +64,9 @@ namespace eTutor.ServerApi.Controllers
             }
 
             var mapped = _mapper.Map<ParentMeetingResponse>(result.Entity);
+
+            mapped.Student.Ratings = _ratingManager.GetUserAvgRatings(mapped.Student.Id);
+            mapped.Tutor.Ratings = _ratingManager.GetUserAvgRatings(mapped.Tutor.Id);
 
             return Ok(mapped);
         }

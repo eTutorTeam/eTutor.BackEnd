@@ -21,12 +21,14 @@ namespace eTutor.ServerApi.Controllers
     {
 
         private readonly UsersManager _usersManager;
+        private readonly RatingManager _ratingManager;
         private readonly IMapper _mapper;
 
-        public UsersController(UsersManager usersManager, IMapper mapper)
+        public UsersController(UsersManager usersManager, IMapper mapper, RatingManager ratingManager)
         {
             _usersManager = usersManager;
             _mapper = mapper;
+            _ratingManager = ratingManager;
         }
 
         [HttpGet("simple/{userId}")]
@@ -62,6 +64,8 @@ namespace eTutor.ServerApi.Controllers
             }
 
             UserResponse user = _mapper.Map<UserResponse>(operationResult.Entity);
+
+            user.Ratings = _ratingManager.GetUserAvgRatings(userId);
             
             return Ok(user);
 
