@@ -179,10 +179,15 @@ namespace eTutor.Core.Managers
                 $"La tutoría programada para {student.FullName} del tema: {meeting.Subject.Name} ha sido cancelada";
 
             string messageToUsers = $"La tutoría programada del tema: {meeting.Subject.Name} ha sido cancelada";
+            
+            var data = new Dictionary<string, string>
+            {
+                {"canceledMeeting", "true"}
+            };
 
-            await _notificationService.SendNotificationToMultipleUsers(parents, messageToParents, subject);
-            await _notificationService.SendNotificationToUser(student, messageToUsers, subject);
-            await _notificationService.SendNotificationToUser(tutor, messageToUsers, subject);
+            await _notificationService.SendNotificationToMultipleUsers(parents, messageToParents, subject, data);
+            await _notificationService.SendNotificationToUser(student, messageToUsers, subject, data);
+            await _notificationService.SendNotificationToUser(tutor, messageToUsers, subject, data);
 
             return BasicOperationResult<string>.Ok("Tutoria Cancelada");
         }

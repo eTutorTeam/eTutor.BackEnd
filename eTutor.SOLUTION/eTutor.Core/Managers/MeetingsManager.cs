@@ -52,7 +52,6 @@ namespace eTutor.Core.Managers
                     s => s.Student, s => s.Tutor, s => s.Subject );
             }
             
-
             if (meeting == null)
             {
                 return BasicOperationResult<Meeting>.Fail("La tutoría no fue encontrada");
