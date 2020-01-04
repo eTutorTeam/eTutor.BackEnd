@@ -9,8 +9,8 @@ using eTutor.Persistence;
 namespace eTutor.Persistence.Migrations
 {
     [DbContext(typeof(ETutorContext))]
-    [Migration("20200101184926_FixedCancelerUserIdDataType")]
-    partial class FixedCancelerUserIdDataType
+    [Migration("20200104213352_addedCancelerUserToMeetings")]
+    partial class addedCancelerUserToMeetings
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -142,6 +142,8 @@ namespace eTutor.Persistence.Migrations
                     b.Property<DateTime>("UpdatedDate");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CancelerUserId");
 
                     b.HasIndex("ParentAuthorizationId");
 
@@ -283,7 +285,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "adb1cb81-ea82-4873-ac82-a53375477c34",
+                            ConcurrencyStamp = "6d487de9-b0b6-4eb6-b249-71bec603ebc1",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "admin",
                             NormalizedName = "admin",
@@ -292,7 +294,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "612a4c37-3410-4651-a6b8-b0fd9589315d",
+                            ConcurrencyStamp = "674518cc-a2be-4265-9443-9cb93b1f11d1",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "tutor",
                             NormalizedName = "tutor",
@@ -301,7 +303,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "dc771a8d-c1a5-4ebe-bd36-157894c992e8",
+                            ConcurrencyStamp = "f9b2499a-5352-439a-af1f-4b84f0666014",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "student",
                             NormalizedName = "student",
@@ -310,7 +312,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "5fbca20d-2109-4c1c-a7ae-0647213f38cd",
+                            ConcurrencyStamp = "f81396ef-2898-4c6a-accf-7194c240f8b7",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "parent",
                             NormalizedName = "parent",
@@ -637,6 +639,10 @@ namespace eTutor.Persistence.Migrations
 
             modelBuilder.Entity("eTutor.Core.Models.Meeting", b =>
                 {
+                    b.HasOne("eTutor.Core.Models.User", "CancelerUser")
+                        .WithMany()
+                        .HasForeignKey("CancelerUserId");
+
                     b.HasOne("eTutor.Core.Models.ParentAuthorization", "ParentAuthorization")
                         .WithMany("Meetings")
                         .HasForeignKey("ParentAuthorizationId");
