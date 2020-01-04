@@ -34,6 +34,8 @@ namespace eTutor.Core.Models
 
         public int? CancelerUserId { get; set; }
 
+        public User CancelerUser { get; set; }
+
         public DateTime RealStartedDateTime { get; set; }
     }
 }

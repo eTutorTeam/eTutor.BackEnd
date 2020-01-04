@@ -231,11 +231,7 @@ namespace eTutor.Core.Managers
 
             if (!parents.Any()) return BasicOperationResult<string>.Fail("No fueron encontrados padres para este estudiante");
 
-            if (userId == student.Id)
-            {
-                calculateAmount = true;
-            }
-            else if (parents.Any(p => p.Id == userId))
+            if (userId == student.Id || parents.Any(p => p.Id == userId))
             {
                 calculateAmount = true;
             }

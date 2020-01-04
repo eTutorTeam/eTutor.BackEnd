@@ -175,6 +175,8 @@ namespace eTutor.Core.Managers
             if (!(meeting.StudentId == userId || meeting.TutorId == userId))
                 return BasicOperationResult<Meeting>.Fail("El usuario no esta asociado a esta tutoría");
 
+            if (meeting.Status != MeetingStatus.Accepted)
+                return BasicOperationResult<Meeting>.Fail("La tutoría aún no ha sido aceptada");
 
             meeting.Status = MeetingStatus.InProgress;
             meeting.RealStartedDateTime = DateTime.Now;
@@ -206,6 +208,8 @@ namespace eTutor.Core.Managers
             if (!(meeting.StudentId == userId || meeting.TutorId == userId))
                 return BasicOperationResult<Meeting>.Fail("El usuario no esta asociado a esta tutoría");
 
+            if (meeting.Status != MeetingStatus.InProgress)
+                return BasicOperationResult<Meeting>.Fail("La tutoría aún no ha iniciado");
 
             meeting.Status = MeetingStatus.Complete;
             var amount = CalculateMeetingAmount(meeting);
@@ -383,14 +387,7 @@ namespace eTutor.Core.Managers
             decimal amountPerHour = 200.0m;
 
             decimal hours =meeting.EndDateTime.Hour - meeting.RealStartedDateTime.Hour;
-            if (hours < 1)
-            {
-                result = amountPerHour;
-            }
-            else
-            {
-                result = amountPerHour * hours;
-            }
+            result = hours < 1 ? amountPerHour : amountPerHour * hours;
 
             return result;
         }

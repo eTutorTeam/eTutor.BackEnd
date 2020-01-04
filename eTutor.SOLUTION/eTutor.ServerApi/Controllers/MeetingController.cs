@@ -67,7 +67,7 @@ namespace eTutor.ServerApi.Controllers
             return Ok(mapped);
         }
 
-        [HttpPut("start-meeting/{meetingId}")]
+        [HttpPatch("start-meeting/{meetingId}")]
         [ProducesResponseType(typeof(MeetingResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         public async Task<IActionResult> StartMeeting([FromRoute] int meetingId)
@@ -85,7 +85,7 @@ namespace eTutor.ServerApi.Controllers
             return Ok(mapped);
         }
 
-        [HttpPut("end-meeting/{meetingId}")]
+        [HttpPatch("end-meeting/{meetingId}")]
         [ProducesResponseType(typeof(MeetingResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         public async Task<IActionResult> EndMeeting([FromRoute] int meetingId)
