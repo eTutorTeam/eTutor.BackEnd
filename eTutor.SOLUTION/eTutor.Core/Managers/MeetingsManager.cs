@@ -21,21 +21,37 @@ namespace eTutor.Core.Managers
         private readonly ISubjectRepository _subjectRepository;
         private readonly NotificationManager _notificationManager;
         private readonly IUserRepository _userRepository;
+        private readonly IRejectedMeetingRepository _rejectedMeetingRepository;
 
         public MeetingsManager(IMeetingRepository meetingRepository,
             ISubjectRepository subjectRepository, IUserRepository userRepository,
-            NotificationManager notificationManager)
+            NotificationManager notificationManager, IRejectedMeetingRepository rejectedMeetingRepository)
         {
             _meetingRepository = meetingRepository;
             _subjectRepository = subjectRepository;
             _userRepository = userRepository;
             _notificationManager = notificationManager;
+            _rejectedMeetingRepository = rejectedMeetingRepository;
         }
 
         public async Task<IOperationResult<Meeting>> GetMeeting(int meetingId, int userId)
         {
-            var meeting = await _meetingRepository.Find(s => s.Id == meetingId && (s.StudentId == userId || s.TutorId == userId));
 
+            var user = await _userRepository.Find(u => u.Id == userId, u => u.UserRoles);
+            
+            Meeting meeting;
+
+            if (user.UserRoles.Any(u => u.RoleId == (int) RoleTypes.Student))
+            {
+                meeting = await _meetingRepository.Find(s => s.Id == meetingId && s.StudentId == userId, 
+                    s => s.Student, s => s.Tutor, s => s.Subject );
+            }
+            else
+            {
+                meeting = await _meetingRepository.Find(s => s.Id == meetingId && s.TutorId == userId, 
+                    s => s.Student, s => s.Tutor, s => s.Subject );
+            }
+            
             if (meeting == null)
             {
                 return BasicOperationResult<Meeting>.Fail("La tutoría no fue encontrada");
@@ -65,7 +81,7 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<Meeting>.Fail("El usuario no fue encontrado");
             }
 
-            var meeting = await _meetingRepository.Find(s => s.Id == meetingId);
+            var meeting = await _meetingRepository.Find(s => s.Id == meetingId, s => s.Subject);
 
             if (meeting == null)
             {
@@ -244,7 +260,7 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<Meeting>.Ok(meeting);
 
         }
-        
+
         public async Task<IOperationResult<string>> TutorResponseToMeetingRequest(int meetingId, MeetingStatus answeredStatusAnsweredStatus, int userId)
         {
             var meeting = await FindMeetingWithTutor(meetingId, userId);
@@ -261,6 +277,16 @@ namespace eTutor.Core.Managers
             }
 
             meeting.Status = status;
+
+            if (status == MeetingStatus.Rejected)
+            {
+                var rejection = new RejectedMeeting
+                {
+                    TutorId = meeting.TutorId,
+                    MeetingId = meetingId
+                };
+                _rejectedMeetingRepository.Create(rejection);
+            }
 
             _meetingRepository.Update(meeting);
 
@@ -370,11 +396,12 @@ namespace eTutor.Core.Managers
             if (student == null) return false;
             return true;
         }
+
         private async Task<bool> TutorExistsAndIsTutor(int tutorId)
         {
             var tutor = await _userRepository.Set
                 .Include(u => u.UserRoles)
-                .FirstOrDefaultAsync(u => u.UserRoles.Any(ur => ur.RoleId == (int)RoleTypes.Tutor)
+                .FirstOrDefaultAsync(u => u.UserRoles.Any(ur => ur.RoleId == (int) RoleTypes.Tutor)
                                           && u.Id == tutorId && u.Id == tutorId && u.IsActive && u.IsEmailValidated);
             if (tutor == null) return false;
 
@@ -392,6 +419,105 @@ namespace eTutor.Core.Managers
             return result;
         }
 
+
+
+        public async Task<IOperationResult<Meeting>> RescheduleTutorForStudentMeeting(int meetingId, int tutorId, int studentId)
+        {
+            var meeting = await _meetingRepository.Find(m =>
+                    m.Id == meetingId
+                    && m.StudentId == studentId,
+                m => m.Student, m => m.Subject
+            );
+
+            if (meeting == null)
+            {
+                return BasicOperationResult<Meeting>.Fail("La tutoría no pudo ser encontrada en nuestros registros.");
+            }
+
+            var tutor = await _userRepository.Find(u =>
+                u.Id == tutorId && u.UserRoles.Any(ur => ur.RoleId == (int) RoleTypes.Tutor), u => u.UserRoles);
+
+            if (tutor == null)
+            {
+                return BasicOperationResult<Meeting>.Fail("El tutor con quien intenta reprogammar no existe en nuestros registros");
+            }
+
+            meeting.TutorId = tutorId;
+            meeting.Status = MeetingStatus.Approved;
+            _meetingRepository.Update(meeting);
+            await _meetingRepository.Save();
+
+            meeting.Tutor = tutor;
+
+            await _notificationManager.NotifyStudentMeetingWasCreated(studentId, meeting.Subject.Name, tutor.FullName);
+            await _notificationManager.NotifyTutorOfSolicitedMeeting(tutor.Id, meeting.Subject, meeting.Student, meetingId);
+            await _notificationManager.NotifyParentsOfMeetingUpdatedForStudent(meeting);
+            
+            return BasicOperationResult<Meeting>.Ok(meeting);
+        }
+
+        public async Task<IOperationResult<ISet<Meeting>>> GetMeetingsForUserCalendar(int userId)
+        {
+            bool userExists = await _userRepository.Exists(u => u.Id == userId && u.IsActive && u.IsEmailValidated);
+
+            if (!userExists)
+            {
+                return BasicOperationResult<ISet<Meeting>>.Fail("El usuario no está en nuestra base de datos.");
+            }
+            
+            var roles = await _userRepository.GetRolesForUser(userId);
+            
+            var functions = new Dictionary<RoleTypes, Func<int, Task<IEnumerable<Meeting>>>>
+            {
+                {RoleTypes.Parent, GetMeetingsForParent},
+                {RoleTypes.Tutor, GetMeetingsForTutor},
+                {RoleTypes.Student, GetMeetingsForStudent}
+            };
+
+            var meetings = new List<Meeting>();
+            
+            foreach (var role in roles)
+            {
+                var foundMeetings = await functions[role](userId);
+                meetings.AddRange(foundMeetings);
+            }
+
+            var meetingsDistinct = meetings
+                .Where(m => m.Status == MeetingStatus.Accepted)
+                .Distinct().ToHashSet();
+
+            return BasicOperationResult<ISet<Meeting>>.Ok(meetingsDistinct);
+        }
+
+        private Task<IEnumerable<Meeting>> GetMeetingsForTutor(int tutorId)
+        {
+            return _meetingRepository.FindAll(
+                m => m.TutorId == tutorId &&
+                     m.StartDateTime.Date >= DateTime.Now.Date,
+                m => m.Student, m => m.Tutor, m => m.Subject
+            );
+        }
+
+        private Task<IEnumerable<Meeting>> GetMeetingsForStudent(int studentId)
+        {
+            return _meetingRepository.FindAll(
+                    m => m.StudentId == studentId &&
+                         m.StartDateTime.Date >= DateTime.Now.Date,
+                    m => m.Student, m => m.Tutor, m => m.Subject
+                );
+        }
+
+        private async Task<IEnumerable<Meeting>> GetMeetingsForParent(int parentId)
+        {
+            var students = await _userRepository.GetAllStudentsForParent(parentId);
+            var studentIds = students.Select(s => s.Id);
+
+            return await _meetingRepository.FindAll(
+                m => studentIds.Any(s => s == m.StudentId)
+                && m.StartDateTime.Date > DateTime.Now.Date,
+            m => m.Student, m => m.Tutor, m => m.Subject
+            );
+        }
 
     }
 }

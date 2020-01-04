@@ -9,6 +9,7 @@ using eTutor.Core.Models;
 using eTutor.ServerApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 
 namespace eTutor.ServerApi.Controllers
 {
@@ -19,12 +20,14 @@ namespace eTutor.ServerApi.Controllers
     public class MeetingController: EtutorBaseController
     {
         private readonly MeetingsManager _meetingsManager;
+        private readonly RatingManager _ratingManager;
         private readonly IMapper _mapper;
 
-        public MeetingController( MeetingsManager meetingsManager, IMapper mapper)
+        public MeetingController( MeetingsManager meetingsManager, IMapper mapper, RatingManager ratingManager)
         {
             _meetingsManager = meetingsManager;
             _mapper = mapper;
+            _ratingManager = ratingManager;
         }
 
         [HttpPost]
@@ -66,6 +69,7 @@ namespace eTutor.ServerApi.Controllers
 
             return Ok(mapped);
         }
+
 
         [HttpPatch("start-meeting/{meetingId}")]
         [ProducesResponseType(typeof(MeetingResponse), 200)]
@@ -123,6 +127,28 @@ namespace eTutor.ServerApi.Controllers
             return Ok(mapped);
         }
 
+        [HttpGet("calendar")]
+        [ProducesResponseType(typeof(ISet<CalendarMeetingEventModel>), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        [Authorize(Roles = "student, tutor, parent")]
+        public async Task<IActionResult> GetMeetingsDependingOnUserRoleForCalendar()
+        {
+            int userId = GetUserId();
+
+            IOperationResult<ISet<Meeting>> operationResult = await _meetingsManager.GetMeetingsForUserCalendar(userId);
+
+            if (!operationResult.Success)
+            {
+                return BadRequest(operationResult.Message);
+            }
+
+            var mapped = _mapper.Map<ISet<CalendarMeetingEventModel>>(operationResult.Entity);
+
+            return Ok(mapped);
+        }
+        
+
+
         [HttpGet("all")]
         [ProducesResponseType(typeof(IEnumerable<MeetingResponse>), 200)]
         [ProducesResponseType(typeof(Error), 400)]
@@ -171,7 +197,7 @@ namespace eTutor.ServerApi.Controllers
             int userId = GetUserId();
 
             IOperationResult<Meeting> operationResult =
-                await _meetingsManager.GetTutorMeetingSummary(meetingId, userId);
+                await _meetingsManager.GetMeeting(meetingId, userId);
 
             if (!operationResult.Success)
             {
@@ -180,27 +206,9 @@ namespace eTutor.ServerApi.Controllers
 
             MeetingSummaryModel mapped = _mapper.Map<MeetingSummaryModel>(operationResult.Entity);
 
+            mapped.StudentRatings = _ratingManager.GetUserAvgRatings(mapped.StudentId);
+            
             return Ok(mapped);
-        }
-
-        [HttpPatch("{meetingId}/tutor-answer")]
-        [ProducesResponseType(typeof(IOperationResult<string>),202)]
-        [ProducesResponseType(typeof(Error), 400)]
-        [Authorize(Roles = "tutor")]
-        public async Task<IActionResult> SetTutorMeetingResponseToNotification( [FromRoute] int meetingId,
-            [FromBody] MeetingStatusRequest answeredStatus)
-        {
-            int userId = GetUserId();
-
-            IOperationResult<string> result =
-                await _meetingsManager.TutorResponseToMeetingRequest(meetingId, answeredStatus.AnsweredStatus, userId);
-
-            if (!result.Success)
-            {
-                return BadRequest(result.Message);
-            }
-
-            return Accepted(result);
         }
 
     }

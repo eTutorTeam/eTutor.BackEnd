@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eTutor.Persistence;
 
 namespace eTutor.Persistence.Migrations
 {
     [DbContext(typeof(ETutorContext))]
-    partial class ETutorContextModelSnapshot : ModelSnapshot
+    [Migration("20191228024824_createRejectedMigrationsTable")]
+    partial class createRejectedMigrationsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -117,15 +119,11 @@ namespace eTutor.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("CancelerUserId");
-
                     b.Property<DateTime>("CreatedDate");
 
                     b.Property<DateTime>("EndDateTime");
 
                     b.Property<int?>("ParentAuthorizationId");
-
-                    b.Property<DateTime>("RealStartedDateTime");
 
                     b.Property<DateTime>("StartDateTime");
 
@@ -140,8 +138,6 @@ namespace eTutor.Persistence.Migrations
                     b.Property<DateTime>("UpdatedDate");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CancelerUserId");
 
                     b.HasIndex("ParentAuthorizationId");
 
@@ -332,7 +328,6 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 4,
-
                             ConcurrencyStamp = "e9f634fe-713b-4804-a93b-9ae27c071feb",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "parent",
@@ -660,10 +655,6 @@ namespace eTutor.Persistence.Migrations
 
             modelBuilder.Entity("eTutor.Core.Models.Meeting", b =>
                 {
-                    b.HasOne("eTutor.Core.Models.User", "CancelerUser")
-                        .WithMany()
-                        .HasForeignKey("CancelerUserId");
-
                     b.HasOne("eTutor.Core.Models.ParentAuthorization", "ParentAuthorization")
                         .WithMany("Meetings")
                         .HasForeignKey("ParentAuthorizationId");

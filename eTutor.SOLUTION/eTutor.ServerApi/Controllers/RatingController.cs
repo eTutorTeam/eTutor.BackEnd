@@ -70,7 +70,7 @@ namespace eTutor.ServerApi.Controllers
         [ProducesResponseType(typeof(Error), 400)]
         public async Task<IActionResult> GetUserAvgRatings([FromRoute] int userId)
         {
-            var result = await _ratingManager.GetUserAvgRating(userId);
+            var result = await _ratingManager.GetUserAvgRatingAsync(userId);
             if (!result.Success)
             {
                 return BadRequest(result.Message);
