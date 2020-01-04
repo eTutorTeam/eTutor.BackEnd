@@ -13,6 +13,8 @@ namespace eTutor.ServerApi.ViewModels
         public string Name { get; set; }
 
         public string LastName { get; set; }
+        
+        public decimal Ratings { get; set; }
 
         public string Email { get; set; }
 

@@ -20,12 +20,14 @@ namespace eTutor.ServerApi.Controllers
     public class MeetingController: EtutorBaseController
     {
         private readonly MeetingsManager _meetingsManager;
+        private readonly RatingManager _ratingManager;
         private readonly IMapper _mapper;
 
-        public MeetingController( MeetingsManager meetingsManager, IMapper mapper)
+        public MeetingController( MeetingsManager meetingsManager, IMapper mapper, RatingManager ratingManager)
         {
             _meetingsManager = meetingsManager;
             _mapper = mapper;
+            _ratingManager = ratingManager;
         }
 
         [HttpPost]
@@ -146,6 +148,8 @@ namespace eTutor.ServerApi.Controllers
 
             MeetingSummaryModel mapped = _mapper.Map<MeetingSummaryModel>(operationResult.Entity);
 
+            mapped.StudentRatings = _ratingManager.GetUserAvgRatings(mapped.StudentId);
+            
             return Ok(mapped);
         }
 

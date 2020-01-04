@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using eTutor.Core.Contracts;
@@ -19,14 +20,16 @@ namespace eTutor.ServerApi.Controllers.Students
     {
         private readonly MeetingsManager _meetingsManager;
         private readonly TutorsManager _tutorsManager;
+        private readonly RatingManager _ratingManager;
         private readonly IMapper _mapper;
 
         public StudentMeetingsController(MeetingsManager meetingsManager, 
-            IMapper mapper, TutorsManager tutorsManager)
+            IMapper mapper, TutorsManager tutorsManager, RatingManager ratingManager)
         {
             _meetingsManager = meetingsManager;
             _mapper = mapper;
             _tutorsManager = tutorsManager;
+            _ratingManager = ratingManager;
         }
 
         [HttpGet("{meetingId}/not-selected-tutors")]
@@ -43,6 +46,12 @@ namespace eTutor.ServerApi.Controllers.Students
 
             ISet<TutorSimpleResponse> tutors =
                 _mapper.Map<ISet<TutorSimpleResponse>>(operationResult.Entity);
+            
+            IEnumerable<TutorSimpleResponse> mapped = tutors.Select(t =>
+            {
+                t.Ratings = _ratingManager.GetUserAvgRatings(t.Id);
+                return t;
+            });
 
             return Ok(tutors);
         }
@@ -62,6 +71,8 @@ namespace eTutor.ServerApi.Controllers.Students
 
             var mapped = _mapper.Map<TutorSimpleResponse>(operationResult.Entity);
 
+            mapped.Ratings = _ratingManager.GetUserAvgRatings(mapped.Id);
+            
             return Ok(mapped);
         }
         

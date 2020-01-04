@@ -6,11 +6,15 @@ namespace eTutor.ServerApi.ViewModels
     {
         public int MeetingId { get; set; }
         
+        public int StudentId { get; set; }
+        
         public string StudentName { get; set; }
         
         public string StudentImg { get; set; }
         
         public string SubjectName { get; set; }
+
+        public decimal StudentRatings { get; set; }
         
         public DateTime MeetingDate { get; set; }
         

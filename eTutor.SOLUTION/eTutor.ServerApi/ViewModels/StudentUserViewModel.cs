@@ -18,6 +18,8 @@ namespace eTutor.ServerApi.ViewModels
         
         public int Age { get; set; }
         
+        public decimal Ratings { get; set; }
+        
         public string FullName => $"{Name} {LastName}";
         
         public string AboutMe { get; set; }
