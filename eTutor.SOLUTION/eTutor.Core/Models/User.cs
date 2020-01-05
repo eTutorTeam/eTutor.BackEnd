@@ -106,6 +106,7 @@ namespace eTutor.Core.Models
         
         public ISet<Meeting> TutorMeetings { get; set; }
         
+        public ISet<Meeting> CanceledMeetings { get; set; }
         public ISet<Device> Devices { get; set; }
         public ISet<ChangePassword> ChangeRequests { get; set; }
         

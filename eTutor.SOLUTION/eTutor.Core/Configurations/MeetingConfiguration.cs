@@ -20,6 +20,10 @@ namespace eTutor.Core.Configurations
             builder.HasOne(b => b.Tutor)
                 .WithMany(u => u.TutorMeetings)
                 .HasForeignKey(b => b.TutorId);
+
+            builder.HasOne(b => b.CancelerUser)
+                .WithMany(u => u.CanceledMeetings)
+                .HasForeignKey(b => b.CancelerUserId);
         }
     }
 }
