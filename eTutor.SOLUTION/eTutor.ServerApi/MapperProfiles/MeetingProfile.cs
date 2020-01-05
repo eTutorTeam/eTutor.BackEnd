@@ -1,3 +1,4 @@
+using System;
 using AutoMapper;
 using eTutor.Core.Models;
 using eTutor.ServerApi.ViewModels;
@@ -27,7 +28,19 @@ namespace eTutor.ServerApi.MapperProfiles
                 .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => src.StartDateTime ))
                 .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => src.EndDateTime))
                 .ForMember(dest => dest.TutorName, opt => opt.MapFrom(src => src.Tutor.FullName))
-                .ForMember(dest => dest.TutorImg, opt => opt.MapFrom(src => src.Tutor.ProfileImageUrl));
+                .ForMember(dest => dest.TutorImg, opt => opt.MapFrom(
+                    src => src.Tutor.ProfileImageUrl ?? "https://immedilet-invest.com/wp-content/uploads/2016/01/user-placeholder.jpg"));
+
+            CreateMap<Meeting, HistoryMeetingReponse>()
+                .ForMember(dest => dest.StudentName, opt => opt.MapFrom(src => src.Student.FullName))
+                .ForMember(dest => dest.StudentImg, opt => opt.MapFrom(src =>     
+                    src.Student.ProfileImageUrl ?? "https://immedilet-invest.com/wp-content/uploads/2016/01/user-placeholder.jpg"))
+                .ForMember(dest => dest.ScheduledDate, opt => opt.MapFrom(src => src.StartDateTime))
+                .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => src.RealStartedDateTime ))
+                .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => src.RealEndedDateTime))
+                .ForMember(dest => dest.TutorName, opt => opt.MapFrom(src => src.Tutor.FullName))
+                .ForMember(dest => dest.TutorImg, opt => opt.MapFrom(
+                    src => src.Tutor.ProfileImageUrl ?? "https://immedilet-invest.com/wp-content/uploads/2016/01/user-placeholder.jpg"));
 
             CreateMap<Meeting, ParentMeetingResponse>();
 

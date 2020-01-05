@@ -148,7 +148,7 @@ namespace eTutor.ServerApi.Controllers
         }
 
         [HttpGet("history")]
-        [ProducesResponseType(typeof(ISet<MeetingSummaryModel>), 200)]
+        [ProducesResponseType(typeof(ISet<HistoryMeetingReponse>), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         [Authorize(Roles = "student, tutor, parent")]
         public async Task<IActionResult> GetMeetingsHistoryForUser()
@@ -162,7 +162,7 @@ namespace eTutor.ServerApi.Controllers
                 return BadRequest(result.Message);
             }
 
-            var mapped = _mapper.Map<ISet<MeetingSummaryModel>>(result.Entity);
+            var mapped = _mapper.Map<ISet<HistoryMeetingReponse>>(result.Entity);
             
             return Ok(mapped);
         }

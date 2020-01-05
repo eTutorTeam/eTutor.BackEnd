@@ -236,6 +236,8 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<Meeting>.Fail("La tutoría aún no ha iniciado");
 
             meeting.Status = MeetingStatus.Complete;
+            meeting.RealEndedDateTime = DateTime.Now;
+
             var amount = CalculateMeetingAmount(meeting);
 
             _meetingRepository.Update(meeting);
@@ -421,7 +423,7 @@ namespace eTutor.Core.Managers
             decimal result;
             decimal amountPerHour = 200.0m;
 
-            decimal hours =meeting.EndDateTime.Hour - meeting.RealStartedDateTime.Hour;
+            decimal hours = meeting.RealEndedDateTime.Hour - meeting.RealStartedDateTime.Hour;
             result = hours < 1 ? amountPerHour : amountPerHour * hours;
 
             return result;
