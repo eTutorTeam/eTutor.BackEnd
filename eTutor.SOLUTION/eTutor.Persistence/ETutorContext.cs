@@ -21,6 +21,7 @@ namespace eTutor.Persistence
         public DbSet<Device> Devices { get; set; }
         public DbSet<EmailValidation> EmailValidations { get; set; }
         public DbSet<ChangePassword> ChangePasswordRequests { get; set; }
+        public DbSet<RejectedMeeting> RejectedMeetings { get; set; }
         public ETutorContext(DbContextOptions options) : base(options)
         {
         }
@@ -49,6 +50,7 @@ namespace eTutor.Persistence
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new DeviceConfiguration());
             modelBuilder.ApplyConfiguration(new MeetingConfiguration());
+            modelBuilder.ApplyConfiguration(new RejectedMeetingConfiguration());
         }
     }
 }

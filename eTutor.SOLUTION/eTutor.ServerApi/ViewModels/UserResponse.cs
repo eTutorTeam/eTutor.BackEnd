@@ -78,6 +78,8 @@ namespace eTutor.ServerApi.ViewModels
         /// </summary>
         public string UserName { get; set; }
         
+        public decimal Ratings { get; set; }
+        
         /// <summary>
         /// Represents the url to the user's profile image
         /// </summary>

@@ -361,7 +361,7 @@ namespace eTutor.Core.Managers
 
             if (!string.IsNullOrEmpty(user.ProfileImageUrl))
             {
-                await _fileService.DeleteFileFromBucketServer(user.FileReference);
+                //await _fileService.DeleteFileFromBucketServer(user.FileReference);
             }
 
             user.ProfileImageUrl = fileUrl;

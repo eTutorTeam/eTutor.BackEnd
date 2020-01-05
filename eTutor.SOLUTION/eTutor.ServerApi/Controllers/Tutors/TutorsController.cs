@@ -19,12 +19,14 @@ namespace eTutor.ServerApi.Controllers
     public class TutorsController : EtutorBaseController
     {
         private readonly TutorsManager _tutorsManager;
+        private readonly RatingManager _ratingManager;
         private readonly IMapper _mapper;
 
-        public TutorsController(TutorsManager tutorsManager, IMapper mapper)
+        public TutorsController(TutorsManager tutorsManager, IMapper mapper, RatingManager ratingManager)
         {
             _tutorsManager = tutorsManager;
             _mapper = mapper;
+            _ratingManager = ratingManager;
         }
 
 
@@ -113,7 +115,13 @@ namespace eTutor.ServerApi.Controllers
                 return BadRequest(result.Message);
             }
 
-            var mapped = _mapper.Map<ISet<TutorSimpleResponse>>(result.Entity);
+            var tutors = _mapper.Map<ISet<TutorSimpleResponse>>(result.Entity);
+
+            IEnumerable<TutorSimpleResponse> mapped = tutors.Select(t =>
+            {
+                t.Ratings = _ratingManager.GetUserAvgRatings(t.Id);
+                return t;
+            });
 
             return Ok(mapped);
         }
@@ -132,6 +140,8 @@ namespace eTutor.ServerApi.Controllers
             }
 
             var response = _mapper.Map<TutorSimpleResponse>(result.Entity);
+
+            response.Ratings = _ratingManager.GetUserAvgRatings(response.Id);
 
             return Ok(response);
         }

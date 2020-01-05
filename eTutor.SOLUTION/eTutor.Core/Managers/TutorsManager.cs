@@ -17,13 +17,18 @@ namespace eTutor.Core.Managers
         private readonly IUserRepository _userRepository;
         private readonly ITutorSubjectRepository _tutorSubjectRepository;
         private readonly ISubjectRepository _subjectRepository;
+        private readonly IMeetingRepository _meetingRepository;
+        private readonly IRejectedMeetingRepository _rejectedMeetingRepository;
 
         public TutorsManager(IUserRepository userRepository, 
-            ITutorSubjectRepository tutorSubjectRepository, ISubjectRepository subjectRepository)
+            ITutorSubjectRepository tutorSubjectRepository, ISubjectRepository subjectRepository, 
+            IMeetingRepository meetingRepository, IRejectedMeetingRepository rejectedMeetingRepository)
         {
             _userRepository = userRepository;
             _tutorSubjectRepository = tutorSubjectRepository;
             _subjectRepository = subjectRepository;
+            _meetingRepository = meetingRepository;
+            _rejectedMeetingRepository = rejectedMeetingRepository;
         }
 
 
@@ -80,8 +85,6 @@ namespace eTutor.Core.Managers
             var tutors = tutorList.Select(t => t.Tutor).Where(t => t.IsActive && t.IsEmailValidated).ToHashSet();
             
             return BasicOperationResult<ISet<User>>.Ok(tutors);
-
-
         }
 
         public async Task<IOperationResult<User>> GetTutorById(int tutorId)
@@ -98,6 +101,78 @@ namespace eTutor.Core.Managers
             }
             
             return BasicOperationResult<User>.Ok(tutor);
+        }
+
+        public async Task<IOperationResult<ISet<User>>> GetTutorNotInCurMeeting(int meetingId)
+        {
+            var meeting = await _meetingRepository.Find(
+                m => m.Id == meetingId && m.Status == MeetingStatus.Rejected,
+                m => m.Subject, m => m.Subject.Tutors);
+
+            if (meeting == null)
+            {
+                return BasicOperationResult<ISet<User>>.Fail("La tutoría rechazada no fue encontrada");
+            }
+
+            var tutorsResult = await GetTutorsBySubjectId(meeting.SubjectId);
+
+            if (!tutorsResult.Success)
+            {
+                return tutorsResult;
+            }
+
+            var rejections = await _rejectedMeetingRepository.FindAll(r => r.MeetingId == meeting.Id);
+
+            ISet<User> tutors = tutorsResult
+                .Entity
+                .Where(t => t.Id != meeting.TutorId && rejections.All(r => r.TutorId != t.Id))
+                .ToHashSet();
+
+            if (!tutors.Any())
+            {
+                return BasicOperationResult<ISet<User>>.Fail("No hay más tutores disponibles para esta matería, lo sentimos, estamos trabajando por obtener más");
+            }
+            
+            return BasicOperationResult<ISet<User>>.Ok(tutors);
+
+        }
+
+        public async Task<IOperationResult<User>> GetRandomNotUsedTutorForMeeting(int meetingId)
+        {
+            var meeting = await _meetingRepository.Find(m => m.Id == meetingId);
+
+            if (meeting == null)
+            {
+                return BasicOperationResult<User>.Fail("La tutoría no fue encontrada");
+            }
+            
+            var tutorsResult = await GetTutorsBySubjectId(meeting.SubjectId);
+
+            if (!tutorsResult.Success)
+            {
+                return BasicOperationResult<User>.Fail(tutorsResult.Message.Message);
+            }
+
+            var rejections = await _rejectedMeetingRepository.FindAll(r => r.MeetingId == meetingId);
+
+            var tutors = tutorsResult.Entity.Where(t => rejections.All(r => r.TutorId != t.Id));
+            
+            if (!tutors.Any())
+            {
+                return BasicOperationResult<User>.Fail("No hay más tutores disponibles para esta matería, lo sentimos, estamos trabajando por obtener más");
+            }
+            
+            var rand = new Random();
+            int index = rand.Next(tutors.Count());
+
+            var selectedTutor = tutors.ElementAtOrDefault(index);
+
+             if (selectedTutor == null)
+            {
+                return BasicOperationResult<User>.Fail("No se pudo seleccionar ningún tutor de manera aleatoria");
+            }
+            
+            return BasicOperationResult<User>.Ok(selectedTutor);
         }
     }
 }

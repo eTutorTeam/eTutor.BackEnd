@@ -117,11 +117,15 @@ namespace eTutor.Persistence.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int?>("CancelerUserId");
+
                     b.Property<DateTime>("CreatedDate");
 
                     b.Property<DateTime>("EndDateTime");
 
                     b.Property<int?>("ParentAuthorizationId");
+
+                    b.Property<DateTime>("RealStartedDateTime");
 
                     b.Property<DateTime>("StartDateTime");
 
@@ -136,6 +140,8 @@ namespace eTutor.Persistence.Migrations
                     b.Property<DateTime>("UpdatedDate");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CancelerUserId");
 
                     b.HasIndex("ParentAuthorizationId");
 
@@ -157,7 +163,11 @@ namespace eTutor.Persistence.Migrations
 
                     b.Property<DateTime>("CreatedDate");
 
-                    b.Property<int>("ParentId");
+                    b.Property<int?>("ParentId");
+
+                    b.Property<string>("Reason");
+
+                    b.Property<int>("Status");
 
                     b.Property<DateTime>("UpdatedDate");
 
@@ -273,7 +283,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "f5f41e8c-978b-4d50-8d26-dba9580b1718",
+                            ConcurrencyStamp = "6d487de9-b0b6-4eb6-b249-71bec603ebc1",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "admin",
                             NormalizedName = "admin",
@@ -282,7 +292,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "df8acf69-a73c-45b1-ae2e-a8cc55e93f40",
+                            ConcurrencyStamp = "674518cc-a2be-4265-9443-9cb93b1f11d1",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "tutor",
                             NormalizedName = "tutor",
@@ -291,7 +301,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "fdfbca9c-dfe2-4540-8d1d-9f08171c800a",
+                            ConcurrencyStamp = "f9b2499a-5352-439a-af1f-4b84f0666014",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "student",
                             NormalizedName = "student",
@@ -300,7 +310,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "bc070805-2e30-4c2c-93a7-2771d8f66b36",
+                            ConcurrencyStamp = "f81396ef-2898-4c6a-accf-7194c240f8b7",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "parent",
                             NormalizedName = "parent",
@@ -627,6 +637,10 @@ namespace eTutor.Persistence.Migrations
 
             modelBuilder.Entity("eTutor.Core.Models.Meeting", b =>
                 {
+                    b.HasOne("eTutor.Core.Models.User", "CancelerUser")
+                        .WithMany()
+                        .HasForeignKey("CancelerUserId");
+
                     b.HasOne("eTutor.Core.Models.ParentAuthorization", "ParentAuthorization")
                         .WithMany("Meetings")
                         .HasForeignKey("ParentAuthorizationId");
@@ -651,8 +665,7 @@ namespace eTutor.Persistence.Migrations
                 {
                     b.HasOne("eTutor.Core.Models.User", "Parent")
                         .WithMany("Autorizations")
-                        .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ParentId");
                 });
 
             modelBuilder.Entity("eTutor.Core.Models.ParentStudent", b =>
