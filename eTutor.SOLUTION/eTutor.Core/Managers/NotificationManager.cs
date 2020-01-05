@@ -260,6 +260,7 @@ namespace eTutor.Core.Managers
                 calculateAmount = true;
             }
 
+
             if (calculateAmount)
             {
                 messageToParents = $"La tutoría programada para {meeting.Student.FullName} del tema: {meeting.Subject.Name} ha sido cancelada" +
@@ -273,10 +274,6 @@ namespace eTutor.Core.Managers
                                   $"sin cargos adicionales";
                messageToUsers = $"La tutoría programada del tema: {meeting.Subject.Name} ha sido cancelada por el tutor";
             }
-
-                $"La tutoría programada para {student.FullName} del tema: {meeting.Subject.Name} ha sido cancelada";
-
-            string messageToUsers = $"La tutoría programada del tema: {meeting.Subject.Name} ha sido cancelada";
             
 
             var data = new Dictionary<string, string>

@@ -250,28 +250,6 @@ namespace eTutor.Persistence.Migrations
                     b.ToTable("Ratings");
                 });
 
-            modelBuilder.Entity("eTutor.Core.Models.RejectedMeeting", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<int>("MeetingId");
-
-                    b.Property<int>("TutorId");
-
-                    b.Property<DateTime>("UpdatedDate");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MeetingId");
-
-                    b.HasIndex("TutorId");
-
-                    b.ToTable("RejectedMeetings");
-                });
-
             modelBuilder.Entity("eTutor.Core.Models.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -305,7 +283,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "535f7b87-3065-4e29-8c89-34098ba9e8d5",
+                            ConcurrencyStamp = "6d487de9-b0b6-4eb6-b249-71bec603ebc1",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "admin",
                             NormalizedName = "admin",
@@ -314,7 +292,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "fbed5342-3a13-4886-add4-84f694824bc8",
+                            ConcurrencyStamp = "674518cc-a2be-4265-9443-9cb93b1f11d1",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "tutor",
                             NormalizedName = "tutor",
@@ -323,7 +301,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "661bab72-afd4-4ff0-8559-adc203a6775e",
+                            ConcurrencyStamp = "f9b2499a-5352-439a-af1f-4b84f0666014",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "student",
                             NormalizedName = "student",
@@ -332,8 +310,7 @@ namespace eTutor.Persistence.Migrations
                         new
                         {
                             Id = 4,
-
-                            ConcurrencyStamp = "e9f634fe-713b-4804-a93b-9ae27c071feb",
+                            ConcurrencyStamp = "f81396ef-2898-4c6a-accf-7194c240f8b7",
                             CreatedDate = new DateTime(2019, 11, 2, 12, 12, 22, 916, DateTimeKind.Local).AddTicks(8769),
                             Name = "parent",
                             NormalizedName = "parent",
@@ -727,19 +704,6 @@ namespace eTutor.Persistence.Migrations
                     b.HasOne("eTutor.Core.Models.User", "User")
                         .WithMany("Ratings")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("eTutor.Core.Models.RejectedMeeting", b =>
-                {
-                    b.HasOne("eTutor.Core.Models.Meeting", "Meeting")
-                        .WithMany()
-                        .HasForeignKey("MeetingId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("eTutor.Core.Models.User", "Tutor")
-                        .WithMany()
-                        .HasForeignKey("TutorId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
