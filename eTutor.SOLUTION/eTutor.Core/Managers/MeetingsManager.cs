@@ -22,6 +22,7 @@ namespace eTutor.Core.Managers
         private readonly NotificationManager _notificationManager;
         private readonly IUserRepository _userRepository;
         private readonly IRejectedMeetingRepository _rejectedMeetingRepository;
+        private readonly Dictionary<RoleTypes, Func<int, Task<IEnumerable<Meeting>>>> _getMeetingsByRole;
 
         public MeetingsManager(IMeetingRepository meetingRepository,
             ISubjectRepository subjectRepository, IUserRepository userRepository,
@@ -32,6 +33,13 @@ namespace eTutor.Core.Managers
             _userRepository = userRepository;
             _notificationManager = notificationManager;
             _rejectedMeetingRepository = rejectedMeetingRepository;
+            
+            _getMeetingsByRole = new Dictionary<RoleTypes, Func<int, Task<IEnumerable<Meeting>>>>
+            {
+                {RoleTypes.Parent, GetMeetingsForParent},
+                {RoleTypes.Tutor, GetMeetingsForTutor},
+                {RoleTypes.Student, GetMeetingsForStudent}
+            };
         }
 
         public async Task<IOperationResult<Meeting>> GetMeeting(int meetingId, int userId)
@@ -465,28 +473,50 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<ISet<Meeting>>.Fail("El usuario no está en nuestra base de datos.");
             }
             
-            var roles = await _userRepository.GetRolesForUser(userId);
-            
-            var functions = new Dictionary<RoleTypes, Func<int, Task<IEnumerable<Meeting>>>>
-            {
-                {RoleTypes.Parent, GetMeetingsForParent},
-                {RoleTypes.Tutor, GetMeetingsForTutor},
-                {RoleTypes.Student, GetMeetingsForStudent}
-            };
+            ISet<RoleTypes> roles = await _userRepository.GetRolesForUser(userId);
 
-            var meetings = new List<Meeting>();
-            
-            foreach (var role in roles)
-            {
-                var foundMeetings = await functions[role](userId);
-                meetings.AddRange(foundMeetings);
-            }
+            RoleTypes role = roles.FirstOrDefault();
 
-            var meetingsDistinct = meetings
+            IEnumerable<Meeting> meetings = await _getMeetingsByRole[role](userId);
+
+            HashSet<Meeting> meetingsDistinct = meetings
                 .Where(m => m.Status == MeetingStatus.Accepted)
-                .Distinct().ToHashSet();
+                .Distinct()
+                .ToHashSet();
 
             return BasicOperationResult<ISet<Meeting>>.Ok(meetingsDistinct);
+        }
+        
+        public async Task<IOperationResult<ISet<Meeting>>> GetMeetingsHistory(int userId)
+        {
+            bool userExists = await _userRepository.Exists(u => u.Id == userId && u.IsActive && u.IsEmailValidated);
+
+            if (!userExists)
+            {
+                return BasicOperationResult<ISet<Meeting>>.Fail("El usuario indicado no fue encontrado, verifique e intente nuevamente.");    
+            }
+
+            ISet<RoleTypes> roles = await _userRepository.GetRolesForUser(userId);
+
+            RoleTypes role = roles.FirstOrDefault();
+
+            IEnumerable<Meeting> meetings = await _getMeetingsByRole[role](userId);
+
+            MeetingStatus[] statusesToFilterBy =
+            {
+                MeetingStatus.Complete, 
+                MeetingStatus.Cancelled, 
+                MeetingStatus.InProgress, 
+                MeetingStatus.Rejected
+            };
+
+            HashSet<Meeting> filteredMeetings = meetings.Where(m => statusesToFilterBy.Contains(m.Status))
+                .OrderBy(m => m.StartDateTime)
+                .ThenBy(m => m.RealStartedDateTime)
+                .ToHashSet();
+            
+            return BasicOperationResult<ISet<Meeting>>.Ok(filteredMeetings);
+
         }
 
         private Task<IEnumerable<Meeting>> GetMeetingsForTutor(int tutorId)
@@ -518,6 +548,5 @@ namespace eTutor.Core.Managers
             m => m.Student, m => m.Tutor, m => m.Subject
             );
         }
-
     }
 }
