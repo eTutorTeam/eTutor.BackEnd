@@ -92,12 +92,14 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<Meeting>.Fail("El usuario no esta asociado a esta tutoría");
 
 
-            meeting.Status = MeetingStatus.Cancelled; 
+            meeting.Status = MeetingStatus.Cancelled;
+            meeting.CancelerUserId = userId;
+            var amount = CalculateMeetingAmount(meeting);
             _meetingRepository.Update(meeting);
 
             await _meetingRepository.Save();
 
-            await _notificationManager.NotifyMeetingWasCanceled(meeting);
+            await _notificationManager.NotifyMeetingWasCanceled(meeting, userId, amount);
 
             return BasicOperationResult<Meeting>.Ok(meeting);
         }
@@ -170,6 +172,95 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<Meeting>.Ok(response);
         }
 
+        public async Task<IOperationResult<Meeting>> StartMeeting(int meetingId, int userId)
+        {
+            var user = await _userRepository.Find(u => u.Id == userId, u => u.UserRoles);
+
+            if (user == null)
+            {
+                return BasicOperationResult<Meeting>.Fail("El usuario no fue encontrado");
+            }
+
+            var meeting = await _meetingRepository.Find(s => s.Id == meetingId);
+
+            if (meeting == null)
+            {
+                return BasicOperationResult<Meeting>.Fail("La tutoría no fue encontrada");
+            }
+
+            if (!(meeting.StudentId == userId || meeting.TutorId == userId))
+                return BasicOperationResult<Meeting>.Fail("El usuario no esta asociado a esta tutoría");
+
+            if (meeting.Status != MeetingStatus.Accepted)
+                return BasicOperationResult<Meeting>.Fail("La tutoría aún no ha sido aceptada");
+
+            meeting.Status = MeetingStatus.InProgress;
+            meeting.RealStartedDateTime = DateTime.Now;
+            _meetingRepository.Update(meeting);
+
+            await _meetingRepository.Save();
+
+            await _notificationManager.NotifyMeetingHasStarted(meeting);
+
+            return BasicOperationResult<Meeting>.Ok(meeting);
+        }
+
+        public async Task<IOperationResult<Meeting>> EndMeeting(int meetingId, int userId)
+        {
+            var user = await _userRepository.Find(u => u.Id == userId, u => u.UserRoles);
+
+            if (user == null)
+            {
+                return BasicOperationResult<Meeting>.Fail("El usuario no fue encontrado");
+            }
+
+            var meeting = await _meetingRepository.Find(s => s.Id == meetingId);
+
+            if (meeting == null)
+            {
+                return BasicOperationResult<Meeting>.Fail("La tutoría no fue encontrada");
+            }
+
+            if (!(meeting.StudentId == userId || meeting.TutorId == userId))
+                return BasicOperationResult<Meeting>.Fail("El usuario no esta asociado a esta tutoría");
+
+            if (meeting.Status != MeetingStatus.InProgress)
+                return BasicOperationResult<Meeting>.Fail("La tutoría aún no ha iniciado");
+
+            meeting.Status = MeetingStatus.Complete;
+            var amount = CalculateMeetingAmount(meeting);
+
+            _meetingRepository.Update(meeting);
+
+            await _meetingRepository.Save();
+            
+            await _notificationManager.NotifyMeetingCompleted(meeting, amount);
+
+            return BasicOperationResult<Meeting>.Ok(meeting);
+        }
+
+        public async Task<IOperationResult<Meeting>> GetTutorMeetingSummary(int meetingId, int tutorId)
+        {
+            var meeting = await _meetingRepository.Find(
+                m => m.Id == meetingId && m.TutorId == tutorId,
+                m => m.Student, m => m.Subject
+                     );
+
+            if (meeting == null)
+            {
+                return BasicOperationResult<Meeting>.Fail("La solicitud no fue encontrada");
+            }
+
+            var validateResult = await ValidateMeeting(meeting);
+            if (!validateResult.Success)
+            {
+                return validateResult;
+            }
+            
+            return BasicOperationResult<Meeting>.Ok(meeting);
+
+        }
+
         public async Task<IOperationResult<string>> TutorResponseToMeetingRequest(int meetingId, MeetingStatus answeredStatusAnsweredStatus, int userId)
         {
             var meeting = await FindMeetingWithTutor(meetingId, userId);
@@ -234,6 +325,26 @@ namespace eTutor.Core.Managers
         }
 
 
+        public async Task<IOperationResult<Meeting>> GetCurrentMeeting(int userId)
+        {
+            var user = await _userRepository.Find(u => u.Id == userId, u => u.UserRoles);
+
+            if (user == null)
+            {
+                return BasicOperationResult<Meeting>.Fail("El usuario no fue encontrado");
+            }
+
+            var meetingInCourse = await _meetingRepository
+                .Find(m => (m.StudentId == userId || m.TutorId == userId) && m.Status == MeetingStatus.InProgress);
+
+            if (meetingInCourse == null)
+            {
+                return BasicOperationResult<Meeting>.Fail("El usuario no tiene tutoría en curso");
+            }
+
+            return BasicOperationResult<Meeting>.Ok(meetingInCourse);
+        }
+
         private async Task<Meeting> FindMeetingWithTutor(int meetingId, int tutorId)
         {
             var meeting = await _meetingRepository.Find(
@@ -296,6 +407,19 @@ namespace eTutor.Core.Managers
 
             return true;
         }
+
+        public decimal CalculateMeetingAmount(Meeting meeting)
+        {
+            decimal result;
+            decimal amountPerHour = 200.0m;
+
+            decimal hours =meeting.EndDateTime.Hour - meeting.RealStartedDateTime.Hour;
+            result = hours < 1 ? amountPerHour : amountPerHour * hours;
+
+            return result;
+        }
+
+
 
         public async Task<IOperationResult<Meeting>> RescheduleTutorForStudentMeeting(int meetingId, int tutorId, int studentId)
         {
@@ -394,5 +518,6 @@ namespace eTutor.Core.Managers
             m => m.Student, m => m.Tutor, m => m.Subject
             );
         }
+
     }
 }
