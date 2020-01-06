@@ -389,7 +389,43 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<Meeting>.Fail("El estudiante no existe");
             }
 
+            if (await CheckIfTutorAsAvailabilityForMeeting(meeting))
+            {
+                return BasicOperationResult<Meeting>.Fail("Debe de elegir un horario diferente, ya que el tutor no está disponible en el mismo");
+            }
+
+            if (await CheckIfStudentAvailabilityForMeeting(meeting))
+            {
+                return BasicOperationResult<Meeting>.Fail("Debe de elegir otro horario, ya que el horario choca con otra tutoria");
+            }
+
             return BasicOperationResult<Meeting>.Ok(meeting);
+        }
+
+        private async Task<bool> CheckIfTutorAsAvailabilityForMeeting(Meeting meeting)
+        {
+            int tutorId = meeting.TutorId;
+
+            bool meetingWithinRange = await _meetingRepository.Exists(
+                m => ( m.StartDateTime >= meeting.StartDateTime ||
+                     m.StartDateTime < meeting.EndDateTime || 
+                     m.EndDateTime >= meeting.StartDateTime ||
+                     m.EndDateTime <= meeting.EndDateTime ) && m.TutorId == tutorId );
+
+            return meetingWithinRange;
+        }
+        
+        private async Task<bool> CheckIfStudentAvailabilityForMeeting(Meeting meeting)
+        {
+            int studentId = meeting.StudentId;
+
+            bool meetingWithinRange = await _meetingRepository.Exists(
+                m => ( m.StartDateTime >= meeting.StartDateTime ||
+                       m.StartDateTime < meeting.EndDateTime || 
+                       m.EndDateTime >= meeting.StartDateTime ||
+                       m.EndDateTime <= meeting.EndDateTime ) && m.StudentId == studentId );
+
+            return meetingWithinRange;
         }
 
         private async Task<bool> SubjectExists(int subjectId)
@@ -428,8 +464,6 @@ namespace eTutor.Core.Managers
 
             return result;
         }
-
-
 
         public async Task<IOperationResult<Meeting>> RescheduleTutorForStudentMeeting(int meetingId, int tutorId, int studentId)
         {
