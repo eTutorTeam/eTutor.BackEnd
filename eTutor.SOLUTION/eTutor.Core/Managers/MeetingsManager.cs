@@ -410,7 +410,7 @@ namespace eTutor.Core.Managers
                 m => ( m.StartDateTime >= meeting.StartDateTime ||
                      m.StartDateTime < meeting.EndDateTime || 
                      m.EndDateTime >= meeting.StartDateTime ||
-                     m.EndDateTime <= meeting.EndDateTime ) && m.TutorId == tutorId );
+                     m.EndDateTime <= meeting.EndDateTime) && m.TutorId == tutorId && m.Status == MeetingStatus.Accepted );
 
             return meetingWithinRange;
         }
@@ -423,7 +423,7 @@ namespace eTutor.Core.Managers
                 m => ( m.StartDateTime >= meeting.StartDateTime ||
                        m.StartDateTime < meeting.EndDateTime || 
                        m.EndDateTime >= meeting.StartDateTime ||
-                       m.EndDateTime <= meeting.EndDateTime ) && m.StudentId == studentId );
+                       m.EndDateTime <= meeting.EndDateTime ) && m.StudentId == studentId && m.Status == MeetingStatus.Accepted );
 
             return meetingWithinRange;
         }

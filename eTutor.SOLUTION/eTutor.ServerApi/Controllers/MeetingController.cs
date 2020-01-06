@@ -52,7 +52,7 @@ namespace eTutor.ServerApi.Controllers
 
             return Ok(response);
         }
-        [HttpPut("cancel-meeting/{meetingId}")]
+        [HttpPatch("cancel-meeting/{meetingId}")]
         [ProducesResponseType(typeof(MeetingResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         public async Task<IActionResult> CancelMeeting([FromRoute] int meetingId)
@@ -210,7 +210,7 @@ namespace eTutor.ServerApi.Controllers
         [ProducesResponseType(typeof(MeetingSummaryModel), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         [Authorize(Roles = "tutor, student")]
-        public async Task<IActionResult> GetTutorMeetingSummary([FromRoute] int meetingId)
+        public async Task<IActionResult> GetMeetingSummary([FromRoute] int meetingId)
         {
             int userId = GetUserId();
 
@@ -225,6 +225,7 @@ namespace eTutor.ServerApi.Controllers
             MeetingSummaryModel mapped = _mapper.Map<MeetingSummaryModel>(operationResult.Entity);
 
             mapped.StudentRatings = _ratingManager.GetUserAvgRatings(mapped.StudentId);
+            mapped.TutorRatings = _ratingManager.GetUserAvgRatings(mapped.TutorId);
             
             return Ok(mapped);
         }
