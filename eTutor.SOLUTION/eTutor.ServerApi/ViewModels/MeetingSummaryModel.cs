@@ -11,7 +11,7 @@ namespace eTutor.ServerApi.ViewModels
         public string StudentName { get; set; }
         
         public string StudentImg { get; set; }
-        
+
         public string SubjectName { get; set; }
 
         public decimal StudentRatings { get; set; }
@@ -21,6 +21,10 @@ namespace eTutor.ServerApi.ViewModels
         public DateTime StartTime { get; set; }
         
         public DateTime EndTime { get; set; }
+        
+        public string TutorName { get; set; }
+        
+        public string TutorImg { get; set; }
         
         public string LocationSummary { get; set; }
         
