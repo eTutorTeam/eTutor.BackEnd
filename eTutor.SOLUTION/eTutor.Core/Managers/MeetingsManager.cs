@@ -509,7 +509,8 @@ namespace eTutor.Core.Managers
                 MeetingStatus.Complete, 
                 MeetingStatus.Cancelled, 
                 MeetingStatus.InProgress, 
-                MeetingStatus.Rejected
+                MeetingStatus.Rejected,
+                MeetingStatus.Accepted
             };
 
             HashSet<Meeting> filteredMeetings = meetings.Where(m => statusesToFilterBy.Contains(m.Status))

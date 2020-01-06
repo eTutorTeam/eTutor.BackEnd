@@ -39,6 +39,7 @@ namespace eTutor.ServerApi.MapperProfiles
                 .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => src.RealStartedDateTime ))
                 .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => src.RealEndedDateTime))
                 .ForMember(dest => dest.TutorName, opt => opt.MapFrom(src => src.Tutor.FullName))
+                .ForMember(dest => dest.Subject, opt => opt.MapFrom(src => src.Subject.Name))
                 .ForMember(dest => dest.TutorImg, opt => opt.MapFrom(
                     src => src.Tutor.ProfileImageUrl ?? "https://immedilet-invest.com/wp-content/uploads/2016/01/user-placeholder.jpg"));
 
