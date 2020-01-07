@@ -111,20 +111,7 @@ namespace eTutor.Core.Managers
 
             return BasicOperationResult<Meeting>.Ok(meeting);
         }
-
-        public async Task<IOperationResult<IEnumerable<Meeting>>> GetTutorMeetings(int tutorId)
-        {
-            var tutor = await _userRepository.Find(u => u.Id == tutorId, u => u.UserRoles);
-
-            if (tutor == null)
-            {
-                return BasicOperationResult<IEnumerable<Meeting>>.Fail("El usuario no fue encontrado");
-            }
-
-            var meetings = await _meetingRepository.FindAll(u => u.TutorId == tutorId, u => u.Tutor, u => u.Subject);
-
-            return BasicOperationResult<IEnumerable<Meeting>>.Ok(meetings);
-        }
+        
 
         public async Task<IOperationResult<IEnumerable<Meeting>>> GetStudentTutorMeetings(int userId)
         {
@@ -189,19 +176,17 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<Meeting>.Fail("El usuario no fue encontrado");
             }
 
-            var meeting = await _meetingRepository.Find(s => s.Id == meetingId);
+            var meeting = await _meetingRepository.Find(
+                m => m.Id == meetingId 
+                     && m.Status == MeetingStatus.Accepted 
+                     && m.TutorId == userId, 
+                m => m.Tutor, m => m.Student, m => m.Subject);
 
             if (meeting == null)
             {
                 return BasicOperationResult<Meeting>.Fail("La tutoría no fue encontrada");
             }
-
-            if (!(meeting.StudentId == userId || meeting.TutorId == userId))
-                return BasicOperationResult<Meeting>.Fail("El usuario no esta asociado a esta tutoría");
-
-            if (meeting.Status != MeetingStatus.Accepted)
-                return BasicOperationResult<Meeting>.Fail("La tutoría aún no ha sido aceptada");
-
+             
             meeting.Status = MeetingStatus.InProgress;
             meeting.RealStartedDateTime = DateTime.Now;
             _meetingRepository.Update(meeting);
@@ -410,7 +395,7 @@ namespace eTutor.Core.Managers
                 m => ( m.StartDateTime >= meeting.StartDateTime ||
                      m.StartDateTime < meeting.EndDateTime || 
                      m.EndDateTime >= meeting.StartDateTime ||
-                     m.EndDateTime <= meeting.EndDateTime ) && m.TutorId == tutorId );
+                     m.EndDateTime <= meeting.EndDateTime) && m.TutorId == tutorId && m.Status == MeetingStatus.Accepted );
 
             return meetingWithinRange;
         }
@@ -423,7 +408,7 @@ namespace eTutor.Core.Managers
                 m => ( m.StartDateTime >= meeting.StartDateTime ||
                        m.StartDateTime < meeting.EndDateTime || 
                        m.EndDateTime >= meeting.StartDateTime ||
-                       m.EndDateTime <= meeting.EndDateTime ) && m.StudentId == studentId );
+                       m.EndDateTime <= meeting.EndDateTime ) && m.StudentId == studentId && m.Status == MeetingStatus.Accepted );
 
             return meetingWithinRange;
         }
@@ -516,7 +501,7 @@ namespace eTutor.Core.Managers
             IEnumerable<Meeting> meetings = await _getMeetingsByRole[role](userId);
 
             HashSet<Meeting> meetingsDistinct = meetings
-                .Where(m => m.Status == MeetingStatus.Accepted)
+                .Where(m => m.Status == MeetingStatus.Accepted && m.EndDateTime > DateTime.Now)
                 .Distinct()
                 .ToHashSet();
 
@@ -559,8 +544,7 @@ namespace eTutor.Core.Managers
         private Task<IEnumerable<Meeting>> GetMeetingsForTutor(int tutorId)
         {
             return _meetingRepository.FindAll(
-                m => m.TutorId == tutorId &&
-                     m.StartDateTime.Date >= DateTime.Now.Date,
+                m => m.TutorId == tutorId,
                 m => m.Student, m => m.Tutor, m => m.Subject
             );
         }
@@ -568,8 +552,7 @@ namespace eTutor.Core.Managers
         private Task<IEnumerable<Meeting>> GetMeetingsForStudent(int studentId)
         {
             return _meetingRepository.FindAll(
-                    m => m.StudentId == studentId &&
-                         m.StartDateTime.Date >= DateTime.Now.Date,
+                    m => m.StudentId == studentId,
                     m => m.Student, m => m.Tutor, m => m.Subject
                 );
         }
@@ -580,8 +563,7 @@ namespace eTutor.Core.Managers
             var studentIds = students.Select(s => s.Id);
 
             return await _meetingRepository.FindAll(
-                m => studentIds.Any(s => s == m.StudentId)
-                && m.StartDateTime.Date > DateTime.Now.Date,
+                m => studentIds.Any(s => s == m.StudentId),
             m => m.Student, m => m.Tutor, m => m.Subject
             );
         }
