@@ -12,7 +12,8 @@ namespace eTutor.ServerApi.MapperProfiles
     {
         public UsersProfile()
         {
-            CreateMap<UserProfileUpdateRequest, User>();
+            CreateMap<UserProfileUpdateRequest, User>()
+				.ForMember(dest=>dest.PhoneNumber, opt=>opt.MapFrom(src => src.PhoneNumber));
 
             CreateMap<User, SimpleUserResponse>();
 
