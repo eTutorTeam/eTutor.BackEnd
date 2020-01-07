@@ -179,7 +179,8 @@ namespace eTutor.Core.Managers
             var meeting = await _meetingRepository.Find(
                 m => m.Id == meetingId 
                      && m.Status == MeetingStatus.Accepted 
-                     && m.TutorId == userId);
+                     && m.TutorId == userId, 
+                m => m.Tutor, m => m.Student, m => m.Subject);
 
             if (meeting == null)
             {
@@ -500,7 +501,7 @@ namespace eTutor.Core.Managers
             IEnumerable<Meeting> meetings = await _getMeetingsByRole[role](userId);
 
             HashSet<Meeting> meetingsDistinct = meetings
-                .Where(m => m.Status == MeetingStatus.Accepted && m.EndDateTime <= DateTime.Now)
+                .Where(m => m.Status == MeetingStatus.Accepted && m.EndDateTime > DateTime.Now)
                 .Distinct()
                 .ToHashSet();
 

@@ -158,26 +158,16 @@ namespace eTutor.Core.Managers
         {
 
             string subject = "Tutoría Iniciada";
-            var studentResult = await GetUser(meeting.StudentId);
-            var tutorResult = await GetUser(meeting.TutorId);
 
-            if (!studentResult.Success)
-            {
-                return BasicOperationResult<string>.Fail(studentResult.Message.Message);
-            }
-            if (!tutorResult.Success)
-            {
-                return BasicOperationResult<string>.Fail(tutorResult.Message.Message);
-            }
-
-            User student = studentResult.Entity;
-            User tutor = tutorResult.Entity;
+            User student = meeting.Student;
+            User tutor = meeting.Tutor;
+            
             ISet<User> parents = await _userRepository.GetAllParentsForStudent(student.Id);
 
             if (!parents.Any()) return BasicOperationResult<string>.Fail("No fueron encontrados padres para este estudiante");
 
             string messageToParents =
-                $"La tutoría de {meeting.Student.FullName} del tema: {meeting.Subject.Name} ha iniciado.";
+                $"La tutoría de {student.FullName} del tema: {meeting.Subject.Name} ha iniciado.";
 
             string messageToUsers = $"La tutoría para {meeting.Subject.Name} ha sido iniciada, entra a la aplicación para ver más detalles.";
             
