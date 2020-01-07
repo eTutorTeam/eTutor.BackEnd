@@ -232,5 +232,27 @@ namespace eTutor.ServerApi.Controllers
             return Ok(mapped);
         }
 
+        [HttpGet("in-progress")]
+        [ProducesResponseType(typeof(MeetingInProgressResponse), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        public async Task<IActionResult> GetMeetingInProgress()
+        {
+            int userId = GetUserId();
+
+            IOperationResult<Meeting> operationResult = await _meetingsManager.GetInProgressMeetingForUser(userId);
+
+            if (!operationResult.Success)
+            {
+                return BadRequest(operationResult.Message);
+            }
+
+            var mapped = _mapper.Map<MeetingInProgressResponse>(operationResult.Entity);
+
+            mapped.StudentRatings = _ratingManager.GetUserAvgRatings(mapped.StudentId);
+            mapped.TutorRatings = _ratingManager.GetUserAvgRatings(mapped.TutorId);
+            
+            return Ok(mapped);
+        }
+
     }
 }

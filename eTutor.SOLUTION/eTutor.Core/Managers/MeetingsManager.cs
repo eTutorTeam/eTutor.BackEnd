@@ -567,5 +567,24 @@ namespace eTutor.Core.Managers
             m => m.Student, m => m.Tutor, m => m.Subject
             );
         }
+
+        public async Task<IOperationResult<Meeting>> GetInProgressMeetingForUser(int userId)
+        {
+            if (await _userRepository.Exists(u => u.Id == userId && u.IsActive && u.IsEmailValidated))
+            {
+                return BasicOperationResult<Meeting>.Fail("El usuario no fue encontrado");
+            }
+
+            var meeting = await _meetingRepository.Find(m => (m.StudentId == userId || m.TutorId == userId)
+                                                             && m.Status == MeetingStatus.InProgress,
+                m => m.Student, m => m.Tutor, m => m.Subject);
+
+            if (meeting != null)
+            {
+                return BasicOperationResult<Meeting>.Fail("No ha sido iniciada ninguna tutoría con el usuario.");
+            }
+            
+            return BasicOperationResult<Meeting>.Ok(meeting);
+        }
     }
 }
