@@ -21,7 +21,9 @@ namespace eTutor.ServerApi.ViewModels
         public DateTime StartTime { get; set; }
         
         public DateTime EndTime { get; set; }
-        
+
+        public DateTime RealStartedDateTime { get; set; }
+
         public string LocationSummary { get; set; }
         
         public float Longitude { get; set; }

@@ -92,6 +92,7 @@ namespace eTutor.ServerApi.Controllers
         [HttpPatch("end-meeting/{meetingId}")]
         [ProducesResponseType(typeof(MeetingResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
+        [Authorize(Roles = "tutor")]
         public async Task<IActionResult> EndMeeting([FromRoute] int meetingId)
         {
             int userId = GetUserId();
@@ -183,7 +184,7 @@ namespace eTutor.ServerApi.Controllers
                 return BadRequest(result.Message);
             }
 
-            var mapped = _mapper.Map<IEnumerable<MeetingResponse>>(result.Entity);
+            var mapped = _mapper.Map<MeetingResponse>(result.Entity);
 
             return Ok(mapped);
         }
