@@ -177,18 +177,18 @@ namespace eTutor.Core.Managers
             if (!parents.Any()) return BasicOperationResult<string>.Fail("No fueron encontrados padres para este estudiante");
 
             string messageToParents =
-                $"La tutoría de {meeting.Student.FullName} del tema: {meeting.Subject.Name} ha iniciado\nEstá pautada para terminar a" +
-                $"las {meeting.EndDateTime.Hour}";
+                $"La tutoría de {meeting.Student.FullName} del tema: {meeting.Subject.Name} ha iniciado.";
 
-            string messageToUsers = $"La tutoría ahora está en curso, entra a la aplicación para ver más detalles.";
+            string messageToUsers = $"La tutoría para {meeting.Subject.Name} ha sido iniciada, entra a la aplicación para ver más detalles.";
+            
             var data = new Dictionary<string, string>
             {
-                {"parentMeetingId", meeting.Id.ToString()}
+                {"startedMeetingId", meeting.Id.ToString()}
             };
 
             await _notificationService.SendNotificationToMultipleUsers(parents, messageToParents, subject, data);
-            await _notificationService.SendNotificationToUser(student, messageToUsers, subject);
-            await _notificationService.SendNotificationToUser(tutor, messageToUsers, subject);
+            await _notificationService.SendNotificationToUser(student, messageToUsers, subject, data);
+            await _notificationService.SendNotificationToUser(tutor, messageToUsers, subject, data);
                 
             return BasicOperationResult<string>.Ok("Tutoria Completada");
         }

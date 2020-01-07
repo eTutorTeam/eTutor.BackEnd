@@ -111,20 +111,7 @@ namespace eTutor.Core.Managers
 
             return BasicOperationResult<Meeting>.Ok(meeting);
         }
-
-        public async Task<IOperationResult<IEnumerable<Meeting>>> GetTutorMeetings(int tutorId)
-        {
-            var tutor = await _userRepository.Find(u => u.Id == tutorId, u => u.UserRoles);
-
-            if (tutor == null)
-            {
-                return BasicOperationResult<IEnumerable<Meeting>>.Fail("El usuario no fue encontrado");
-            }
-
-            var meetings = await _meetingRepository.FindAll(u => u.TutorId == tutorId, u => u.Tutor, u => u.Subject);
-
-            return BasicOperationResult<IEnumerable<Meeting>>.Ok(meetings);
-        }
+        
 
         public async Task<IOperationResult<IEnumerable<Meeting>>> GetStudentTutorMeetings(int userId)
         {
