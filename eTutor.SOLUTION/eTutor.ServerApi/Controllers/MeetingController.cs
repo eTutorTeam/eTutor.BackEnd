@@ -74,6 +74,7 @@ namespace eTutor.ServerApi.Controllers
         [HttpPatch("start-meeting/{meetingId}")]
         [ProducesResponseType(typeof(MeetingResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
+        [Authorize(Roles = "tutor")]
         public async Task<IActionResult> StartMeeting([FromRoute] int meetingId)
         {
             int userId = GetUserId();
@@ -92,6 +93,7 @@ namespace eTutor.ServerApi.Controllers
         [HttpPatch("end-meeting/{meetingId}")]
         [ProducesResponseType(typeof(MeetingResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
+        [Authorize(Roles = "tutor, student")]
         public async Task<IActionResult> EndMeeting([FromRoute] int meetingId)
         {
             int userId = GetUserId();
