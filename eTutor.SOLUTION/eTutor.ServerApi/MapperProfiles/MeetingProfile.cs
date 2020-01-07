@@ -25,7 +25,8 @@ namespace eTutor.ServerApi.MapperProfiles
                 .ForMember(dest => dest.MeetingDate, opt => opt.MapFrom(src => src.StartDateTime.Date))
                 .ForMember(dest => dest.SubjectName, opt => opt.MapFrom(src => src.Subject.Name))
                 .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => src.StartDateTime ))
-                .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => src.EndDateTime));
+                .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => src.EndDateTime))
+                .ForMember(dest => dest.RealStartedDateTime, opt => opt.MapFrom(src => src.RealStartedDateTime));
 
             CreateMap<Meeting, ParentMeetingResponse>();
 
