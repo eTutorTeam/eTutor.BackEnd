@@ -33,6 +33,9 @@ namespace eTutor.ServerApi.ViewModels
         
         public decimal TutorRatings { get; set; }
         
+
+        public DateTime RealStartedDateTime { get; set; }
+
         public string LocationSummary { get; set; }
         
         public float Longitude { get; set; }

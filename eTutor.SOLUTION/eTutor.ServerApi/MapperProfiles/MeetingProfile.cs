@@ -31,7 +31,8 @@ namespace eTutor.ServerApi.MapperProfiles
                 .ForMember(dest => dest.StudentPhone, opt => opt.MapFrom(src => src.Student.PhoneNumber))
                 .ForMember(dest => dest.TutorPhone, opt => opt.MapFrom(src => src.Tutor.PhoneNumber))
                 .ForMember(dest => dest.TutorImg, opt => opt.MapFrom(
-                    src => src.Tutor.ProfileImageUrl ?? "https://immedilet-invest.com/wp-content/uploads/2016/01/user-placeholder.jpg"));
+                    src => src.Tutor.ProfileImageUrl ?? "https://immedilet-invest.com/wp-content/uploads/2016/01/user-placeholder.jpg"))
+                .ForMember(dest => dest.RealStartedDateTime, opt => opt.MapFrom(src => src.RealStartedDateTime));
 
             CreateMap<Meeting, HistoryMeetingReponse>()
                 .ForMember(dest => dest.StudentName, opt => opt.MapFrom(src => src.Student.FullName))

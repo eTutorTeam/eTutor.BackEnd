@@ -203,7 +203,7 @@ namespace eTutor.ServerApi.Controllers
                 return BadRequest(result.Message);
             }
 
-            var mapped = _mapper.Map<IEnumerable<MeetingResponse>>(result.Entity);
+            var mapped = _mapper.Map<MeetingResponse>(result.Entity);
 
             return Ok(mapped);
         }

@@ -205,7 +205,7 @@ namespace eTutor.Core.Managers
             if (!parents.Any()) return BasicOperationResult<string>.Fail("No fueron encontrados padres para este estudiante");
 
             string messageToParents =
-                $"La tutoría de {meeting.Student.FullName} del tema: {meeting.Subject.Name} ha sido completada satisfactoriamente por un monto" +
+                $"La tutoría de {meeting.Student.FullName} ha sido completada satisfactoriamente por un monto" +
                 $"de {amount}";
 
             string messageToUsers = $"¡La tutoría ha terminado! \nEl monto total es: RD${amount}, Gracias por utilizar eTutor";
@@ -264,7 +264,6 @@ namespace eTutor.Core.Managers
                                   $"sin cargos adicionales";
                messageToUsers = $"La tutoría programada del tema: {meeting.Subject.Name} ha sido cancelada por el tutor";
             }
-            
 
             var data = new Dictionary<string, string>
             {
