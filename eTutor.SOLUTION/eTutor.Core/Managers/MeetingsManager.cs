@@ -570,9 +570,11 @@ namespace eTutor.Core.Managers
 
         public async Task<IOperationResult<Meeting>> GetInProgressMeetingForUser(int userId)
         {
-            if (await _userRepository.Exists(u => u.Id == userId && u.IsActive && u.IsEmailValidated))
+            var user = await _userRepository.Find(u => u.Id == userId);
+
+            if (user == null)
             {
-                return BasicOperationResult<Meeting>.Fail("El usuario no fue encontrado");
+                return  BasicOperationResult<Meeting>.Fail("Usuario no encontrado");
             }
 
             var meeting = await _meetingRepository.Find(m => (m.StudentId == userId || m.TutorId == userId)
