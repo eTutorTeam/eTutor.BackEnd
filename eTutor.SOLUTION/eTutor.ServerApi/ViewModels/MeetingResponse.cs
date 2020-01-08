@@ -28,6 +28,8 @@ namespace eTutor.ServerApi.ViewModels
 
         public DateTime EndDateTime { get; set; }
 
+        public DateTime RealStartedDateTime { get; set; }
+
         public MeetingStatus Status { get; set; }
     }
 }

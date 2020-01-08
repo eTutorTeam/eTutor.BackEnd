@@ -220,7 +220,10 @@ namespace eTutor.Core.Managers
             if (meeting.Status != MeetingStatus.InProgress)
                 return BasicOperationResult<Meeting>.Fail("La tutoría aún no ha iniciado");
 
-            meeting.Status = MeetingStatus.Complete;
+            var roles = await _userRepository.GetRolesForUser(userId);
+            var role = roles.FirstOrDefault();
+
+            meeting.Status = role == RoleTypes.Tutor ? MeetingStatus.Complete : MeetingStatus.Cancelled;
             meeting.RealEndedDateTime = DateTime.Now;
 
             var amount = CalculateMeetingAmount(meeting);
@@ -229,7 +232,7 @@ namespace eTutor.Core.Managers
 
             await _meetingRepository.Save();
             
-            await _notificationManager.NotifyMeetingCompleted(meeting, amount);
+            await _notificationManager.NotifyMeetingFinalized(meeting, amount);
 
             return BasicOperationResult<Meeting>.Ok(meeting);
         }
@@ -566,6 +569,30 @@ namespace eTutor.Core.Managers
                 m => studentIds.Any(s => s == m.StudentId),
             m => m.Student, m => m.Tutor, m => m.Subject
             );
+        }
+
+        public async Task<IOperationResult<Meeting>> GetInProgressMeetingForUser(int userId)
+        {
+            var user = await _userRepository.Find(u => u.Id == userId);
+
+            if (user == null)
+            {
+                return  BasicOperationResult<Meeting>.Fail("Usuario no encontrado");
+            }
+
+            var meeting = await _meetingRepository.Set
+                .Include(m => m.Tutor)
+                .Include(m => m.Student)
+                .Include(m => m.Subject)
+                .FirstOrDefaultAsync(m =>
+                    m.Status == MeetingStatus.InProgress && (m.TutorId == userId || m.StudentId == userId));
+
+            if (meeting == null)
+            {
+                return BasicOperationResult<Meeting>.Fail("No ha sido iniciada ninguna tutoría con el usuario.");
+            }
+            
+            return BasicOperationResult<Meeting>.Ok(meeting);
         }
     }
 }
