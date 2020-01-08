@@ -1,5 +1,7 @@
+using System;
 using System.Threading.Tasks;
 using eTutor.Core.Contracts;
+using eTutor.Core.Helpers;
 using eTutor.Core.Managers;
 using eTutor.Core.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -26,6 +28,13 @@ namespace eTutor.ServerApi.Controllers
             IOperationResult<string> result = await _notificationManager.NotifyMeetingAccepted(userId);
 
             return Ok(result);
+        }
+
+        [HttpGet("demo-date")]
+        public DateTime GetTestDate()
+        {
+            
+            return DateTime.Now.GetNowInCorrectTimezone();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using eTutor.Core.Helpers;
 using eTutor.Core.Models;
 using FluentValidation;
 
@@ -16,7 +17,7 @@ namespace eTutor.Core.Validations
 
             RuleFor(s => s.SubjectId).NotNull();
 
-            RuleFor(s => s.StartDateTime).NotEmpty().GreaterThan(DateTime.Now);
+            RuleFor(s => s.StartDateTime).NotEmpty().GreaterThan(DateTime.Now.GetNowInCorrectTimezone());
 
             RuleFor(s => s.EndDateTime).NotEmpty().GreaterThan(s => s.StartDateTime);
 
