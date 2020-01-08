@@ -23,5 +23,6 @@ namespace eTutor.ServerApi.ViewModels
         public string FullName => $"{Name} {LastName}";
         
         public string AboutMe { get; set; }
+		public string PhoneNumber { get; set; }
     }
 }

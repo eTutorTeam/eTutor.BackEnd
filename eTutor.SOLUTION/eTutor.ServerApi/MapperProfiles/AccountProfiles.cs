@@ -32,9 +32,10 @@ namespace eTutor.ServerApi.MapperProfiles
 
             CreateMap<ParentUserRegistrationRequest, User>();
 
-            CreateMap<User, UserResponse>()
-                .ForMember(dest => dest.ProfileImageUrl, opt => opt.MapFrom(
-                    src => src.ProfileImageUrl ?? "https://immedilet-invest.com/wp-content/uploads/2016/01/user-placeholder.jpg"))
+			CreateMap<User, UserResponse>()
+				.ForMember(dest => dest.ProfileImageUrl, opt => opt.MapFrom(
+					src => src.ProfileImageUrl ?? "https://immedilet-invest.com/wp-content/uploads/2016/01/user-placeholder.jpg"))
+				.ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
                 .ReverseMap();
 
             CreateMap<ChangePassword, ChangePasswordResponse>();

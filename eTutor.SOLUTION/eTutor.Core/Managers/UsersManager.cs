@@ -286,6 +286,7 @@ namespace eTutor.Core.Managers
                 oldUser.PersonalId = user.PersonalId;
                 oldUser.UserName = user.UserName;
                 oldUser.AboutMe = user.AboutMe;
+				oldUser.PhoneNumber = user.PhoneNumber;
                 oldUser.NormalizedUserName = user.UserName.ToUpper();
                 oldUser.NormalizedEmail = user.Email.ToUpper();
 
