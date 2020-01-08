@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -188,7 +188,7 @@ namespace eTutor.Core.Managers
             }
              
             meeting.Status = MeetingStatus.InProgress;
-            meeting.RealStartedDateTime = DateTime.Now;
+            meeting.RealStartedDateTime = DateTime.Now.GetNowInCorrectTimezone();
             _meetingRepository.Update(meeting);
 
             await _meetingRepository.Save();

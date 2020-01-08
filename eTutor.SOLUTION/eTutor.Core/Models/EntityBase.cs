@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using eTutor.Core.Helpers;
 
 namespace eTutor.Core.Models
 {
@@ -22,12 +23,12 @@ namespace eTutor.Core.Models
         /// Represents the date of creation
         /// </summary>
 
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime CreatedDate { get; set; } = DateTime.Now.GetNowInCorrectTimezone();
 
         /// <summary>
         /// Represents the date it was updated
         /// </summary>
 
-        public DateTime UpdatedDate { get; set; } = DateTime.Now;
+        public DateTime UpdatedDate { get; set; } = DateTime.Now.GetNowInCorrectTimezone();
     }
 }
