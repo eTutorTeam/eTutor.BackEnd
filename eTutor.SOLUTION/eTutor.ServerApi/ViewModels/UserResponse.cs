@@ -87,5 +87,6 @@ namespace eTutor.ServerApi.ViewModels
 
         public string FullName => Name + " " + LastName;
 
+		public string PhoneNumber { get; set; }
     }
 }
