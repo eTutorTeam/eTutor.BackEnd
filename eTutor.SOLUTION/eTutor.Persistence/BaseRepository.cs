@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using eTutor.Core.Contracts;
+using eTutor.Core.Helpers;
 using eTutor.Core.Models;
 using eTutor.Core.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -52,7 +53,7 @@ namespace eTutor.Persistence
 
         public IOperationResult<T> Update(T entity)
         {
-            entity.UpdatedDate = DateTime.Now;
+            entity.UpdatedDate = DateTime.Now.GetNowInCorrectTimezone();
             var entityEntry = _context.Entry(entity);
             entityEntry.State = EntityState.Modified;
             
