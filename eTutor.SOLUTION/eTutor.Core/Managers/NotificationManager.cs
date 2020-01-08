@@ -183,7 +183,7 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<string>.Ok("Tutoria Completada");
         }
 
-        public async Task<IOperationResult<string>> NotifyMeetingCompleted(Meeting meeting, decimal amount)
+        public async Task<IOperationResult<string>> NotifyMeetingFinalized(Meeting meeting, decimal amount)
         {
             string subject = "¡Tutoría Completada!";
             var studentResult = await GetUser(meeting.StudentId);
@@ -211,14 +211,14 @@ namespace eTutor.Core.Managers
             string messageToUsers = $"¡La tutoría ha terminado! \nEl monto total es: RD${amount}, Gracias por utilizar eTutor";
             var data = new Dictionary<string, string>
             {
-                {"parentMeetingId", meeting.Id.ToString()}
+                {"finalizedMeetingId", meeting.Id.ToString()}
             };
 
             await _notificationService.SendNotificationToMultipleUsers(parents, messageToParents, subject, data);
-            await _notificationService.SendNotificationToUser(student, messageToUsers, subject);
-            await _notificationService.SendNotificationToUser(tutor, messageToUsers, subject);
+            await _notificationService.SendNotificationToUser(student, messageToUsers, subject, data);
+            await _notificationService.SendNotificationToUser(tutor, messageToUsers, subject, data);
 
-            return BasicOperationResult<string>.Ok("Tutoria Completada");
+            return BasicOperationResult<string>.Ok("Tutoria Finalizada");
         }
 
         public async Task<IOperationResult<string>> NotifyMeetingWasCanceled(Meeting meeting, int userId, decimal amount)
