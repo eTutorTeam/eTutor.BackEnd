@@ -2,7 +2,7 @@ using System;
 
 namespace eTutor.ServerApi.ViewModels
 {
-    public class MeetingSummaryModel
+    public class MeetingInProgressResponse
     {
         public int MeetingId { get; set; }
         
@@ -18,8 +18,6 @@ namespace eTutor.ServerApi.ViewModels
 
         public decimal StudentRatings { get; set; }
         
-        public DateTime MeetingDate { get; set; }
-        
         public DateTime StartTime { get; set; }
         
         public DateTime EndTime { get; set; }
@@ -33,5 +31,7 @@ namespace eTutor.ServerApi.ViewModels
         public string TutorPhone { get; set; }
         
         public decimal TutorRatings { get; set; }
+        
+        public DateTime RealStartTime { get; set; }
     }
 }

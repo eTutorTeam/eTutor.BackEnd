@@ -37,5 +37,7 @@ namespace eTutor.Core.Models
         public User CancelerUser { get; set; }
 
         public DateTime RealStartedDateTime { get; set; }
+        
+        public DateTime RealEndedDateTime { get; set; }
     }
 }

@@ -52,7 +52,7 @@ namespace eTutor.ServerApi.Controllers
 
             return Ok(response);
         }
-        [HttpPut("cancel-meeting/{meetingId}")]
+        [HttpPatch("cancel-meeting/{meetingId}")]
         [ProducesResponseType(typeof(MeetingResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         public async Task<IActionResult> CancelMeeting([FromRoute] int meetingId)
@@ -74,6 +74,7 @@ namespace eTutor.ServerApi.Controllers
         [HttpPatch("start-meeting/{meetingId}")]
         [ProducesResponseType(typeof(MeetingResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
+        [Authorize(Roles = "tutor")]
         public async Task<IActionResult> StartMeeting([FromRoute] int meetingId)
         {
             int userId = GetUserId();
@@ -92,6 +93,7 @@ namespace eTutor.ServerApi.Controllers
         [HttpPatch("end-meeting/{meetingId}")]
         [ProducesResponseType(typeof(MeetingResponse), 200)]
         [ProducesResponseType(typeof(Error), 400)]
+        [Authorize(Roles = "tutor, student")]
         public async Task<IActionResult> EndMeeting([FromRoute] int meetingId)
         {
             int userId = GetUserId();
@@ -146,8 +148,26 @@ namespace eTutor.ServerApi.Controllers
 
             return Ok(mapped);
         }
-        
 
+        [HttpGet("history")]
+        [ProducesResponseType(typeof(ISet<HistoryMeetingReponse>), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        [Authorize(Roles = "student, tutor, parent")]
+        public async Task<IActionResult> GetMeetingsHistoryForUser()
+        {
+            int userId = GetUserId();
+            
+            IOperationResult<ISet<Meeting>> result = await _meetingsManager.GetMeetingsHistory(userId);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            var mapped = _mapper.Map<ISet<HistoryMeetingReponse>>(result.Entity);
+            
+            return Ok(mapped);
+        }
 
         [HttpGet("all")]
         [ProducesResponseType(typeof(IEnumerable<MeetingResponse>), 200)]
@@ -183,7 +203,7 @@ namespace eTutor.ServerApi.Controllers
                 return BadRequest(result.Message);
             }
 
-            var mapped = _mapper.Map<IEnumerable<MeetingResponse>>(result.Entity);
+            var mapped = _mapper.Map<MeetingResponse>(result.Entity);
 
             return Ok(mapped);
         }
@@ -192,7 +212,7 @@ namespace eTutor.ServerApi.Controllers
         [ProducesResponseType(typeof(MeetingSummaryModel), 200)]
         [ProducesResponseType(typeof(Error), 400)]
         [Authorize(Roles = "tutor, student")]
-        public async Task<IActionResult> GetTutorMeetingSummary([FromRoute] int meetingId)
+        public async Task<IActionResult> GetMeetingSummary([FromRoute] int meetingId)
         {
             int userId = GetUserId();
 
@@ -207,6 +227,29 @@ namespace eTutor.ServerApi.Controllers
             MeetingSummaryModel mapped = _mapper.Map<MeetingSummaryModel>(operationResult.Entity);
 
             mapped.StudentRatings = _ratingManager.GetUserAvgRatings(mapped.StudentId);
+            mapped.TutorRatings = _ratingManager.GetUserAvgRatings(mapped.TutorId);
+            
+            return Ok(mapped);
+        }
+
+        [HttpGet("in-progress")]
+        [ProducesResponseType(typeof(MeetingInProgressResponse), 200)]
+        [ProducesResponseType(typeof(Error), 400)]
+        public async Task<IActionResult> GetMeetingInProgress()
+        {
+            int userId = GetUserId();
+
+            IOperationResult<Meeting> operationResult = await _meetingsManager.GetInProgressMeetingForUser(userId);
+
+            if (!operationResult.Success)
+            {
+                return BadRequest(operationResult.Message);
+            }
+
+            var mapped = _mapper.Map<MeetingInProgressResponse>(operationResult.Entity);
+
+            mapped.StudentRatings = _ratingManager.GetUserAvgRatings(mapped.StudentId);
+            mapped.TutorRatings = _ratingManager.GetUserAvgRatings(mapped.TutorId);
             
             return Ok(mapped);
         }

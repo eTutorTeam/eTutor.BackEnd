@@ -22,30 +22,17 @@ namespace eTutor.PushNotificationService
         private readonly FirebaseMessaging _firebaseMessaging;
         
 
-        public PushNotificationService(IDeviceRepository deviceRepository, AppBaseRoute route)
+        public PushNotificationService(IDeviceRepository deviceRepository, FirebaseMessaging firebaseMessaging)
         {
             _deviceRepository = deviceRepository;
-
-            string jsonPath = Path.Combine(route.BasePath, "etutorfirebaseadmin.json");
-
-            var configurationJson = File.ReadAllText(jsonPath);
-
-            if (FirebaseApp.DefaultInstance == null)
-            {
-                FirebaseApp.Create(new AppOptions()
-                {
-                    Credential = GoogleCredential.FromJson(configurationJson)
-                });
-            }
-
-            _firebaseMessaging = FirebaseMessaging.DefaultInstance;
+            _firebaseMessaging = firebaseMessaging;
 
         }
 
         public async Task SendNotificationToUser(User user, string message, string subject = "eTutor", Dictionary<string, string> data = null)
         {
             var devices = await _deviceRepository.FindAll(u => u.UserId == user.Id);
-            var deviceTokens = devices.Select(d => d.FcmToken).ToHashSet().ToArray();
+            var deviceTokens = devices.Select(d => d.FcmToken).Distinct().ToArray();
 
             if (deviceTokens.Length > 0)
             {
@@ -70,6 +57,7 @@ namespace eTutor.PushNotificationService
             string[] deviceTokens = await _deviceRepository
                 .Set.Where(d => user.Any(u => u.Id == d.UserId))
                 .Select(d => d.FcmToken)
+                .Distinct()
                 .ToArrayAsync();
             
             if (deviceTokens.Length > 0)

@@ -16,7 +16,7 @@ namespace eTutor.Core.Validations
 
             RuleFor(s => s.SubjectId).NotNull();
 
-            RuleFor(s => s.StartDateTime).NotEmpty();
+            RuleFor(s => s.StartDateTime).NotEmpty().GreaterThan(DateTime.Now);
 
             RuleFor(s => s.EndDateTime).NotEmpty().GreaterThan(s => s.StartDateTime);
 

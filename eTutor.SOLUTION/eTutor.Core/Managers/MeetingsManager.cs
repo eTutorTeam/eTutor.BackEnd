@@ -22,6 +22,7 @@ namespace eTutor.Core.Managers
         private readonly NotificationManager _notificationManager;
         private readonly IUserRepository _userRepository;
         private readonly IRejectedMeetingRepository _rejectedMeetingRepository;
+        private readonly Dictionary<RoleTypes, Func<int, Task<IEnumerable<Meeting>>>> _getMeetingsByRole;
 
         public MeetingsManager(IMeetingRepository meetingRepository,
             ISubjectRepository subjectRepository, IUserRepository userRepository,
@@ -32,6 +33,13 @@ namespace eTutor.Core.Managers
             _userRepository = userRepository;
             _notificationManager = notificationManager;
             _rejectedMeetingRepository = rejectedMeetingRepository;
+            
+            _getMeetingsByRole = new Dictionary<RoleTypes, Func<int, Task<IEnumerable<Meeting>>>>
+            {
+                {RoleTypes.Parent, GetMeetingsForParent},
+                {RoleTypes.Tutor, GetMeetingsForTutor},
+                {RoleTypes.Student, GetMeetingsForStudent}
+            };
         }
 
         public async Task<IOperationResult<Meeting>> GetMeeting(int meetingId, int userId)
@@ -103,20 +111,7 @@ namespace eTutor.Core.Managers
 
             return BasicOperationResult<Meeting>.Ok(meeting);
         }
-
-        public async Task<IOperationResult<IEnumerable<Meeting>>> GetTutorMeetings(int tutorId)
-        {
-            var tutor = await _userRepository.Find(u => u.Id == tutorId, u => u.UserRoles);
-
-            if (tutor == null)
-            {
-                return BasicOperationResult<IEnumerable<Meeting>>.Fail("El usuario no fue encontrado");
-            }
-
-            var meetings = await _meetingRepository.FindAll(u => u.TutorId == tutorId, u => u.Tutor, u => u.Subject);
-
-            return BasicOperationResult<IEnumerable<Meeting>>.Ok(meetings);
-        }
+        
 
         public async Task<IOperationResult<IEnumerable<Meeting>>> GetStudentTutorMeetings(int userId)
         {
@@ -181,19 +176,17 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<Meeting>.Fail("El usuario no fue encontrado");
             }
 
-            var meeting = await _meetingRepository.Find(s => s.Id == meetingId);
+            var meeting = await _meetingRepository.Find(
+                m => m.Id == meetingId 
+                     && m.Status == MeetingStatus.Accepted 
+                     && m.TutorId == userId, 
+                m => m.Tutor, m => m.Student, m => m.Subject);
 
             if (meeting == null)
             {
                 return BasicOperationResult<Meeting>.Fail("La tutoría no fue encontrada");
             }
-
-            if (!(meeting.StudentId == userId || meeting.TutorId == userId))
-                return BasicOperationResult<Meeting>.Fail("El usuario no esta asociado a esta tutoría");
-
-            if (meeting.Status != MeetingStatus.Accepted)
-                return BasicOperationResult<Meeting>.Fail("La tutoría aún no ha sido aceptada");
-
+             
             meeting.Status = MeetingStatus.InProgress;
             meeting.RealStartedDateTime = DateTime.Now;
             _meetingRepository.Update(meeting);
@@ -227,14 +220,19 @@ namespace eTutor.Core.Managers
             if (meeting.Status != MeetingStatus.InProgress)
                 return BasicOperationResult<Meeting>.Fail("La tutoría aún no ha iniciado");
 
-            meeting.Status = MeetingStatus.Complete;
+            var roles = await _userRepository.GetRolesForUser(userId);
+            var role = roles.FirstOrDefault();
+
+            meeting.Status = role == RoleTypes.Tutor ? MeetingStatus.Complete : MeetingStatus.Cancelled;
+            meeting.RealEndedDateTime = DateTime.Now;
+
             var amount = CalculateMeetingAmount(meeting);
 
             _meetingRepository.Update(meeting);
 
             await _meetingRepository.Save();
             
-            await _notificationManager.NotifyMeetingCompleted(meeting, amount);
+            await _notificationManager.NotifyMeetingFinalized(meeting, amount);
 
             return BasicOperationResult<Meeting>.Ok(meeting);
         }
@@ -379,7 +377,43 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<Meeting>.Fail("El estudiante no existe");
             }
 
+            if (await CheckIfTutorAsAvailabilityForMeeting(meeting))
+            {
+                return BasicOperationResult<Meeting>.Fail("Debe de elegir un horario diferente, ya que el tutor no está disponible en el mismo");
+            }
+
+            if (await CheckIfStudentAvailabilityForMeeting(meeting))
+            {
+                return BasicOperationResult<Meeting>.Fail("Debe de elegir otro horario, ya que el horario choca con otra tutoria");
+            }
+
             return BasicOperationResult<Meeting>.Ok(meeting);
+        }
+
+        private async Task<bool> CheckIfTutorAsAvailabilityForMeeting(Meeting meeting)
+        {
+            int tutorId = meeting.TutorId;
+
+            bool meetingWithinRange = await _meetingRepository.Exists(
+                m => ( m.StartDateTime >= meeting.StartDateTime ||
+                     m.StartDateTime < meeting.EndDateTime || 
+                     m.EndDateTime >= meeting.StartDateTime ||
+                     m.EndDateTime <= meeting.EndDateTime) && m.TutorId == tutorId && m.Status == MeetingStatus.Accepted );
+
+            return meetingWithinRange;
+        }
+        
+        private async Task<bool> CheckIfStudentAvailabilityForMeeting(Meeting meeting)
+        {
+            int studentId = meeting.StudentId;
+
+            bool meetingWithinRange = await _meetingRepository.Exists(
+                m => ( m.StartDateTime >= meeting.StartDateTime ||
+                       m.StartDateTime < meeting.EndDateTime || 
+                       m.EndDateTime >= meeting.StartDateTime ||
+                       m.EndDateTime <= meeting.EndDateTime ) && m.StudentId == studentId && m.Status == MeetingStatus.Accepted );
+
+            return meetingWithinRange;
         }
 
         private async Task<bool> SubjectExists(int subjectId)
@@ -413,13 +447,11 @@ namespace eTutor.Core.Managers
             decimal result;
             decimal amountPerHour = 200.0m;
 
-            decimal hours =meeting.EndDateTime.Hour - meeting.RealStartedDateTime.Hour;
+            decimal hours = meeting.RealEndedDateTime.Hour - meeting.RealStartedDateTime.Hour;
             result = hours < 1 ? amountPerHour : amountPerHour * hours;
 
             return result;
         }
-
-
 
         public async Task<IOperationResult<Meeting>> RescheduleTutorForStudentMeeting(int meetingId, int tutorId, int studentId)
         {
@@ -465,35 +497,57 @@ namespace eTutor.Core.Managers
                 return BasicOperationResult<ISet<Meeting>>.Fail("El usuario no está en nuestra base de datos.");
             }
             
-            var roles = await _userRepository.GetRolesForUser(userId);
-            
-            var functions = new Dictionary<RoleTypes, Func<int, Task<IEnumerable<Meeting>>>>
-            {
-                {RoleTypes.Parent, GetMeetingsForParent},
-                {RoleTypes.Tutor, GetMeetingsForTutor},
-                {RoleTypes.Student, GetMeetingsForStudent}
-            };
+            ISet<RoleTypes> roles = await _userRepository.GetRolesForUser(userId);
 
-            var meetings = new List<Meeting>();
-            
-            foreach (var role in roles)
-            {
-                var foundMeetings = await functions[role](userId);
-                meetings.AddRange(foundMeetings);
-            }
+            RoleTypes role = roles.FirstOrDefault();
 
-            var meetingsDistinct = meetings
-                .Where(m => m.Status == MeetingStatus.Accepted)
-                .Distinct().ToHashSet();
+            IEnumerable<Meeting> meetings = await _getMeetingsByRole[role](userId);
+
+            HashSet<Meeting> meetingsDistinct = meetings
+                .Where(m => m.Status == MeetingStatus.Accepted && m.EndDateTime > DateTime.Now)
+                .Distinct()
+                .ToHashSet();
 
             return BasicOperationResult<ISet<Meeting>>.Ok(meetingsDistinct);
+        }
+        
+        public async Task<IOperationResult<ISet<Meeting>>> GetMeetingsHistory(int userId)
+        {
+            bool userExists = await _userRepository.Exists(u => u.Id == userId && u.IsActive && u.IsEmailValidated);
+
+            if (!userExists)
+            {
+                return BasicOperationResult<ISet<Meeting>>.Fail("El usuario indicado no fue encontrado, verifique e intente nuevamente.");    
+            }
+
+            ISet<RoleTypes> roles = await _userRepository.GetRolesForUser(userId);
+
+            RoleTypes role = roles.FirstOrDefault();
+
+            IEnumerable<Meeting> meetings = await _getMeetingsByRole[role](userId);
+
+            MeetingStatus[] statusesToFilterBy =
+            {
+                MeetingStatus.Complete, 
+                MeetingStatus.Cancelled, 
+                MeetingStatus.InProgress, 
+                MeetingStatus.Rejected,
+                MeetingStatus.Accepted
+            };
+
+            HashSet<Meeting> filteredMeetings = meetings.Where(m => statusesToFilterBy.Contains(m.Status))
+                .OrderBy(m => m.StartDateTime)
+                .ThenBy(m => m.RealStartedDateTime)
+                .ToHashSet();
+            
+            return BasicOperationResult<ISet<Meeting>>.Ok(filteredMeetings);
+
         }
 
         private Task<IEnumerable<Meeting>> GetMeetingsForTutor(int tutorId)
         {
             return _meetingRepository.FindAll(
-                m => m.TutorId == tutorId &&
-                     m.StartDateTime.Date >= DateTime.Now.Date,
+                m => m.TutorId == tutorId,
                 m => m.Student, m => m.Tutor, m => m.Subject
             );
         }
@@ -501,8 +555,7 @@ namespace eTutor.Core.Managers
         private Task<IEnumerable<Meeting>> GetMeetingsForStudent(int studentId)
         {
             return _meetingRepository.FindAll(
-                    m => m.StudentId == studentId &&
-                         m.StartDateTime.Date >= DateTime.Now.Date,
+                    m => m.StudentId == studentId,
                     m => m.Student, m => m.Tutor, m => m.Subject
                 );
         }
@@ -513,11 +566,33 @@ namespace eTutor.Core.Managers
             var studentIds = students.Select(s => s.Id);
 
             return await _meetingRepository.FindAll(
-                m => studentIds.Any(s => s == m.StudentId)
-                && m.StartDateTime.Date > DateTime.Now.Date,
+                m => studentIds.Any(s => s == m.StudentId),
             m => m.Student, m => m.Tutor, m => m.Subject
             );
         }
 
+        public async Task<IOperationResult<Meeting>> GetInProgressMeetingForUser(int userId)
+        {
+            var user = await _userRepository.Find(u => u.Id == userId);
+
+            if (user == null)
+            {
+                return  BasicOperationResult<Meeting>.Fail("Usuario no encontrado");
+            }
+
+            var meeting = await _meetingRepository.Set
+                .Include(m => m.Tutor)
+                .Include(m => m.Student)
+                .Include(m => m.Subject)
+                .FirstOrDefaultAsync(m =>
+                    m.Status == MeetingStatus.InProgress && (m.TutorId == userId || m.StudentId == userId));
+
+            if (meeting == null)
+            {
+                return BasicOperationResult<Meeting>.Fail("No ha sido iniciada ninguna tutoría con el usuario.");
+            }
+            
+            return BasicOperationResult<Meeting>.Ok(meeting);
+        }
     }
 }
