@@ -504,7 +504,7 @@ namespace eTutor.Core.Managers
             IEnumerable<Meeting> meetings = await _getMeetingsByRole[role](userId);
 
             HashSet<Meeting> meetingsDistinct = meetings
-                .Where(m => m.Status == MeetingStatus.Accepted && m.EndDateTime > DateTime.Now)
+                .Where(m => m.Status == MeetingStatus.Accepted && m.EndDateTime > DateTime.Now.GetNowInCorrectTimezone())
                 .Distinct()
                 .ToHashSet();
 

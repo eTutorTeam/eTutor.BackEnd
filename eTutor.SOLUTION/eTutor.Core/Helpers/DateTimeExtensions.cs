@@ -5,8 +5,7 @@ namespace eTutor.Core.Helpers
     {
         public static DateTime GetNowInCorrectTimezone(this DateTime date)
         {
-            date = DateTime.UtcNow;
-            return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(date, "SA Western Standard Time");
+            return date.AddHours(-4);
         }
     }
 }
