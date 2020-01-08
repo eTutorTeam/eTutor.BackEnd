@@ -214,7 +214,7 @@ namespace eTutor.Core.Managers
                 {"finalizedMeetingId", meeting.Id.ToString()}
             };
 
-            await _notificationService.SendNotificationToMultipleUsers(parents, messageToParents, subject, data);
+            await _notificationService.SendNotificationToMultipleUsers(parents, messageToParents, subject);
             await _notificationService.SendNotificationToUser(student, messageToUsers, subject, data);
             await _notificationService.SendNotificationToUser(tutor, messageToUsers, subject, data);
 

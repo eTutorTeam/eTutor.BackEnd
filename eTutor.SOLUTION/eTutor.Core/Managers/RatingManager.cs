@@ -15,9 +15,7 @@ namespace eTutor.Core.Managers
 {
     public sealed class RatingManager
     {
-        public readonly IRatingRepository _ratingRepository;
-
-
+        private readonly IRatingRepository _ratingRepository;
         public RatingManager(IRatingRepository ratingRepository)
         {
             _ratingRepository = ratingRepository;
