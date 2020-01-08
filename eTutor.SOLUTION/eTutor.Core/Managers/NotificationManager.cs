@@ -183,7 +183,7 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<string>.Ok("Tutoria Completada");
         }
 
-        public async Task<IOperationResult<string>> NotifyMeetingCompleted(Meeting meeting, decimal amount)
+        public async Task<IOperationResult<string>> NotifyMeetingFinalized(Meeting meeting, decimal amount)
         {
             string subject = "¡Tutoría Completada!";
             var studentResult = await GetUser(meeting.StudentId);
@@ -205,20 +205,20 @@ namespace eTutor.Core.Managers
             if (!parents.Any()) return BasicOperationResult<string>.Fail("No fueron encontrados padres para este estudiante");
 
             string messageToParents =
-                $"La tutoría de {meeting.Student.FullName} del tema: {meeting.Subject.Name} ha sido completada satisfactoriamente por un monto" +
+                $"La tutoría de {meeting.Student.FullName} ha sido completada satisfactoriamente por un monto" +
                 $"de {amount}";
 
             string messageToUsers = $"¡La tutoría ha terminado! \nEl monto total es: RD${amount}, Gracias por utilizar eTutor";
             var data = new Dictionary<string, string>
             {
-                {"parentMeetingId", meeting.Id.ToString()}
+                {"finalizedMeetingId", meeting.Id.ToString()}
             };
 
             await _notificationService.SendNotificationToMultipleUsers(parents, messageToParents, subject, data);
-            await _notificationService.SendNotificationToUser(student, messageToUsers, subject);
-            await _notificationService.SendNotificationToUser(tutor, messageToUsers, subject);
+            await _notificationService.SendNotificationToUser(student, messageToUsers, subject, data);
+            await _notificationService.SendNotificationToUser(tutor, messageToUsers, subject, data);
 
-            return BasicOperationResult<string>.Ok("Tutoria Completada");
+            return BasicOperationResult<string>.Ok("Tutoria Finalizada");
         }
 
         public async Task<IOperationResult<string>> NotifyMeetingWasCanceled(Meeting meeting, int userId, decimal amount)
@@ -264,7 +264,6 @@ namespace eTutor.Core.Managers
                                   $"sin cargos adicionales";
                messageToUsers = $"La tutoría programada del tema: {meeting.Subject.Name} ha sido cancelada por el tutor";
             }
-            
 
             var data = new Dictionary<string, string>
             {

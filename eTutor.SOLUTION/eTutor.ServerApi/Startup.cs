@@ -140,6 +140,13 @@ namespace eTutor.ServerApi
 
             var emailLinksConfiguration = Configuration.GetSection("EmailLinks").Get<EmailLinksConfiguration>();
             services.AddScoped(typeof(EmailLinksConfiguration), elc => emailLinksConfiguration);
+            
+            
+            string jsonPath = Path.Combine(route.BasePath, "etutorfirebaseadmin.json");
+            var configurationJson = File.ReadAllText(jsonPath);
+            if (FirebaseApp.DefaultInstance == null) { FirebaseApp.Create(new AppOptions {Credential = GoogleCredential.FromJson(configurationJson)}); }
+            var instance = FirebaseMessaging.DefaultInstance;
+            services.AddSingleton(typeof(FirebaseMessaging), instance);
 
         }
 

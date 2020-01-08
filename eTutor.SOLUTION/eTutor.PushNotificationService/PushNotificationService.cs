@@ -22,23 +22,10 @@ namespace eTutor.PushNotificationService
         private readonly FirebaseMessaging _firebaseMessaging;
         
 
-        public PushNotificationService(IDeviceRepository deviceRepository, AppBaseRoute route)
+        public PushNotificationService(IDeviceRepository deviceRepository, FirebaseMessaging firebaseMessaging)
         {
             _deviceRepository = deviceRepository;
-
-            string jsonPath = Path.Combine(route.BasePath, "etutorfirebaseadmin.json");
-
-            var configurationJson = File.ReadAllText(jsonPath);
-
-            if (FirebaseApp.DefaultInstance == null)
-            {
-                FirebaseApp.Create(new AppOptions
-                {
-                    Credential = GoogleCredential.FromJson(configurationJson)
-                });
-            }
-
-            _firebaseMessaging = FirebaseMessaging.DefaultInstance;
+            _firebaseMessaging = firebaseMessaging;
 
         }
 
