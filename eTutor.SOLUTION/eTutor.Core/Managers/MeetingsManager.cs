@@ -224,7 +224,7 @@ namespace eTutor.Core.Managers
             var role = roles.FirstOrDefault();
 
             meeting.Status = role == RoleTypes.Tutor ? MeetingStatus.Complete : MeetingStatus.Cancelled;
-            meeting.RealEndedDateTime = DateTime.Now;
+            meeting.RealEndedDateTime = DateTime.Now.GetNowInCorrectTimezone();
 
             var amount = CalculateMeetingAmount(meeting);
 
@@ -314,7 +314,7 @@ namespace eTutor.Core.Managers
             
             var meetings = await _meetingRepository.GetAllMeetingsOfParentStudents(parentId);
             var filteredMeetings = meetings.Where(
-                m => m.StartDateTime > DateTime.Now.AddHours(-2)
+                m => m.StartDateTime > DateTime.Now.GetNowInCorrectTimezone().AddHours(-2)
                      && m.ParentAuthorizationId == null
                      && m.Status == MeetingStatus.Pending
             ).ToHashSet();
