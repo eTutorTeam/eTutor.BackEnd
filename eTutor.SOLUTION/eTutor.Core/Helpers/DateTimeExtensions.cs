@@ -5,7 +5,7 @@ namespace eTutor.Core.Helpers
     {
         public static DateTime GetNowInCorrectTimezone(this DateTime date)
         {
-            return date.AddHours(-4);
+            return date;
         }
     }
 }
