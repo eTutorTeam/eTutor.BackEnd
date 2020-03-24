@@ -31,10 +31,21 @@ namespace eTutor.ServerApi.Controllers
         }
 
         [HttpGet("demo-date")]
-        public DateTime GetTestDate()
+        public IActionResult GetTestDate()
         {
-            
-            return DateTime.Now.GetNowInCorrectTimezone();
+            var date = DateTime.Now;
+            var funcDate = date.GetNowInCorrectTimezone();
+            var timezone = TimeZone.CurrentTimeZone;
+            var strDate = date.ToLongDateString();
+            var strTime = date.ToLongTimeString();
+            var strTimezone = timezone.StandardName;
+
+            return Ok(new {
+                normal = funcDate.ToLongDateString() + "   " + funcDate.ToLongTimeString() ,
+                strDate = strDate,
+                strTime = strTime,
+                strTimezone = strTimezone
+            });
         }
     }
 }
