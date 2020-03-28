@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using eTutor.Core.Enums;
 using eTutor.Core.Models;
 using eTutor.Core.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -43,6 +44,20 @@ namespace eTutor.Persistence.Repositories
                                           m.Student.Parents.Any(p => p.ParentId == parentId));
 
                 return result;
+        }
+
+        public async Task<Meeting> GetLastCompleteMeetingForUser(int userId, RoleTypes role)
+        {
+            var meeting = await _context.Meetings
+                .Include(m => m.Subject)
+                .Include(m => m.Tutor)
+                .Include(m => m.Student)
+                .ThenInclude(st => st.Parents)
+                .Where(m => (m.StudentId == userId || m.TutorId == userId)
+                                                              && m.Status == MeetingStatus.Complete)
+                .OrderByDescending(m => m.RealEndedDateTime).FirstOrDefaultAsync();
+            
+            return meeting;
         }
     }
 

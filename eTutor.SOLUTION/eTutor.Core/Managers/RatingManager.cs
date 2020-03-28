@@ -5,6 +5,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using eTutor.Core.Contracts;
+using eTutor.Core.Enums;
 using eTutor.Core.Helpers;
 using eTutor.Core.Models;
 using eTutor.Core.Repositories;
@@ -16,9 +17,13 @@ namespace eTutor.Core.Managers
     public sealed class RatingManager
     {
         private readonly IRatingRepository _ratingRepository;
-        public RatingManager(IRatingRepository ratingRepository)
+        private readonly IMeetingRepository _meetingRepository;
+        private readonly IUserRepository _userRepository;
+        public RatingManager(IRatingRepository ratingRepository, IUserRepository userRepository, IMeetingRepository meetingRepository)
         {
             _ratingRepository = ratingRepository;
+            _userRepository = userRepository;
+            _meetingRepository = meetingRepository;
         }
 
         public async Task<IOperationResult<IEnumerable<Rating>>> GetUserRatings(int userId)
@@ -94,5 +99,27 @@ namespace eTutor.Core.Managers
             return BasicOperationResult<Rating>.Ok();
         }
 
+        public async Task<IOperationResult<Meeting>> GetMeetingPendingForRatingForUser(int userId)
+        {
+            var userExists = await _userRepository.Exists(u => u.Id == userId);
+
+            if (!userExists)
+            {
+                return BasicOperationResult<Meeting>.Fail("El usuario no fue encontrado");
+            }
+
+            RoleTypes userRole = (await _userRepository.GetRolesForUser(userId)).FirstOrDefault();
+            
+            Meeting lastMeeting = await _meetingRepository.GetLastCompleteMeetingForUser(userId, userRole);
+
+            bool ratingExists = await _ratingRepository.Exists(r => r.UserId == userId && r.MeetingId == lastMeeting.Id);
+
+            if (!ratingExists)
+            {
+                return BasicOperationResult<Meeting>.Ok(lastMeeting);
+            }
+            
+            return BasicOperationResult<Meeting>.Ok(null);
+        }
     }
 }

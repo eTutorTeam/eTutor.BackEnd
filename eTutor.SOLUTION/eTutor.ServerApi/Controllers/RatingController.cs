@@ -78,5 +78,28 @@ namespace eTutor.ServerApi.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("pending")]
+        [Authorize(Roles = "tutor, student")]
+        [ProducesResponseType(typeof(MeetingSummaryModel), 200)]
+        [ProducesResponseType(202)]
+        [ProducesResponseType(typeof(Error), 400)]
+        public async Task<IActionResult> CheckPendingCalifications()
+        {
+            int userId = GetUserId();
+            IOperationResult<Meeting> result = await _ratingManager.GetMeetingPendingForRatingForUser(userId);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            if (result.Entity == null) return Accepted();
+            
+            var mapped = _mapper.Map<MeetingSummaryModel>(result.Entity);
+
+            return Ok(mapped);
+
+        }
     }
 }
