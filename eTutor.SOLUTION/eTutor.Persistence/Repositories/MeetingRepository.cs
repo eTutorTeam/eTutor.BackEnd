@@ -48,14 +48,17 @@ namespace eTutor.Persistence.Repositories
 
         public async Task<Meeting> GetLastCompleteMeetingForUser(int userId, RoleTypes role)
         {
-            var meeting = await _context.Meetings
+            var meetings = await _context.Meetings
                 .Include(m => m.Subject)
                 .Include(m => m.Tutor)
                 .Include(m => m.Student)
-                .ThenInclude(st => st.Parents)
                 .Where(m => (m.StudentId == userId || m.TutorId == userId)
-                                                              && m.Status == MeetingStatus.Complete)
-                .OrderByDescending(m => m.RealEndedDateTime).FirstOrDefaultAsync();
+                            && m.Status == MeetingStatus.Complete
+                            && m.RealEndedDateTime != null)
+                .OrderByDescending(m => m.RealEndedDateTime)
+                .ToListAsync();
+                
+            var meeting = meetings.FirstOrDefault();
             
             return meeting;
         }
